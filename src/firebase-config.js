@@ -1,11 +1,11 @@
 const config = {
-  apiKey: "AIzaSyCa55_pd7_LRF253dPjao7smiGTllbQfRI",
-  authDomain: "mongolhorde.firebaseapp.com",
-  databaseURL: "https://flaunt-app.firebaseio.com",
-  projectId: "flaunt-app",
-  // storageBucket: "flaunt-app.appspot.com",
-  messagingSenderId: "428291030444",
-  appId: "1:428291030444:web:a0d857e5a6a0748a",
+  apiKey: "AIzaSyBSgVy0GGc60oAQs7KH3y9bOUXVHwLKYVk",
+  authDomain: "flawntapp.firebaseapp.com",
+  databaseURL: "https://flawntapp.firebaseio.com",
+  projectId: "flawntapp",
+  storageBucket: "",
+  messagingSenderId: "386483040808",
+  appId: "1:386483040808:web:28202c9ee7d32efd"
 
   // GENERAL SETTINGS:
   settings: {
