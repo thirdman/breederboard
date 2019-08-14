@@ -1,0 +1,23 @@
+.HomePage {
+  .circleWrap > .circle {
+    opacity: 0.75;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  }
+  .Preview {
+    transition: transform 0.6s ease-in-out;
+    transform: translateY(0);
+  }
+  .testy {
+    @media (hover: hover) {
+      &:hover {
+        .circleWrap > .circle {
+          transform: scale(1.1);
+          opacity: 1;
+        }
+        .Preview {
+          transform: translateY(-1rem);
+        }
+      }
+    }
+  }
+}
