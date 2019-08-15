@@ -36,7 +36,7 @@ class ProductPageComponent extends Component {
     previewBackground: "limey",
     previewMode: "collection"
   };
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     const {
       rootStore: { routerStore, ProductStore }
     } = this.props;
@@ -53,7 +53,13 @@ class ProductPageComponent extends Component {
   }
   render() {
     const {
-      rootStore: { routerStore, ProductStore, ColorsStore, TemplatesStore }
+      rootStore: {
+        routerStore,
+        ProductStore,
+        ColorsStore,
+        TemplatesStore,
+        AssetStore
+      }
     } = this.props;
 
     const {
@@ -66,12 +72,13 @@ class ProductPageComponent extends Component {
       productBackground,
       productMode,
       contrast,
-      title = "DJ Meowlody",
-      subtitle = "1674258 | Gen 12",
+      title,
+      subtitle,
       hasTitle,
       hasSubtitle
     } = ProductStore;
     const { colors } = ColorsStore;
+    const { assetId, asset } = AssetStore;
     const templateObject = TemplatesStore.templates.filter(
       template => template.name === id
     )[0];
@@ -118,11 +125,12 @@ class ProductPageComponent extends Component {
                 hasTitle={hasTitle}
                 hasSubtitle={hasSubtitle}
                 hasBorder={templateObject && templateObject.hasBorder}
-                title={title}
-                subtitle={subtitle}
+                title={(asset && asset.name) || title}
+                subtitle={(asset && `#${asset.id}`) || subtitle}
                 contrast={contrast}
                 aspect={templateObject && templateObject.aspect}
                 template={templateObject && templateObject.name}
+                sourceImage={asset && asset.image_url_cdn}
               />
             </Box>
             <Box

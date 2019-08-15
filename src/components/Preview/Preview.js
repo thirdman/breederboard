@@ -25,7 +25,8 @@ class Preview extends Component {
       hasTextEffect = true,
       isRender = false,
       contrast = "light",
-      aspect = "3/4"
+      aspect = "3/4",
+      sourceImage
     } = this.props;
     return (
       <div className={classNames("Preview", template)}>
@@ -47,7 +48,7 @@ class Preview extends Component {
               <div className="grid">
                 <div className="box">
                   <div className="circle">
-                    <img alt="" src={mockup} />
+                    <img alt="" src={sourceImage ? sourceImage : mockup} />
                   </div>
                 </div>
                 <div className="box">
@@ -57,7 +58,7 @@ class Preview extends Component {
                 </div>
                 <div className="box">
                   <div className="circle">
-                    <img alt="" src={mockup} />
+                    <img alt="" src={sourceImage ? sourceImage : mockup} />
                   </div>
                 </div>
                 <div className="box">
@@ -67,7 +68,7 @@ class Preview extends Component {
                 </div>
                 <div className="box">
                   <div className="circle">
-                    <img alt="" src={mockup} />
+                    <img alt="" src={sourceImage ? sourceImage : mockup} />
                   </div>
                 </div>
                 <div className="box">
@@ -77,7 +78,7 @@ class Preview extends Component {
                 </div>
                 <div className="box">
                   <div className="circle">
-                    <img alt="" src={mockup} />
+                    <img alt="" src={sourceImage ? sourceImage : mockup} />
                   </div>
                 </div>
                 <div className="box">
@@ -87,7 +88,7 @@ class Preview extends Component {
                 </div>
                 <div className="box">
                   <div className="circle">
-                    <img alt="" src={mockup} />
+                    <img alt="" src={sourceImage ? sourceImage : mockup} />
                   </div>
                 </div>
                 <div className="box">
@@ -97,7 +98,7 @@ class Preview extends Component {
                 </div>
                 <div className="box">
                   <div className="circle">
-                    <img alt="" src={mockup} />
+                    <img alt="" src={sourceImage ? sourceImage : mockup} />
                   </div>
                 </div>
               </div>
@@ -106,7 +107,7 @@ class Preview extends Component {
               <div className="grid">
                 <div className="box hero">
                   <div className="circle">
-                    <img alt="" src={mockup} />
+                    <img alt="" src={sourceImage ? sourceImage : mockup} />
                   </div>
                 </div>
               </div>

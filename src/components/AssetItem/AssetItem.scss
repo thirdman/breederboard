@@ -1,0 +1,22 @@
+.AssetItem {
+  // min-width: 100px;
+  // min-height: 400px;
+  flex-basis: calc(20% - 24px);
+  transition: box-shadow 0.3s ease-out;
+  img.assetImg {
+    width: 100%;
+  }
+  .title {
+    // white-space: nowrap;
+    // overflow: hidden;
+    // text-overflow: ellipsis;
+  }
+  .subtitle {
+    font-size: "small";
+  }
+  &:hover {
+    // background: pink !important;
+    // transform: translateY(-1rem);
+    box-shadow: 0 0 3rem rgba(0, 0, 0, 0.3);
+  }
+}

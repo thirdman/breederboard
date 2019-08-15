@@ -14,6 +14,7 @@ import {
   Stack,
   Text
 } from "grommet";
+import AssetList from "../../components/AssetList/AssetList";
 import "./UserPage.scss";
 import apiConfig from "./../../apiConfig";
 import Web3Connect from "web3connect";
@@ -62,73 +63,112 @@ web3Connect.on("close", () => {
 });
 
 class UserPageComponent extends Component {
+  state = {
+    kitties: [],
+    collections: []
+  };
   render() {
     const {
-      rootStore: { routerStore, UiStore }
+      rootStore: { routerStore, AssetStore, ProductStore }
     } = this.props;
-
+    const { kitties, collections, isLoadingAssets = false } = this.state;
+    console.log("AssetStore", AssetStore);
     return (
       <div
         className={classNames("UserPage", {
           isTransitioning: !!routerStore.isTransitioning
         })}
       >
-        <Box
-          justify="center"
-          direction="row"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Heading level={2} margin="large">
-            User
-          </Heading>
-          <Text>Not logged in</Text>
-        </Box>
         <Box pad="large">
-          <Button pad="large" color="primary" onClick={() => this.handleAuth()}>
-            test auth
-          </Button>
-          <Button onClick={this.handleModal}>handleModal</Button>
-          <Button pad="large" color="primary" onClick={() => this.handleUser()}>
-            handle user
-          </Button>
-          <Button pad="small" primary onClick={() => this.fetchApi()}>
-            fetch api
-          </Button>
-          <Button pad="small" primary onClick={() => this.getDapps()}>
-            get dapps
-          </Button>
-          <Button pad="small" primary onClick={() => this.getKitty()}>
-            getKitty
-          </Button>
-        </Box>
-        {/* <Box margin="large" direction="column">
-          <Web3Connect.Button
-            providerOptions={{
-              portis: {
-                id: "PORTIS_ID", // required
-                network: "mainnet" // optional
-              },
-              fortmatic: {
-                key: "FORTMATIC_KEY", // required
-                network: "mainnet" // optional
-              }
-            }}
-            onConnect={(provider: any) => {
-              const web3 = new Web3(provider); // add provider to web3
-              console.log("web3", web3);
-              console.log("dappAuth", dappAuth);
-              console.log("currentProvider", web3.eth.currentProvider);
+          <Box pad="small" direction="row" gap="small" align="center">
+            <Button
+              pad="large"
+              color="primary"
+              onClick={() => this.handleAuth()}
+            >
+              test auth
+            </Button>
+            <Button onClick={this.handleModal}>handleModal</Button>
+            <Button
+              pad="large"
+              color="primary"
+              onClick={() => this.handleUser()}
+            >
+              handle user
+            </Button>
+            <Button pad="small" primary onClick={() => this.getDapps()}>
+              get dapps
+            </Button>
+            <Button pad="small" primary onClick={() => this.getKitty()}>
+              getKitty
+            </Button>
+          </Box>
+          <Box
+            justify="center"
+            direction="row"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Heading level={2} margin="large">
+              User
+            </Heading>
+          </Box>
 
-              web3.eth.getCoinbase().then(console.log);
-              web3.eth.getAccounts().then(console.log);
-              // this.handleUser();
-            }}
-            onClose={() => {
-              console.log("Web3Connect Modal Closed"); // modal has closed
-            }}
-          />
-        </Box> */}
+          <Box direction="row" margin="small">
+            <Button onClick={() => this.getKitties()}>
+              <Box
+                pad="small"
+                border="all"
+                justify="center"
+                align="center"
+                round="small"
+              >
+                get Kitties
+              </Box>
+            </Button>
+            <Button onClick={() => this.getCollections()}>
+              <Box
+                pad="small"
+                border="all"
+                justify="center"
+                align="center"
+                round="small"
+              >
+                get collections
+              </Box>
+            </Button>
+          </Box>
+
+          <Box
+            // margin="large"
+            // border="all"
+            alignItems="center"
+            justifyContent="start"
+            fill="horizontal"
+          >
+            {isLoadingAssets && (
+              <Box
+                className="loading"
+                fill
+                pad="large"
+                align="center"
+                justify="center"
+              >
+                loading...
+              </Box>
+            )}
+            {!isLoadingAssets && (
+              <AssetList
+                assets={this.state.kitties}
+                collections={collections}
+                selectedCollection={this.state.selectedCollection}
+                onAssetClick={this.handleSelectAsset}
+                onSelectCollection={this.handleSelectCollection}
+                showAllAssets={this.handleShowAll}
+              />
+            )}
+          </Box>
+        </Box>
       </div>
     );
   }
@@ -186,29 +226,47 @@ class UserPageComponent extends Component {
       console.error(error);
     }
   };
-  fetchApi = () => {
-    console.log("fetching");
-    // fetch(API + DEFAULT_QUERY)
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     console.log("data", data);
-    //     this.setState({ hits: data.hits });
-    //   });
-    console.log("apiConfig", apiConfig);
+
+  getKitties = () => {
     let theHeaders = new Headers();
-
+    this.setState({
+      isLoadingAssets: true
+    });
     // Add a few headers
-    theHeaders.append("Content-Type", "Application/json");
+    theHeaders.append("Content-Type", "application/json");
     theHeaders.append("x-api-token", apiConfig.apiToken);
-    theHeaders.append("x-authentication-token", apiConfig.authToken);
-
-    const API = "https://public.api.cryptokitties.co/v1/wallets/profile";
+    // theHeaders.append("x-authentication-token", apiConfig.authtoken);
+    // console.log(theHeaders.get("x-authentication-token"));
+    const API =
+      "https://public.api.cryptokitties.co/v1/kitties?owner_wallet_address=0x03f0d81c9a73930b8034553fc54152cbd6958d0b";
     // fetch(API + DEFAULT_QUERY)
     fetch(API, { headers: theHeaders })
       .then(response => response.json())
       .then(data => {
         console.log("data", data);
-        this.setState({ hits: data.hits });
+        this.setState({ kitties: data.kitties });
+        this.setState({
+          isLoadingAssets: false
+        });
+      });
+  };
+
+  getCollections = () => {
+    let theHeaders = new Headers();
+
+    // Add a few headers
+    theHeaders.append("Content-Type", "application/json");
+    theHeaders.append("x-api-token", apiConfig.apiToken);
+    // theHeaders.append("x-authentication-token", apiConfig.authtoken);
+    console.log(theHeaders.get("x-authentication-token"));
+    const API =
+      "https://public.api.cryptokitties.co/v1/wallets/0x03f0d81c9a73930b8034553fc54152cbd6958d0b/collections";
+    // fetch(API + DEFAULT_QUERY)
+    fetch(API, { headers: theHeaders })
+      .then(response => response.json())
+      .then(data => {
+        console.log("data", data);
+        this.setState({ collections: data.collections });
       });
   };
 
@@ -243,8 +301,51 @@ class UserPageComponent extends Component {
       .then(response => response.json())
       .then(data => {
         console.log("data", data);
-        // this.setState({ hits: data.hits });
+        //this.setState({ kitties: data.kitties });
       });
+  };
+
+  handleShowAll = () => {
+    this.setState({
+      selectedAsset: null,
+      selectedCollection: null
+    });
+    this.getKitties();
+  };
+  handleSelectAsset = id => {
+    const {
+      rootStore: { routerStore, AssetStore, ProductStore }
+    } = this.props;
+    const { kitties } = this.state;
+    this.setState({
+      selectedAsset: id
+    });
+    AssetStore.assetId = id;
+    console.log("assets", kitties);
+    const thisAsset = kitties && kitties.filter(asset => asset.id === id)[0];
+    console.log(thisAsset);
+    if (thisAsset) {
+      AssetStore.asset = thisAsset;
+    }
+
+    this.appLink("product", id, "config");
+  };
+  handleSelectCollection = (id, collection) => {
+    const {
+      rootStore: { AssetStore }
+    } = this.props;
+    const { kitties } = this.state;
+    this.setState({
+      selectedCollection: id,
+      kitties: collection.kitties
+    });
+    // AssetStore.assetId = id;
+    console.log("collection", collection);
+    // const thisCollection = kitties && kitties.filter(asset => asset.id === id)[0];
+    // console.log(thisAsset);
+    // if (thisAsset) {
+    //   AssetStore.asset = thisAsset;
+    // }
   };
   ////////////////
   // MISC
