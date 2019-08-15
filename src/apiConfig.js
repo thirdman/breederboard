@@ -1,0 +1,7 @@
+const apiConfig = {
+  apiToken: "o3I2e_2nGL2BzyyHEMSLCy5GpIppEu6VDMNYP3xlBL0",
+  authtoken:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTczMjM4NTUsImlhdCI6MTU2NTc4Nzg1NSwianRpIjoiMTc1ZjY3ZGQtNGE3Zi00Y2Y2LTlhNTMtYjIxMWQ3NmRiMDJhIiwidXNlcmlkIjoiOGIwNWY1NTUtMjk0Zi00ZTRhLTkyYWUtNjA2OTE1ODVkOWI5In0.IokqQMEjiKMY61jJ33NZ-kQ1Wq-D6PvBPSmQKBfT0XA"
+};
+
+export default apiConfig;

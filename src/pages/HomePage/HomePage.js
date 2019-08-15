@@ -89,6 +89,10 @@ class HomePageComponent extends Component {
         >
           <p>Connect your ethereum wallet and print one of a kind products</p>
         </Box>
+        <Box>
+          * unique products based on your own assets * no data stored * new
+          templates released regularly
+        </Box>
         <Box
           basis="full"
           border={{

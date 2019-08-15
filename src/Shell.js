@@ -8,6 +8,7 @@ import { ProductsPage } from "./pages/ProductsPage/ProductsPage";
 import { ProductPage } from "./pages/ProductPage/ProductPage";
 import { RenderPage } from "./pages/RenderPage/RenderPage";
 import { ConfirmPage } from "./pages/ConfirmPage/ConfirmPage";
+import { UserPage } from "./pages/UserPage/UserPage";
 
 // import { LoginPage } from "./pages/LoginPage/LoginPage.js";
 
@@ -18,7 +19,7 @@ const viewMap = {
   product: <ProductPage />,
   render: <RenderPage />,
   confirm: <ConfirmPage />,
-
+  user: <UserPage />,
   about: <AboutPage />
 
   // login: <LoginPage />,

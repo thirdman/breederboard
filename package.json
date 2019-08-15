@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "dependencies": {
+    "@dapperlabs/dappauth": "^2.0.1",
     "classnames": "^2.2.6",
     "dom-to-image": "^2.6.0",
     "firebase": "^6.3.5",
@@ -18,7 +19,8 @@
     "react-aspect-ratio": "^1.0.40",
     "react-dom": "^16.9.0",
     "react-scripts": "3.0.1",
-    "styled-components": "^4.3.2"
+    "styled-components": "^4.3.2",
+    "web3connect": "^1.0.0-beta.18"
   },
   "scripts": {
     "start": "PORT=3333 react-scripts start",

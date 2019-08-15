@@ -5,7 +5,7 @@ const config = {
   projectId: "flawntapp",
   storageBucket: "",
   messagingSenderId: "386483040808",
-  appId: "1:386483040808:web:28202c9ee7d32efd"
+  appId: "1:386483040808:web:28202c9ee7d32efd",
 
   // GENERAL SETTINGS:
   settings: {

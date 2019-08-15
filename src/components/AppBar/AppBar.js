@@ -31,6 +31,9 @@ const AppBar = props => {
         <Button margin="small" onClick={() => props.appLink("home")}>
           Home
         </Button>
+        <Button margin="small" onClick={() => props.appLink("user")}>
+          User
+        </Button>
         <Button margin="small" onClick={() => props.appLink("products")}>
           Products
         </Button>
