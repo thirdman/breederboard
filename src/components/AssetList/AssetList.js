@@ -51,47 +51,63 @@ class AssetList extends Component {
           border="bottom"
           fill="horizontal"
           direction="row"
+          justify="between"
         >
-          {hasInfo && (
-            <Box
-              pad="small"
-              direction="row"
-              align="center"
-              justify="center"
-              gap="small"
-            >
-              <Text as="span">total:</Text>
-              <Text as="span" weight={900}>
-                {assets.length || "..."}
-              </Text>
-            </Box>
-          )}
-          {collections && collections.length > 0 && (
-            <Box
-              pad="small"
-              direction="row"
-              align="center"
-              justify="center"
-              gap="small"
-            >
-              <Text as="span">Collections:</Text>
-              <Text as="span" weight={900}>
-                {collections.length || "..."}
-              </Text>
-              <Menu
-                label={collectionName || "Select"}
-                items={collections.map(collection => {
-                  const thisObj = {
-                    label: collection.name || "ggg",
-                    onClick: () =>
-                      this.handleSetCollection(collection.id, collection)
-                  };
-                  return thisObj;
-                })}
-              />
-              <Button onClick={this.props.showAllAssets}>Show All</Button>
-            </Box>
-          )}
+          <Box direction="row" align="center" justify="center" gap="small">
+            {hasInfo && (
+              <Box
+                pad="small"
+                direction="row"
+                align="center"
+                justify="center"
+                gap="small"
+              >
+                <Text as="span">Kitties:</Text>
+                <Text as="span" weight={900}>
+                  {assets.length || "..."}
+                </Text>
+              </Box>
+            )}
+            {collections && collections.length > 0 && (
+              <Box
+                pad="small"
+                direction="row"
+                align="center"
+                justify="center"
+                gap="small"
+              >
+                <Text as="span">Collections:</Text>
+                <Text as="span" weight={900}>
+                  {collections.length || "..."}
+                </Text>
+              </Box>
+            )}
+          </Box>
+          <Box direction="row" align="center" justify="center" gap="small">
+            {collections && collections.length > 0 && (
+              <React.Fragment>
+                <Text>Collection: </Text>
+                <Menu
+                  label={(selectedCollection && collectionName) || "Select"}
+                  items={collections.map(collection => {
+                    const thisObj = {
+                      label: collection.name || "ggg",
+                      onClick: () =>
+                        this.handleSetCollection(collection.id, collection)
+                    };
+                    return thisObj;
+                  })}
+                />
+              </React.Fragment>
+            )}
+            {selectedCollection && (
+              <Button onClick={this.props.showAllAssets}>
+                <Box pad="small" border="all">
+                  Show All
+                </Box>
+              </Button>
+            )}
+          </Box>
         </Box>
         <Box
           direction="row"

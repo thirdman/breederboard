@@ -342,7 +342,7 @@ class ProductPageComponent extends Component {
 
   handleBackground = value => {
     const {
-      rootStore: { ProductStore, ColorsStore }
+      rootStore: { ProductStore, ColorsStore, UiStore }
     } = this.props;
     const { colors } = ColorsStore;
     const thisColorObj = colors.filter(color => color.name === value);
@@ -354,7 +354,10 @@ class ProductPageComponent extends Component {
     ProductStore.productBackground = value;
     ProductStore.contrast =
       thisColorObj && thisColorObj[0] && thisColorObj[0].contrast;
-
+    UiStore.productTheme = value;
+    UiStore.productContrast =
+      thisColorObj && thisColorObj[0] && thisColorObj[0].contrast;
+    UiStore.productColorObj = thisColorObj;
     console.log("ProductStore", ProductStore);
     // ProductStore.update({
     //   productBackground: value

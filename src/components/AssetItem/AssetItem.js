@@ -16,7 +16,7 @@ class AssetItem extends Component {
       background = "#fff",
       onAssetClick
     } = this.props;
-    console.log("asset", asset);
+    // console.log("asset", asset);
     const tempStyle = {
       //background: background
     };

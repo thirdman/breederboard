@@ -76,6 +76,7 @@ class App extends Component {
                 margin={{
                   top: "73px"
                 }}
+                className="sideBar"
               >
                 <Box
                   flex

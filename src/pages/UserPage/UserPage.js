@@ -65,13 +65,23 @@ web3Connect.on("close", () => {
 class UserPageComponent extends Component {
   state = {
     kitties: [],
-    collections: []
+    collections: [],
+    isLoading: false,
+    isLoadingAssets: false
   };
-  render() {
+  componentDidMount() {
     const {
-      rootStore: { routerStore, AssetStore, ProductStore }
+      rootStore: { routerStore, AssetStore, AssetsStore, ProductStore }
     } = this.props;
     const { kitties, collections, isLoadingAssets = false } = this.state;
+    this.handleLoad();
+  }
+  render() {
+    const {
+      rootStore: { routerStore, AssetStore, ProductStore, AssetsStore }
+    } = this.props;
+    const { kitties, collections, isLoading, isLoadingAssets } = this.state;
+    const { assets } = AssetsStore;
     console.log("AssetStore", AssetStore);
     return (
       <div
@@ -101,6 +111,9 @@ class UserPageComponent extends Component {
             </Button>
             <Button pad="small" primary onClick={() => this.getKitty()}>
               getKitty
+            </Button>
+            <Button pad="small" primary onClick={() => this.getProfile()}>
+              get Profile
             </Button>
           </Box>
           <Box
@@ -146,6 +159,7 @@ class UserPageComponent extends Component {
             justifyContent="start"
             fill="horizontal"
           >
+            {isLoading && <div>Loading.</div>}
             {isLoadingAssets && (
               <Box
                 className="loading"
@@ -157,22 +171,41 @@ class UserPageComponent extends Component {
                 loading...
               </Box>
             )}
-            {!isLoadingAssets && (
-              <AssetList
-                assets={this.state.kitties}
-                collections={collections}
-                selectedCollection={this.state.selectedCollection}
-                onAssetClick={this.handleSelectAsset}
-                onSelectCollection={this.handleSelectCollection}
-                showAllAssets={this.handleShowAll}
-              />
-            )}
+            <AssetList
+              assets={assets}
+              collections={collections}
+              selectedCollection={this.state.selectedCollection}
+              onAssetClick={this.handleSelectAsset}
+              onSelectCollection={this.handleSelectCollection}
+              showAllAssets={this.handleShowAll}
+            />
+            {/* {!isLoadingAssets && (
+            )} */}
           </Box>
         </Box>
       </div>
     );
   }
 
+  handleLoad = async () => {
+    console.log("handling load");
+    /**
+     * todo:
+     * check user has wallet
+     * check provider exists
+     * if yes, check dapper has access
+     * if yes, get
+     * - kitties
+     * - collections
+     * - user?
+     */
+    this.setState({ isLoading: true });
+    await this.getKitties();
+    await this.getCollections();
+    this.setState({ isLoading: false });
+  };
+
+  /// USER FINCTIONS
   handleModal = () => {
     web3Connect.toggleModal();
   };
@@ -227,7 +260,43 @@ class UserPageComponent extends Component {
     }
   };
 
-  getKitties = () => {
+  getProfile = () => {
+    // const {
+    //   rootStore: { AssetsStore }
+    // } = this.props;
+    // console.log("AssetsStore");
+    // this.setState({
+    //   isLoadingAssets: true
+    // });
+
+    let theHeaders = new Headers();
+    theHeaders.append("Content-Type", "application/json");
+    theHeaders.append("x-api-token", apiConfig.apiToken);
+    theHeaders.append("x-authentication-token", apiConfig.authtoken);
+
+    const API = "https://public.api.cryptokitties.co/v1/wallets/profile";
+
+    fetch(API, { headers: theHeaders })
+      .then(response => response.json())
+      .then(data => {
+        console.log("data", data);
+        // this.setState({ kitties: data.kitties });
+        // this.setState({
+        //   isLoadingAssets: false
+        // });
+        // AssetsStore.assets = data.kitties;
+        // AssetsStore.assetSource = "cryptoKitties";
+        // console.log("AssetsStore");
+        return true;
+      });
+  };
+
+  getKitties = address => {
+    console.log("address", address);
+    const {
+      rootStore: { AssetsStore }
+    } = this.props;
+    console.log("AssetsStore");
     let theHeaders = new Headers();
     this.setState({
       isLoadingAssets: true
@@ -248,6 +317,10 @@ class UserPageComponent extends Component {
         this.setState({
           isLoadingAssets: false
         });
+        AssetsStore.assets = data.kitties;
+        AssetsStore.assetSource = "cryptoKitties";
+        console.log("AssetsStore");
+        return true;
       });
   };
 
@@ -267,6 +340,7 @@ class UserPageComponent extends Component {
       .then(data => {
         console.log("data", data);
         this.setState({ collections: data.collections });
+        return true;
       });
   };
 
@@ -332,20 +406,19 @@ class UserPageComponent extends Component {
   };
   handleSelectCollection = (id, collection) => {
     const {
-      rootStore: { AssetStore }
+      rootStore: { AssetStore, CollectionStore }
     } = this.props;
     const { kitties } = this.state;
     this.setState({
       selectedCollection: id,
       kitties: collection.kitties
     });
-    // AssetStore.assetId = id;
+    CollectionStore.collectionId = id;
+    CollectionStore.collectionName = collection.name;
+    CollectionStore.assets = collection.kitties;
+    CollectionStore.collection = collection;
+
     console.log("collection", collection);
-    // const thisCollection = kitties && kitties.filter(asset => asset.id === id)[0];
-    // console.log(thisAsset);
-    // if (thisAsset) {
-    //   AssetStore.asset = thisAsset;
-    // }
   };
   ////////////////
   // MISC

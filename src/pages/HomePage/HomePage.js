@@ -24,14 +24,35 @@ import "react-aspect-ratio/aspect-ratio.css";
 class HomePageComponent extends Component {
   render() {
     const {
-      rootStore: { routerStore, UiStore }
+      rootStore: {
+        routerStore,
+        UiStore,
+        AssetStore,
+        AssetsStore,
+        CollectionStore
+      }
     } = this.props;
 
     const {
       routerState: { params }
     } = routerStore;
     const { id } = params;
-
+    const { asset } = AssetStore;
+    const {
+      collectionId,
+      collectionName,
+      // assets,
+      collection
+    } = CollectionStore;
+    const { assets } = AssetsStore;
+    const hasAssets = AssetsStore && AssetsStore.assets.length > 0;
+    console.log("hasAssets", hasAssets);
+    console.log("assets", assets);
+    console.log("CollectionStore", CollectionStore);
+    console.log("collection", collection);
+    console.log("asset? ", asset);
+    console.log("UiStore", UiStore);
+    console.log("UiStore.productTheme", UiStore.productTheme);
     if (params.id) {
       // GameStore.path = `games/${params.id}`;
     }
@@ -64,7 +85,7 @@ class HomePageComponent extends Component {
           justifyContent="center"
         >
           <Heading level={2} margin="large">
-            Show off your Digital collection in physical form!
+            Show off your Digital Assets!
           </Heading>
         </Box>
         <Box
@@ -138,7 +159,12 @@ class HomePageComponent extends Component {
                   // alignItems="center"
                   align="center"
                 >
-                  <Preview displayMode="collection" />
+                  <Preview
+                    displayMode="collection"
+                    collection={hasAssets ? assets : collection}
+                    title={collectionName}
+                    background={UiStore.productTheme}
+                  />
                 </Box>
                 {/* <Box
                   background="brand"
@@ -201,7 +227,11 @@ class HomePageComponent extends Component {
             justify="center"
           >
             <Heading level={3}>For a single item</Heading>
-            <Preview displayMode="hero" />
+            <Preview
+              displayMode="hero"
+              source={asset && asset.image_url_cdn}
+              background={UiStore.productTheme}
+            />
             <Button
               onClick={() => this.appLink("productsByType", "none", "hero")}
               color="brand"
