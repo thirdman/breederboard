@@ -183,7 +183,6 @@ class HomePageComponent extends Component {
                   title={collectionName}
                   background={UiStore.productTheme}
                   templateType="phone"
-                  
                   hasBorder={false}
                   aspect="9/16"
                 />
@@ -254,6 +253,7 @@ class HomePageComponent extends Component {
                   fill
                   // alignItems="center"
                   align="center"
+                  className="primaryPreview"
                 >
                   <Preview
                     displayMode="hero"
@@ -270,6 +270,17 @@ class HomePageComponent extends Component {
                   templateType="phone"
                   hasBorder={false}
                   aspect="9/16"
+                />
+              </Box>
+              <Box className="tertiaryPreview">
+                <Preview
+                  displayMode="hero"
+                  source={asset && asset.image_url_cdn}
+                  background={UiStore.productTheme}
+                  templateName="tablet"
+                  templateType="tablet"
+                  hasBorder={false}
+                  aspect="3/4"
                 />
               </Box>
               <AspectRatio

@@ -5,6 +5,7 @@
   width: 70%;
   display: block;
   margin: 1rem;
+
   &.poster {
   }
   &.phone {
@@ -39,6 +40,7 @@
         box-shadow: 0 0 2rem 1rem rgba(0, 0, 0, 0.2);
         position: absolute;
         left: -5%;
+
         top: -7%;
         right: -5%;
         bottom: -7%;
@@ -49,7 +51,8 @@
         background: #000;
         opacity: 1;
         z-index: -1;
-        border-radius: 1rem;
+        border-radius: 5%;
+        border-radius: calc(var(--previewWidth) / 100 * 5); // ie. 10%
       }
       img.phone {
         display: none;
@@ -72,8 +75,12 @@
 .Poster {
   box-sizing: border-box;
   display: block;
-  padding: 3rem 2rem;
-
+  padding: calc(var(--previewWidth) / 100 * 10); // ie. 0%
+  // padding-left: calc(var(--previewWidth) / 100 * 20); // ie. 20%
+  // padding-right: calc(var(--previewWidth) / 100 * 20); // ie. 20%
+  // padding-top: calc(var(--previewWidth) / 100 * 30); // ie. 30%
+  // padding-bottom: calc(var(--previewWidth) / 100 * 30); // ie. 30%
+  // padding: 3rem 2rem;
   background: #fff;
   // background: linear-gradient(-245deg, violet, pink);
   transition: background 0.5s ease;
@@ -106,7 +113,7 @@
   }
 
   &.violet {
-    background: linear-gradient(135deg, violet, pink);
+    background: linear-gradient(135deg, violet, #ffc0cb);
     .sunburst {
       opacity: 0.3;
       @include starburst(
@@ -145,7 +152,7 @@
         hsla(29, 99%, 80%, 1) 30%,
         hsla(29, 99%, 67%, 0) 75%
       ) !important;
-      border: 2px solid hsla(29, 99%, 67%, 0.5) !important;
+      // border: 2px solid hsla(29, 99%, 67%, 0.5) !important;
     }
   }
   &.white {
@@ -195,7 +202,15 @@
             rgb(255, 255, 255) 30%,
             rgba(255, 255, 255, 0) 75%
           );
+
+          background-image: radial-gradient(
+            hsla(var(--hueTo), 99%, 90%, 0.6) 20%,
+            hsla(var(--hueTo), 99%, 77%, 0) 70%
+          );
+
           border: 2px solid rgba(255, 255, 255, 0.4);
+
+          border: 2px solid hsla(var(--hueTo), 99%, 87%, 0.15) !important;
 
           img {
             width: 100%;
@@ -225,6 +240,16 @@
           transform: scale(1.65);
         }
       }
+    }
+  }
+  // CONTRAST MODES
+  &.light {
+    .grid .box.hero .circle {
+      background-image: radial-gradient(
+        hsla(var(--hueTo), 99%, 99%, 0.8) 40%,
+        hsla(var(--hueTo), 99%, 77%, 0) 70%
+      ) !important;
+      border: 2px solid rgba(255, 255, 255, 0.4) !important;
     }
   }
   //MODIFIERS
@@ -289,8 +314,10 @@
         transform: rotate(-3deg);
         text-align: left;
         position: relative;
+
         &:before {
-          content: "DJ Meowlody";
+          // content: "DJ Meowlody";
+          content: attr(data-title);
           z-index: 1;
           color: #fff;
           font-size: 2rem;
@@ -305,7 +332,7 @@
           z-index: -1;
         }
         &:after {
-          content: "DJ Meowlody";
+          content: attr(data-title);
           z-index: 1;
           color: #fff;
           font-size: 2rem;

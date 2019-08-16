@@ -10,7 +10,9 @@
   .Preview {
     transition: transform 0.6s ease-in-out;
     transform: translateY(0);
+    z-index: 10;
   }
+
   .testy {
     cursor: pointer;
     @media (hover: hover) {
@@ -20,23 +22,48 @@
           opacity: 1;
         }
         .Preview {
-          transform: translateY(-1rem);
+          // transform: translateY(-1rem) translateX(-1rem);
+        }
+        .primaryPreview {
+          z-index: 10;
+          transform: translateY(-1rem) translateX(-1rem);
         }
         .secondaryPreview {
+          z-index: 11;
           transform: translateY(-0.5rem) translateX(1rem);
+        }
+        .tertiaryPreview {
+          z-index: 10;
+          transform: translateY(1.5rem) translateX(0.5rem);
         }
       }
     }
   }
+  .primaryPreview {
+    transition: transform 0.8s ease-in-out;
+    z-index: 10;
+  }
   .secondaryPreview {
-    width: 30%;
+    width: 25%;
     top: 20%;
-    left: 65%;
+    left: 69%;
     position: absolute;
 
     display: flex;
     align-items: center;
     justify-content: center;
     transition: transform 0.8s ease-in-out;
+    z-index: 11;
+  }
+  .tertiaryPreview {
+    width: 50%;
+    top: 40%;
+    left: 55%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.8s ease-in-out;
+    z-index: 10;
   }
 }

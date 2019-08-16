@@ -9,6 +9,21 @@ import blue from "../../assets/temp/1674054.svg";
 import phoneBg from "./../../assets/previews/18458082.svg";
 
 class Preview extends Component {
+  state = {
+    elementWidth: 0
+  };
+  refCallback = element => {
+    console.log("refCallback");
+    if (element) {
+      const elementObject = element.getBoundingClientRect();
+      // this.props.getSize(element.getBoundingClientRect());
+      console.log("size", elementObject);
+      this.setState({ elementWidth: elementObject.width });
+    }
+    // if (elementObject) {
+    //   return elementObject.width;
+    // }
+  };
   render() {
     // const { showSidebar } = this.state;
     const {
@@ -33,10 +48,18 @@ class Preview extends Component {
     console.log("collection", collection);
 
     return (
-      <div className={classNames("Preview", templateType)}>
+      <div
+        className={classNames("Preview", templateType)}
+        ref={this.refCallback}
+        data-width={this.state.elementWidth}
+        style={{
+          "--previewWidth": `${this.state.elementWidth}px`
+        }}
+      >
         <AspectRatio ratio={aspect}>
           <div
             id={domId}
+            // data-content="sdfsdf"
             className={classNames(
               "Poster",
               background,
@@ -135,9 +158,15 @@ class Preview extends Component {
             )}
             {hasTitle && (
               <div className="titlePosition">
-                <div className="theTitle">{title}</div>
-                {hasSubtitle && subtitle && (
-                  <div className="theSubtitle">{subtitle}</div>
+                {title && (
+                  <div className="theTitle" data-title={title}>
+                    {title}
+                  </div>
+                )}
+                {hasTitle && hasSubtitle && subtitle && (
+                  <div className="theSubtitle" data-title={subtitle}>
+                    {subtitle}
+                  </div>
                 )}
               </div>
             )}
@@ -151,7 +180,7 @@ class Preview extends Component {
               hasShadow ? "hasShadow" : ""
             )}
           >
-            {templateType === "phone" && (
+            {(templateType === "phone" || templateType === "tablet") && (
               <div className="contextImageWrap phone">
                 <img src={phoneBg} className="phone" />
               </div>

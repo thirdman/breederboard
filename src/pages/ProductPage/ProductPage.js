@@ -4,7 +4,13 @@ import classNames from "classnames";
 // import { Succession } from "../../components/Succession/Succession";
 //import Loading from "../../components/Loading/Loading";
 import AppBar from "../../components/AppBar/AppBar";
-import { Notification, Nodes } from "grommet-icons";
+import {
+  Notification,
+  Nodes,
+  View,
+  CheckboxSelected,
+  Checkbox
+} from "grommet-icons";
 import "./ProductPage.scss";
 import {
   Box,
@@ -66,10 +72,20 @@ class ProductPageComponent extends Component {
       routerState: { params }
     } = routerStore;
     const { id = "poster", stage } = params;
-    const { previewBackground, previewMode } = this.state;
+    const {
+      previewHasTitle = ProductStore.hasTitle,
+      previewHasSubtitle = ProductStore.hasTitle,
+      previewBackground,
+      previewMode
+    } = this.state;
+    const tempTemplateObject = TemplatesStore.templates.filter(
+      template => template.name === id
+    )[0];
+    console.log("params: ", id, stage);
+    console.log("tempTemplateObject: ", tempTemplateObject);
     const {
       templateName,
-      templateObject,
+      templateObject = tempTemplateObject,
       productSize,
       productBackground,
       productMode,
@@ -81,20 +97,22 @@ class ProductPageComponent extends Component {
     } = ProductStore;
     const { colors } = ColorsStore;
     const { assetId, asset } = AssetStore;
-    const tempTemplateObject = TemplatesStore.templates.filter(
-      template => template.name === id
-    )[0];
-    console.log("params: ", id, stage);
-    console.log("tempTemplateObject: ", tempTemplateObject);
+    const { templates } = TemplatesStore;
+
     console.log("templateObject: ", templateObject);
     console.log("hasSubtitle: ", hasSubtitle);
     console.log("templateName: ", templateName);
-
+    const thisColorObj = colors && colors.filter(color=> color.name === productBackground)[0];
+    console.log('thisColorObj', thisColorObj)
     return (
       <div
         className={classNames("ProductPage", {
           isTransitioning: !!routerStore.isTransitioning
         })}
+        style={thisColorObj.hueTo && {
+          "--hueFrom": `${thisColorObj.hueFrom}`,
+          "--hueTo": `${thisColorObj.hueTo}`,
+        }}
       >
         {/* <Heading level={2}>{stage}</Heading> */}
         {stage && stage === "config" && (
@@ -129,26 +147,15 @@ class ProductPageComponent extends Component {
                 displayMode={productMode}
                 hasTitle={hasTitle}
                 hasSubtitle={hasSubtitle}
-                hasBorder={
-                  (templateObject && templateObject.hasBorder) ||
-                  (tempTemplateObject && tempTemplateObject.hasBorder)
-                }
+                hasBorder={templateObject && templateObject.hasBorder}
                 title={(asset && asset.name) || title}
                 subtitle={(asset && `#${asset.id}`) || subtitle}
                 contrast={contrast}
-                aspect={
-                  (templateObject && templateObject.aspect) ||
-                  (tempTemplateObject && tempTemplateObject.aspect)
-                }
+                aspect={templateObject && templateObject.aspect}
                 templateType={
-                  (templateObject && templateObject.type) ||
-                  (tempTemplateObject && tempTemplateObject.type) ||
-                  "poster"
+                  (templateObject && templateObject.type) || "poster"
                 }
-                template={
-                  (templateObject && templateObject.name) ||
-                  (tempTemplateObject && tempTemplateObject.name)
-                }
+                template={templateObject && templateObject.name}
                 sourceImage={asset && asset.image_url_cdn}
               />
             </Box>
@@ -205,56 +212,26 @@ class ProductPageComponent extends Component {
                     direction="column"
                     fill="horizontal"
                   >
-                    <Button
-                      onClick={() => this.handleTemplate("iPhone 6")}
-                      // margin="small"
-                      fill="horizontal"
-                    >
-                      <Box
-                        pad="small"
-                        direction="row"
-                        justify="between"
-                        gap="small"
-                        background={templateName === "iPhone 6" && "violet"}
-                      >
-                        <Text>iPhone 6</Text>
-                        <Text>9/16</Text>
-                      </Box>
-                    </Button>
-                    <Button
-                      onClick={() => this.handleTemplate("iPhone X")}
-                      fill="horizontal"
-                    >
-                      <Box
-                        pad="small"
-                        direction="row"
-                        justify="between"
-                        // gap="small"
-                        fill="horizontal"
-                        background={
-                          templateName === "iPhone X" ? "violet" : null
-                        }
-                      >
-                        <Text>iPhone X</Text>
-                        <Text>9/16</Text>
-                      </Box>
-                    </Button>
-                    <Button
-                      onClick={() => this.handleTemplate("Galaxy S9 Plus")}
-                      fill="horizontal"
-                    >
-                      <Box
-                        pad="small"
-                        direction="row"
-                        justify="between"
-                        background={
-                          templateName === "Galaxy S9 Plus" && "violet"
-                        }
-                      >
-                        <Text>Galaxy S9 Plus</Text>
-                        <Text>9/18.5</Text>
-                      </Box>
-                    </Button>
+                    {templates &&
+                      templates.map(template => (
+                        <Button
+                          onClick={() => this.handleTemplate(template.name)}
+                          fill="horizontal"
+                          key={template.name}
+                        >
+                          <Box
+                            pad="small"
+                            direction="row"
+                            justify="between"
+                            background={
+                              templateName === template.name && "violet"
+                            }
+                          >
+                            <Text>{template.name}</Text>
+                            <Text>{template.aspect}</Text>
+                          </Box>
+                        </Button>
+                      ))}
                   </Box>
                 </Box>
 
@@ -302,31 +279,31 @@ class ProductPageComponent extends Component {
                   pad={{ top: "small" }}
                   animation="slideLeft"
                 >
-                  <Heading level={4} margin="none" pad="small">
-                    Titles
-                  </Heading>
-                  <Box margin={{ bottom: "small" }}>
-                    <CheckBox
-                      checked={hasTitle}
-                      label="Include Title"
-                      onChange={event =>
-                        this.handleHasTitle(event.target.checked)
-                      }
-                    />
-                  </Box>
-                  {/* <Button onClick={() => this.handleTitle("DJ Meowlody")} primary>
-                  Set title
-                </Button> */}
+                  <Button onClick={() => this.handleHasTitle(!previewHasTitle)}>
+                    <Heading level={4} margin="none" pad="small">
+                      <Box direction="row" justify="between">
+                        Titles
+                        {previewHasTitle ? (
+                          <CheckboxSelected color="violet" />
+                        ) : (
+                          <Checkbox color="#aaa" />
+                        )}
+                      </Box>
+                    </Heading>
+                  </Button>
+
                   {hasTitle && (
-                    <TextInput
-                      placeholder="type here"
-                      value={title}
-                      onChange={event => this.handleTitle(event.target.value)}
-                      margin="small"
-                      className="textInput"
-                    />
+                    <Box margin={{ top: "small" }}>
+                      <TextInput
+                        placeholder="title"
+                        value={title}
+                        onChange={event => this.handleTitle(event.target.value)}
+                        margin="small"
+                        className="textInput"
+                      />
+                    </Box>
                   )}
-                  {hasTitle && (
+                  {/* {hasTitle && (
                     <Box margin={{ top: "small" }}>
                       <CheckBox
                         checked={hasSubtitle}
@@ -336,21 +313,34 @@ class ProductPageComponent extends Component {
                         }
                       />
                     </Box>
-                  )}
+                  )} */}
                   {hasTitle && (
                     <React.Fragment>
-                      <Box direction="row" margin={{ top: "small" }}>
+                      <Box
+                        direction="row"
+                        margin={{ top: "small" }}
+                        gap="small"
+                      >
                         <TextInput
-                          placeholder="type here"
-                          value={subtitle || "1674258 | Gen 12"}
+                          placeholder="subtitle"
+                          value={subtitle}
                           onChange={event =>
                             this.handleSubtitle(event.target.value)
                           }
                           className="textInput"
                         />
-                        {/* <Button onClick={() => this.handleSubtitle()}>
-                          save
-                        </Button> */}
+
+                        <Button
+                          onClick={() =>
+                            this.handleHasSubtitle(!previewHasSubtitle)
+                          }
+                        >
+                          {previewHasSubtitle ? (
+                            <CheckboxSelected color="violet" />
+                          ) : (
+                            <Checkbox color="#aaa" />
+                          )}
+                        </Button>
                       </Box>
                     </React.Fragment>
                   )}
@@ -382,19 +372,16 @@ class ProductPageComponent extends Component {
   }
 
   handleHasTitle = checked => {
+    console.log("handle has title: ", checked);
     const {
       rootStore: { ProductStore }
     } = this.props;
-    // this.setState(prevState => ({
-    //   hasTitle: checked
-    // }));
+
+    this.setState(prevState => ({
+      previewHasTitle: checked
+    }));
     ProductStore.hasTitle = checked;
-    if (ProductStore.title === "") {
-      ProductStore.title = "DJ Meowlody";
-    }
-    if (checked === true) {
-      ProductStore.hasSubtitle = checked;
-    }
+
     console.log(ProductStore);
   };
   handleHasSubtitle = checked => {
@@ -402,13 +389,11 @@ class ProductPageComponent extends Component {
     const {
       rootStore: { ProductStore }
     } = this.props;
-    // this.setState(prevState => ({
-    //   hasSubtitle: checked
-    // }));
+    this.setState(prevState => ({
+      previewHasSubtitle: checked
+    }));
+
     ProductStore.hasSubtitle = checked;
-    if (ProductStore.subtitle === "") {
-      ProductStore.subtitle = "1674258 | Gen 12";
-    }
   };
   handleTitle = value => {
     const {
@@ -429,6 +414,7 @@ class ProductPageComponent extends Component {
     this.setState(prevState => ({
       previewSubtitle: value
     }));
+
     ProductStore.subtitle = value;
   };
 

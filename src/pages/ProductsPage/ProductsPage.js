@@ -153,6 +153,7 @@ class ProductsPageComponent extends Component {
             <Preview
               //background={productBackground}
               templateName="poster"
+              templateType="poster"
               background={UiStore.productTheme}
               displayMode={stage}
               collection={hasAssets ? assets : collection}
@@ -193,6 +194,7 @@ class ProductsPageComponent extends Component {
                 displayMode={stage}
                 aspect="9/16"
                 templateName="phone"
+                templateType="phone"
                 hasBorder={false}
                 hasShadow={false}
                 collection={hasAssets ? assets : collection}
