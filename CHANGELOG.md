@@ -1,3 +1,8 @@
+### Version 0.2.2
+- add: Ui for user collections
+- add: Ui for templates
+- add: colour theme variables for previews
+
 ### Version 0.2.1
 
 - add: initialise hoting
