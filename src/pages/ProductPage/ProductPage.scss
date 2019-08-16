@@ -1,4 +1,8 @@
 .ProductPage {
+  transition: opacity 0.2s linear;
+  &.isTransitioning {
+    opacity: 0;
+  }
   .swatchButton {
     display: inline-block !important;
     background: transparent !important;

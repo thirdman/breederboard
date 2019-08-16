@@ -25,15 +25,34 @@ class ProductsPageComponent extends Component {
   };
   render() {
     const {
-      rootStore: { routerStore, ProductStore, TemplatesStore }
+      rootStore: {
+        routerStore,
+        UiStore,
+        ColorsStore,
+        ProductStore,
+        TemplatesStore,
+        AssetStore,
+        AssetsStore,
+        CollectionStore
+      }
     } = this.props;
 
     const {
       routerState: { params }
     } = routerStore;
-    const { id, stage } = params;
+    const { id, stage = "hero" } = params;
     const { previewBackground, previewMode } = this.state;
     const { productSize, productBackground, productMode } = ProductStore;
+    const {
+      collectionId,
+      collectionName,
+
+      collection
+    } = CollectionStore;
+    const { colors } = ColorsStore;
+    const { assets } = AssetsStore;
+    const { productTheme } = UiStore;
+    const hasAssets = AssetsStore && AssetsStore.assets.length > 0;
     const phoneTemplate = TemplatesStore.templates.filter(
       template => template.name === "phone"
     )[0];
@@ -49,7 +68,7 @@ class ProductsPageComponent extends Component {
         })}
       >
         {/* <AppBar appLink={this.appLink} handleToggle={this.props.handleToggle} /> */}
-        <Heading> {stage || "sdf"}</Heading>
+        {/* <Heading> {stage || "sdf"}</Heading> */}
         <Box
           pad="medium"
           margin="large"
@@ -61,15 +80,33 @@ class ProductsPageComponent extends Component {
           <Button
             // onClick={() => this.appLink("productsByType", "none", "hero")}
             onClick={() => this.handleMode("hero")}
-            label="Hero"
-            primary={stage && stage === "hero"}
-          />
+            // label="Hero"
+
+            // primary={stage && stage === "hero"}
+          >
+            <Box
+              pad="small"
+              round="small"
+              border="all"
+              background={stage && stage === "hero" && "brand"}
+            >
+              Hero
+            </Box>
+          </Button>
           <Button
             // onClick={() => this.appLink("productsByType", "none", "collection")}
             onClick={() => this.handleMode("collection")}
-            label="Collection"
-            primary={stage && stage === "collection"}
-          />
+            // primary={stage && stage === "collection"}
+          >
+            <Box
+              pad="small"
+              round="small"
+              border="all"
+              background={stage && stage === "collection" && "brand"}
+            >
+              Collection
+            </Box>
+          </Button>
         </Box>
         {/* <Tabs activeIndex={activeIndex}>
           <Tab label="hero" pad="small">
@@ -85,12 +122,12 @@ class ProductsPageComponent extends Component {
         </Tabs> */}
         <Box
           basis="full"
-          border={{
-            color: "border",
-            size: "small",
-            style: "solid",
-            side: "all"
-          }}
+          // border={{
+          //   color: "border",
+          //   size: "small",
+          //   style: "solid",
+          //   side: "all"
+          // }}
           direction="row"
           justify="stretch"
           align="stretch"
@@ -108,11 +145,22 @@ class ProductsPageComponent extends Component {
             alignItems="center"
             pad="small"
             basis="1/2"
+            onClick={() => this.appLink("product", "poster", "config")}
           >
-            <Heading level={3}>Superstar</Heading>
-            <Preview background={productBackground} displayMode={productMode} />
+            <Heading level={3} margin="none">
+              Superstar
+            </Heading>
+            <Preview
+              //background={productBackground}
+              templateName="poster"
+              background={UiStore.productTheme}
+              displayMode={stage}
+              collection={hasAssets ? assets : collection}
+            />
             <Button onClick={() => this.appLink("product", "poster", "config")}>
-              Customise
+              <Box round="large" border="all" pad="small">
+                Customise...
+              </Box>
             </Button>
           </Box>
           <Box
@@ -124,8 +172,11 @@ class ProductsPageComponent extends Component {
             alignItems="center"
             pad="small"
             basis="1/2"
+            onClick={() => this.appLink("product", "phone", "config")}
           >
-            <Heading level={3}>Phone</Heading>
+            <Heading margin="small" level={3}>
+              Phone
+            </Heading>
             <div
               style={{
                 width: "60%",
@@ -137,16 +188,20 @@ class ProductsPageComponent extends Component {
               }}
             >
               <Preview
-                background={productBackground}
-                displayMode={productMode}
+                // background={productBackground}
+                background={UiStore.productTheme}
+                displayMode={stage}
                 aspect="9/16"
-                template="phone"
+                templateName="phone"
                 hasBorder={false}
                 hasShadow={false}
+                collection={hasAssets ? assets : collection}
               />
             </div>
             <Button onClick={() => this.appLink("product", "phone", "config")}>
-              Customise
+              <Box round="large" border="all" pad="small">
+                Customise...
+              </Box>
             </Button>
           </Box>
           <Box
@@ -173,6 +228,24 @@ class ProductsPageComponent extends Component {
                 side: "bottom"
               }}
             >
+              <Box>
+                <Heading level={4} margin="none">
+                  Theme
+                </Heading>
+                <Menu
+                  label={productTheme ? productTheme : "Select"}
+                  items={
+                    colors &&
+                    colors.map(color => {
+                      const obj = {
+                        label: color.name,
+                        onClick: () => this.handleBackground(color.name)
+                      };
+                      return obj;
+                    })
+                  }
+                />
+              </Box>
               <Heading level={4}>Product type</Heading>
               <Menu
                 label="Menu"
@@ -222,6 +295,27 @@ class ProductsPageComponent extends Component {
     //   productBackground: value
     // });
   };
+
+  handleBackground = value => {
+    const {
+      rootStore: { ProductStore, ColorsStore, UiStore }
+    } = this.props;
+    const { colors } = ColorsStore;
+    const thisColorObj = colors.filter(color => color.name === value);
+    console.log(thisColorObj[0]);
+    this.setState(prevState => ({
+      previewBackground: value
+    }));
+    ProductStore.productBackground = value;
+    ProductStore.contrast =
+      thisColorObj && thisColorObj[0] && thisColorObj[0].contrast;
+    UiStore.productTheme = value;
+    UiStore.productContrast =
+      thisColorObj && thisColorObj[0] && thisColorObj[0].contrast;
+    UiStore.productColorObj = thisColorObj;
+    console.log("ProductStore", ProductStore);
+  };
+
   ////////////////
   // MISC
   ////////////////

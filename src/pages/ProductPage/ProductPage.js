@@ -68,6 +68,8 @@ class ProductPageComponent extends Component {
     const { id = "poster", stage } = params;
     const { previewBackground, previewMode } = this.state;
     const {
+      templateName,
+      templateObject,
       productSize,
       productBackground,
       productMode,
@@ -79,19 +81,22 @@ class ProductPageComponent extends Component {
     } = ProductStore;
     const { colors } = ColorsStore;
     const { assetId, asset } = AssetStore;
-    const templateObject = TemplatesStore.templates.filter(
+    const tempTemplateObject = TemplatesStore.templates.filter(
       template => template.name === id
     )[0];
     console.log("params: ", id, stage);
+    console.log("tempTemplateObject: ", tempTemplateObject);
     console.log("templateObject: ", templateObject);
     console.log("hasSubtitle: ", hasSubtitle);
+    console.log("templateName: ", templateName);
+
     return (
       <div
         className={classNames("ProductPage", {
           isTransitioning: !!routerStore.isTransitioning
         })}
       >
-        <Heading level={2}>{stage}</Heading>
+        {/* <Heading level={2}>{stage}</Heading> */}
         {stage && stage === "config" && (
           <Box
             basis="full"
@@ -124,12 +129,26 @@ class ProductPageComponent extends Component {
                 displayMode={productMode}
                 hasTitle={hasTitle}
                 hasSubtitle={hasSubtitle}
-                hasBorder={templateObject && templateObject.hasBorder}
+                hasBorder={
+                  (templateObject && templateObject.hasBorder) ||
+                  (tempTemplateObject && tempTemplateObject.hasBorder)
+                }
                 title={(asset && asset.name) || title}
                 subtitle={(asset && `#${asset.id}`) || subtitle}
                 contrast={contrast}
-                aspect={templateObject && templateObject.aspect}
-                template={templateObject && templateObject.name}
+                aspect={
+                  (templateObject && templateObject.aspect) ||
+                  (tempTemplateObject && tempTemplateObject.aspect)
+                }
+                templateType={
+                  (templateObject && templateObject.type) ||
+                  (tempTemplateObject && tempTemplateObject.type) ||
+                  "poster"
+                }
+                template={
+                  (templateObject && templateObject.name) ||
+                  (tempTemplateObject && tempTemplateObject.name)
+                }
                 sourceImage={asset && asset.image_url_cdn}
               />
             </Box>
@@ -166,6 +185,79 @@ class ProductPageComponent extends Component {
                     { label: "Glitter", onClick: () => {} }
                   ]}
                 />
+
+                <Box
+                  border={{
+                    color: "border",
+                    size: "small",
+                    style: "solid",
+                    side: "top"
+                  }}
+                  pad={{ top: "small" }}
+                  animation="slideLeft"
+                >
+                  <Heading margin="none" level={4}>
+                    Template: {templateName}
+                  </Heading>
+                  <Box
+                    align="start"
+                    justify="start"
+                    direction="column"
+                    fill="horizontal"
+                  >
+                    <Button
+                      onClick={() => this.handleTemplate("iPhone 6")}
+                      // margin="small"
+                      fill="horizontal"
+                    >
+                      <Box
+                        pad="small"
+                        direction="row"
+                        justify="between"
+                        gap="small"
+                        background={templateName === "iPhone 6" && "violet"}
+                      >
+                        <Text>iPhone 6</Text>
+                        <Text>9/16</Text>
+                      </Box>
+                    </Button>
+                    <Button
+                      onClick={() => this.handleTemplate("iPhone X")}
+                      fill="horizontal"
+                    >
+                      <Box
+                        pad="small"
+                        direction="row"
+                        justify="between"
+                        // gap="small"
+                        fill="horizontal"
+                        background={
+                          templateName === "iPhone X" ? "violet" : null
+                        }
+                      >
+                        <Text>iPhone X</Text>
+                        <Text>9/16</Text>
+                      </Box>
+                    </Button>
+                    <Button
+                      onClick={() => this.handleTemplate("Galaxy S9 Plus")}
+                      fill="horizontal"
+                    >
+                      <Box
+                        pad="small"
+                        direction="row"
+                        justify="between"
+                        background={
+                          templateName === "Galaxy S9 Plus" && "violet"
+                        }
+                      >
+                        <Text>Galaxy S9 Plus</Text>
+                        <Text>9/18.5</Text>
+                      </Box>
+                    </Button>
+                  </Box>
+                </Box>
+
                 <Box
                   border={{
                     color: "border",
@@ -362,6 +454,32 @@ class ProductPageComponent extends Component {
     // ProductStore.update({
     //   productBackground: value
     // });
+  };
+
+  handleTemplate = value => {
+    const {
+      rootStore: { ProductStore, TemplatesStore, UiStore }
+    } = this.props;
+    console.log("handle template value: ", value);
+    const { templates } = TemplatesStore;
+    const thisTemplateObj = templates.filter(
+      template => template.name === value
+    );
+
+    console.log(thisTemplateObj[0]);
+    this.setState(prevState => ({
+      previewTemplateName: value,
+      previewTemplate: thisTemplateObj
+    }));
+    ProductStore.templateName = value;
+    ProductStore.templateObject = thisTemplateObj[0];
+    // ProductStore.contrast =
+    //   thisColorObj && thisColorObj[0] && thisColorObj[0].contrast;
+    // UiStore.productTheme = value;
+    // UiStore.productContrast =
+    //   thisColorObj && thisColorObj[0] && thisColorObj[0].contrast;
+    // UiStore.productColorObj = thisColorObj;
+    // console.log("ProductStore", ProductStore);
   };
 
   ////////////////

@@ -15,6 +15,7 @@ class Preview extends Component {
       displayMode = "collection",
       background = "limey",
       template = "poster",
+      templateType = "poster",
       domId = "abcd",
       title,
       subtitle,
@@ -32,7 +33,7 @@ class Preview extends Component {
     console.log("collection", collection);
 
     return (
-      <div className={classNames("Preview", template)}>
+      <div className={classNames("Preview", templateType)}>
         <AspectRatio ratio={aspect}>
           <div
             id={domId}
@@ -55,7 +56,7 @@ class Preview extends Component {
                     console.log("asset");
                     // asset && asset.image_url_cdn;
                     return (
-                      <div className="box">
+                      <div className="box" key={`previewElement${asset.id}`}>
                         <div className="circle">
                           <img alt="" src={asset && asset.image_url_cdn} />
                         </div>
@@ -150,7 +151,7 @@ class Preview extends Component {
               hasShadow ? "hasShadow" : ""
             )}
           >
-            {template === "phone" && (
+            {templateType === "phone" && (
               <div className="contextImageWrap phone">
                 <img src={phoneBg} className="phone" />
               </div>

@@ -102,19 +102,19 @@ class App extends Component {
                     onClick={() => this.appLink("products", "none", "none")}
                     margin="medium"
                   >
-                    products
+                    Products
                   </Button>
                   <Button
-                    onClick={() => this.appLink("assets", "none", "none")}
+                    onClick={() => this.appLink("user", "none", "none")}
                     margin="medium"
                   >
-                    assets
+                    Assets
                   </Button>
                   <Button
                     onClick={() => this.appLink("about", "none", "none")}
                     margin="medium"
                   >
-                    about
+                    About
                   </Button>
                 </Box>
               </Layer>
@@ -155,6 +155,7 @@ class App extends Component {
   appLink = (routeName, id, stage) => {
     const { routerStore } = rootStore;
     console.log("routerStore", routerStore);
+    this.setState({ showSidebar: false });
     routerStore.goTo(routeName, { id: id, stage: stage });
   };
 }

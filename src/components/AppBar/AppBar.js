@@ -41,15 +41,22 @@ const AppBar = props => {
           About
         </Button>
       </Box>
-      <Button
-        icon={<User />}
-        onClick={props.handleMenu}
-        // onClick={() =>
-        //   this.setState(prevState => ({
-        //     showSidebar: !prevState.showSidebar
-        //   }))
-        // }
-      />
+      <Box direction="row" gap="small">
+        <Button
+          background="primary"
+          onClick={() => props.appLink("user")}
+          label="Connect"
+        />
+        <Button
+          icon={<User />}
+          onClick={props.handleMenu}
+          // onClick={() =>
+          //   this.setState(prevState => ({
+          //     showSidebar: !prevState.showSidebar
+          //   }))
+          // }
+        />
+      </Box>
     </Box>
   );
 };

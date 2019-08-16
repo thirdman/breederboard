@@ -1,4 +1,8 @@
 .HomePage {
+  transition: opacity 0.2s linear;
+  &.isTransitioning {
+    opacity: 0;
+  }
   .circleWrap > .circle {
     opacity: 0.75;
     transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
@@ -8,6 +12,7 @@
     transform: translateY(0);
   }
   .testy {
+    cursor: pointer;
     @media (hover: hover) {
       &:hover {
         .circleWrap > .circle {
@@ -17,7 +22,21 @@
         .Preview {
           transform: translateY(-1rem);
         }
+        .secondaryPreview {
+          transform: translateY(-0.5rem) translateX(1rem);
+        }
       }
     }
+  }
+  .secondaryPreview {
+    width: 30%;
+    top: 20%;
+    left: 65%;
+    position: absolute;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.8s ease-in-out;
   }
 }

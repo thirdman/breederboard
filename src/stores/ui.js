@@ -9,5 +9,6 @@ import config from "../firebase-config";
 
 const UiStore = new Document({ mode: "on" });
 UiStore.hasMenu = false;
+UiStore.productTheme = "sunset";
 
 export { UiStore };

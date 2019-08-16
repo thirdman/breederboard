@@ -15,6 +15,7 @@ import {
   Text
 } from "grommet";
 import AssetList from "../../components/AssetList/AssetList";
+import Loading from "../../components/Loading/Loading";
 import "./UserPage.scss";
 import apiConfig from "./../../apiConfig";
 import Web3Connect from "web3connect";
@@ -115,19 +116,6 @@ class UserPageComponent extends Component {
             <Button pad="small" primary onClick={() => this.getProfile()}>
               get Profile
             </Button>
-          </Box>
-          <Box
-            justify="center"
-            direction="row"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Heading level={2} margin="large">
-              User
-            </Heading>
-          </Box>
-
-          <Box direction="row" margin="small">
             <Button onClick={() => this.getKitties()}>
               <Box
                 pad="small"
@@ -151,6 +139,16 @@ class UserPageComponent extends Component {
               </Box>
             </Button>
           </Box>
+          <Box
+            justify="center"
+            direction="row"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Heading level={2} margin="large">
+              User
+            </Heading>
+          </Box>
 
           <Box
             // margin="large"
@@ -159,7 +157,11 @@ class UserPageComponent extends Component {
             justifyContent="start"
             fill="horizontal"
           >
-            {isLoading && <div>Loading.</div>}
+            {isLoading && (
+              <Box fill="horizontal" align="center" justify="center">
+                <Loading />
+              </Box>
+            )}
             {isLoadingAssets && (
               <Box
                 className="loading"
@@ -168,7 +170,7 @@ class UserPageComponent extends Component {
                 align="center"
                 justify="center"
               >
-                loading...
+                <Loading />
               </Box>
             )}
             <AssetList

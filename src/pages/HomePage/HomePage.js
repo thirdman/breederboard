@@ -14,6 +14,7 @@ import {
   Stack,
   Text
 } from "grommet";
+import { Fireball, StatusGood } from "grommet-icons";
 import Preview from "../../components/Preview/Preview";
 import AppBar from "../../components/AppBar/AppBar";
 import themeFile from "../../theme.json";
@@ -90,56 +91,65 @@ class HomePageComponent extends Component {
         </Box>
         <Box
           basis="full"
-          border={{
-            color: "border",
-            size: "small",
-            style: "solid",
-            side: "all"
-          }}
+          // border={{
+          //   color: "border",
+          //   size: "small",
+          //   style: "solid",
+          //   side: "all"
+          // }}
           direction="row"
-          // justify="stretch"
-          align="stretch"
+          // align="stretch"
           alignItems="center"
           justifyContent="center"
-          round="large"
-          margin="large"
-          pad="large"
-          background="border"
-          alignItems="center"
+          // round="large"
+          // margin="large"
+          pad="small"
+          // background="border"
+
           justify="center"
         >
           <p>Connect your ethereum wallet and print one of a kind products</p>
         </Box>
-        <Box>
-          * unique products based on your own assets * no data stored * new
-          templates released regularly
+        <Box
+          margin="medium"
+          align="center"
+          justify="center"
+          gap="small"
+          direction="row"
+        >
+          <Fireball color="violet" />
+          <Text>Unique products based on your own assets</Text>
+          <Fireball color="violet" />
+          <Text>no data stored</Text>
+          <Fireball color="violet" />
+          <Text>templates released regularly</Text>
         </Box>
         <Box
-          basis="full"
           border={{
             color: "border",
             size: "small",
             style: "solid",
-            side: "all"
+            side: "top"
           }}
           direction="row"
           justify="stretch"
           align="stretch"
-          alignItems="center"
           justifyContent="center"
-          round="large"
-          margin="large"
+          round="none"
+          margin="none"
           alignItems="center"
+          // style={{ maxWidth: "1000px" }}
         >
           <Box
             pad="medium"
             basis="1/2"
-            align="stretch"
             justify="stretch"
-            justifyContent="stretch"
+            align="center"
+            justifyContent="center"
             overflow="hidden"
             style={{ position: "relative" }}
             className={"testy"}
+            onClick={() => this.appLink("productsByType", "none", "collection")}
           >
             <Heading level={3}>For a collection</Heading>
 
@@ -147,9 +157,8 @@ class HomePageComponent extends Component {
               alignSelf="center"
               basis="100%"
               fill
-              // alignItems="center"
               align="center"
-              // border="thin"
+              style={{ maxWidth: "30rem", position: "relative" }}
             >
               <Stack anchor="center" fill>
                 <Box
@@ -166,20 +175,19 @@ class HomePageComponent extends Component {
                     background={UiStore.productTheme}
                   />
                 </Box>
-                {/* <Box
-                  background="brand"
-                  fill
-                  basis="full"
-                  round
-                  width="large"
-                  alignContent="stretch"
-                  // border="thin"
-                  style={{ width: "100%" }}
-                  pad="small"
-                >
-                  <Text>8</Text>
-                </Box> */}
               </Stack>
+              <Box className="secondaryPreview">
+                <Preview
+                  displayMode="collection"
+                  collection={hasAssets ? assets : collection}
+                  title={collectionName}
+                  background={UiStore.productTheme}
+                  templateType="phone"
+                  
+                  hasBorder={false}
+                  aspect="9/16"
+                />
+              </Box>
               <AspectRatio
                 ratio="1/1"
                 style={{ position: "absolute", width: "90%", zIndex: -1 }}
@@ -223,15 +231,74 @@ class HomePageComponent extends Component {
               side: "left"
             }}
             pad="medium"
+            justify="stretch"
             align="center"
-            justify="center"
+            justifyContent="center"
+            overflow="hidden"
+            style={{ position: "relative" }}
+            className={"testy"}
+            onClick={() => this.appLink("productsByType", "none", "hero")}
           >
             <Heading level={3}>For a single item</Heading>
-            <Preview
-              displayMode="hero"
-              source={asset && asset.image_url_cdn}
-              background={UiStore.productTheme}
-            />
+            <Box
+              alignSelf="center"
+              basis="100%"
+              fill
+              align="center"
+              style={{ maxWidth: "30rem", position: "relative" }}
+            >
+              <Stack anchor="center" fill>
+                <Box
+                  alignSelf="center"
+                  basis="1"
+                  fill
+                  // alignItems="center"
+                  align="center"
+                >
+                  <Preview
+                    displayMode="hero"
+                    source={asset && asset.image_url_cdn}
+                    background={UiStore.productTheme}
+                  />
+                </Box>
+              </Stack>
+              <Box className="secondaryPreview">
+                <Preview
+                  displayMode="hero"
+                  source={asset && asset.image_url_cdn}
+                  background={UiStore.productTheme}
+                  templateType="phone"
+                  hasBorder={false}
+                  aspect="9/16"
+                />
+              </Box>
+              <AspectRatio
+                ratio="1/1"
+                style={{ position: "absolute", width: "90%", zIndex: -1 }}
+              >
+                <div
+                  className="circleWrap"
+                  style={{
+                    width: "100%",
+                    position: "absolute",
+                    left: "50%",
+                    top: "-50%",
+                    transform: "scale(1.9)"
+                  }}
+                >
+                  <div
+                    className="circle"
+                    style={{
+                      width: "100%",
+                      background: "#f6f6f6",
+                      height: "100%",
+                      borderRadius: "100%"
+                    }}
+                  />
+                </div>
+              </AspectRatio>
+            </Box>
+
             <Button
               onClick={() => this.appLink("productsByType", "none", "hero")}
               color="brand"

@@ -4,7 +4,14 @@ import classNames from "classnames";
 // import { Succession } from "../../components/Succession/Succession";
 //import Loading from "../../components/Loading/Loading";
 import AppBar from "../../components/AppBar/AppBar";
-import { Notification, Nodes } from "grommet-icons";
+import Loading from "../../components/Loading/Loading";
+import {
+  Notification,
+  Nodes,
+  StatusGood,
+  StatusDisabled,
+  StatusCritical
+} from "grommet-icons";
 import "./ConfirmPage.scss";
 import {
   Box,
@@ -18,7 +25,8 @@ import {
   TableHeader,
   TableRow,
   TableCell,
-  TableBody
+  TableBody,
+  Text
 } from "grommet";
 import Preview from "../../components/Preview/Preview";
 
@@ -100,9 +108,7 @@ class ConfirmPageComponent extends Component {
             pad="small"
             basis="1/3"
           >
-            <Button animation="fadeIn" icon={<Nodes />}>
-              Loading
-            </Button>
+            <Loading />
           </Box>
           <Box
             direction="column"
@@ -124,10 +130,32 @@ class ConfirmPageComponent extends Component {
               }}
             >
               <Heading level={4}>Confirm</Heading>
-              <div>Has Render: {ProductStore.imageRender ? "YES" : "No"}</div>
+              <Box
+                pad="small"
+                direction="row"
+                gap="small"
+                justify="between"
+                border="top"
+                fill="horizontal"
+              >
+                <Text>
+                  <strong>Has Render</strong>
+                </Text>
+                {ProductStore.imageRender ? (
+                  <Box gap="small" direction="row" basis="1/2">
+                    <StatusGood color="lime" size="medium" />
+                    <Text>YES</Text>
+                  </Box>
+                ) : (
+                  <Box gap="small" direction="row" basis="1/2">
+                    <StatusCritical color="red" size="medium" />
+                    <Text color="red">No</Text>
+                  </Box>
+                )}
+              </Box>
               <Box direction="row" fill>
                 <Table>
-                  <TableHeader>
+                  {/* <TableHeader>
                     <TableRow>
                       <TableCell scope="col" border="bottom">
                         Attribute
@@ -136,7 +164,7 @@ class ConfirmPageComponent extends Component {
                         Value
                       </TableCell>
                     </TableRow>
-                  </TableHeader>
+                  </TableHeader> */}
                   <TableBody>
                     <TableRow>
                       <TableCell scope="row">

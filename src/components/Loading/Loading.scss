@@ -1,0 +1,17 @@
+.Loading {
+  .iconWrap {
+    animation: loadingRotate 1.3s linear infinite;
+  }
+}
+
+@keyframes loadingRotate {
+  0% {
+    transform: rotate(0deg) scale3d(1, 1, 1);
+  }
+  50% {
+    transform: rotate(180deg) scale3d(0.7, 0.7, 1);
+  }
+  100% {
+    transform: rotate(360deg) scale3d(1, 1, 1);
+  }
+}

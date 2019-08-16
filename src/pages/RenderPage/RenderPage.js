@@ -13,9 +13,9 @@ import {
   Tab
 } from "grommet";
 import { Notification, Nodes } from "grommet-icons";
-import AppBar from "../../components/AppBar/AppBar";
-import "./RenderPage.scss";
+import Loading from "../../components/Loading/Loading";
 import Preview from "../../components/Preview/Preview";
+import "./RenderPage.scss";
 
 class RenderPageComponent extends Component {
   state = {
@@ -81,12 +81,12 @@ class RenderPageComponent extends Component {
         </Heading>
         <Box
           basis="full"
-          border={{
-            color: "border",
-            size: "small",
-            style: "solid",
-            side: "all"
-          }}
+          // border={{
+          //   color: "border",
+          //   size: "small",
+          //   style: "solid",
+          //   side: "all"
+          // }}
           direction="row"
           justify="stretch"
           align="stretch"
@@ -106,9 +106,9 @@ class RenderPageComponent extends Component {
             basis="2/3"
           >
             {isRendering && (
-              <Button animation="fadeIn" icon={<Nodes />}>
-                Loading
-              </Button>
+              <Box fill="horizontal" align="center" justify="center">
+                <Loading text="Rendering..." />
+              </Box>
             )}
             {!hasRendered && (
               <Preview

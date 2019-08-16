@@ -37,8 +37,22 @@
       bottom: 0;
       &.phone {
         box-shadow: 0 0 2rem 1rem rgba(0, 0, 0, 0.2);
+        position: absolute;
+        left: -5%;
+        top: -7%;
+        right: -5%;
+        bottom: -7%;
+        // left: -0.5rem;
+        // top: -2rem;
+        // right: -0.5rem;
+        // bottom: -2rem;
+        background: #000;
+        opacity: 1;
+        z-index: -1;
+        border-radius: 1rem;
       }
       img.phone {
+        display: none;
         width: 100%;
         position: relative;
         transform: translateX(-0.7%) translateY(-6.5%) scale(1.095);
