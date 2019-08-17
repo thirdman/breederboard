@@ -1,10 +1,12 @@
 {
   "global": {
     "colors": {
-      "brand": "violet",
+      "brand": "#4c0890",
+      "secondary": "violet",
       "border": "#ddd",
-      "accent": ["#3399cc", "#cc3399"],
-      "light": "rgba(0,0,0,.035)"
+      "accent": ["#f9f9f9", "#3399cc", "#cc3399", "#cc0000"],
+      "light": "rgba(0,0,0,.035)",
+      "mid": "rgba(0,0,0,.5)"
     },
     "input": { "border": { "radius": "4px" } },
     "font": {

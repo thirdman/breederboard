@@ -1,23 +1,11 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
-import {
-  Box,
-  Button,
-  Collapsible,
-  Heading,
-  Grommet,
-  Menu,
-  Tabs,
-  Tab,
-  Layer,
-  Stack,
-  Text
-} from "grommet";
-import { Fireball, StatusGood } from "grommet-icons";
+import { Box, Button, Collapsible, Heading, Stack, Text } from "grommet";
+import { Fireball, View } from "grommet-icons";
 import Preview from "../../components/Preview/Preview";
-import AppBar from "../../components/AppBar/AppBar";
-import themeFile from "../../theme.json";
+// import AppBar from "../../components/AppBar/AppBar";
+// import themeFile from "../../theme.json";
 import "./HomePage.scss";
 import AspectRatio from "react-aspect-ratio";
 import "react-aspect-ratio/aspect-ratio.css";
@@ -40,7 +28,7 @@ class HomePageComponent extends Component {
     const { id } = params;
     const { asset } = AssetStore;
     const {
-      collectionId,
+      // collectionId,
       collectionName,
       // assets,
       collection
@@ -217,9 +205,11 @@ class HomePageComponent extends Component {
             <Button
               onClick={() => this.appLink("productsByType", "", "collection")}
               color="brand"
-            >
-              View Products
-            </Button>
+              icon={<View color="accent-2" />}
+              label="View"
+              border="none"
+              gap="xsmall"
+            />
           </Box>
           <Box
             basis="1/2"
@@ -257,7 +247,7 @@ class HomePageComponent extends Component {
                 >
                   <Preview
                     displayMode="hero"
-                    source={asset && asset.image_url_cdn}
+                    sourceImage={asset && asset.image_url_cdn}
                     background={UiStore.productTheme}
                   />
                 </Box>
@@ -265,7 +255,7 @@ class HomePageComponent extends Component {
               <Box className="secondaryPreview">
                 <Preview
                   displayMode="hero"
-                  source={asset && asset.image_url_cdn}
+                  sourceImage={asset && asset.image_url_cdn}
                   background={UiStore.productTheme}
                   templateType="phone"
                   hasBorder={false}
@@ -275,7 +265,7 @@ class HomePageComponent extends Component {
               <Box className="tertiaryPreview">
                 <Preview
                   displayMode="hero"
-                  source={asset && asset.image_url_cdn}
+                  sourceImage={asset && asset.image_url_cdn}
                   background={UiStore.productTheme}
                   templateName="tablet"
                   templateType="tablet"
@@ -314,7 +304,10 @@ class HomePageComponent extends Component {
               onClick={() => this.appLink("productsByType", "none", "hero")}
               color="brand"
             >
-              View Products
+              <Box align="center" justify="center" gap="xsmall" direction="row">
+                <View color="accent-2" />
+                View Products
+              </Box>
             </Button>
           </Box>
         </Box>

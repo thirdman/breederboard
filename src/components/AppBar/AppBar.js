@@ -1,19 +1,14 @@
-import React, { Component } from "react";
-
-import { Box, Button, Collapsible, Heading, Grommet, Tabs, Tab } from "grommet";
-import { Close, Notification, User, Menu } from "grommet-icons";
-// import themeFile from "../../theme.json";
-// import "./App.scss";
+import React from "react";
+import { Box, Button, Heading } from "grommet";
+import { User, Menu } from "grommet-icons";
 
 const AppBar = props => {
-  // console.log("props", props);
   return (
     <Box
       tag="header"
       direction="row"
       align="center"
       justify="between"
-      // background="brand"
       pad={{ left: "medium", right: "small", vertical: "small" }}
       // elevation="medium"
       style={{ zIndex: "1", borderBottom: "1px solid #ddd" }}
@@ -47,15 +42,7 @@ const AppBar = props => {
           onClick={() => props.appLink("user")}
           label="Connect"
         />
-        <Button
-          icon={<User />}
-          onClick={props.handleMenu}
-          // onClick={() =>
-          //   this.setState(prevState => ({
-          //     showSidebar: !prevState.showSidebar
-          //   }))
-          // }
-        />
+        <Button icon={<User />} onClick={props.handleMenu} />
       </Box>
     </Box>
   );

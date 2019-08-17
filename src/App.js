@@ -4,44 +4,17 @@ import { Provider } from "mobx-react";
 import { HistoryAdapter } from "mobx-state-router";
 import { RootStore } from "./stores/root.store";
 import { history } from "./utils/history";
-// import { library } from '@fortawesome/fontawesome-svg-core'
 
 import Shell from "./Shell";
 import "./App.scss";
 
-import {
-  Box,
-  Button,
-  Collapsible,
-  Heading,
-  Grommet,
-  Menu,
-  Tabs,
-  Layer,
-  Tab
-} from "grommet";
+import { Box, Button, Grommet, Layer } from "grommet";
 import { Close } from "grommet-icons";
 import themeFile from "./theme.json";
+import AppBar from "./components/AppBar/AppBar";
 import "./App.scss";
 
-import Preview from "./components/Preview/Preview";
-import AppBar from "./components/AppBar/AppBar";
-
 const rootStore = new RootStore();
-
-// const AppBar2 = props => (
-//   <Box
-//     tag="header"
-//     direction="row"
-//     align="center"
-//     justify="between"
-//     // background="brand"
-//     pad={{ left: "medium", right: "small", vertical: "small" }}
-//     // elevation="medium"
-//     style={{ zIndex: "1", borderBottom: "1px solid #ddd" }}
-//     {...props}
-//   />
-// );
 const historyAdapter = new HistoryAdapter(rootStore.routerStore, history);
 historyAdapter.observeRouterStateChanges();
 

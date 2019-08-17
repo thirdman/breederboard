@@ -1,26 +1,14 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
-import {
-  Box,
-  Button,
-  Collapsible,
-  Heading,
-  Grommet,
-  Menu,
-  Tabs,
-  Tab,
-  Layer,
-  Stack,
-  Text
-} from "grommet";
+import { Box, Button, Heading } from "grommet";
 import AssetList from "../../components/AssetList/AssetList";
 import Loading from "../../components/Loading/Loading";
 import "./UserPage.scss";
 import apiConfig from "./../../apiConfig";
 import Web3Connect from "web3connect";
 // const API = "https://hn.algolia.com/api/v1/search?query=";
-const DEFAULT_QUERY = "redux";
+
 const Web3 = require("web3");
 const DappAuth = require("@dapperlabs/dappauth");
 
@@ -71,17 +59,17 @@ class UserPageComponent extends Component {
     isLoadingAssets: false
   };
   componentDidMount() {
-    const {
-      rootStore: { routerStore, AssetStore, AssetsStore, ProductStore }
-    } = this.props;
-    const { kitties, collections, isLoadingAssets = false } = this.state;
+    // const {
+    //   rootStore: { routerStore, AssetStore, AssetsStore, ProductStore }
+    // } = this.props;
+    // const { kitties, collections, isLoadingAssets = false } = this.state;
     this.handleLoad();
   }
   render() {
     const {
-      rootStore: { routerStore, AssetStore, ProductStore, AssetsStore }
+      rootStore: { routerStore, AssetStore, AssetsStore }
     } = this.props;
-    const { kitties, collections, isLoading, isLoadingAssets } = this.state;
+    const { collections, isLoading, isLoadingAssets } = this.state;
     const { assets } = AssetsStore;
     console.log("AssetStore", AssetStore);
     return (
@@ -390,27 +378,26 @@ class UserPageComponent extends Component {
   };
   handleSelectAsset = id => {
     const {
-      rootStore: { routerStore, AssetStore, ProductStore }
+      rootStore: { AssetStore }
     } = this.props;
     const { kitties } = this.state;
     this.setState({
       selectedAsset: id
     });
     AssetStore.assetId = id;
-    console.log("assets", kitties);
     const thisAsset = kitties && kitties.filter(asset => asset.id === id)[0];
     console.log(thisAsset);
     if (thisAsset) {
       AssetStore.asset = thisAsset;
     }
 
-    this.appLink("product", id, "config");
+    this.appLink("product", "poster", "config");
   };
   handleSelectCollection = (id, collection) => {
     const {
-      rootStore: { AssetStore, CollectionStore }
+      rootStore: { CollectionStore }
     } = this.props;
-    const { kitties } = this.state;
+    // const { kitties } = this.state;
     this.setState({
       selectedCollection: id,
       kitties: collection.kitties

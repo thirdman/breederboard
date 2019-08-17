@@ -1,42 +1,12 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
-// import { Succession } from "../../components/Succession/Succession";
-//import Loading from "../../components/Loading/Loading";
-import AppBar from "../../components/AppBar/AppBar";
-import {
-  Notification,
-  Nodes,
-  View,
-  CheckboxSelected,
-  Checkbox
-} from "grommet-icons";
+import { Next, FormNext, CheckboxSelected, Checkbox } from "grommet-icons";
 import "./ProductPage.scss";
-import {
-  Box,
-  Button,
-  Collapsible,
-  Heading,
-  CheckBox,
-  Grommet,
-  Menu,
-  TextInput,
-  Text,
-  Tabs,
-  Tab
-} from "grommet";
+import { Box, Button, Heading, Menu, TextInput, Text } from "grommet";
 import Preview from "../../components/Preview/Preview";
 import Swatch from "../../components/Swatch/Swatch";
-// const colors = {
-//   limey: {
-//     from: "hsl(173, 44%, 85%)",
-//     to: "#f3f2dd"
-//   },
-//   violet: {
-//     from: "violet",
-//     to: "pink"
-//   }
-// };
+
 class ProductPageComponent extends Component {
   state = {
     previewBackground: "limey",
@@ -44,7 +14,7 @@ class ProductPageComponent extends Component {
   };
   UNSAFE_componentWillMount() {
     const {
-      rootStore: { routerStore, ProductStore }
+      rootStore: { routerStore, ProductStore, CollectionStore }
     } = this.props;
     const {
       routerState: { params }
@@ -64,7 +34,10 @@ class ProductPageComponent extends Component {
         ProductStore,
         ColorsStore,
         TemplatesStore,
-        AssetStore
+        AssetStore,
+        AssetsStore,
+        CollectionStore,
+        UiStore
       }
     } = this.props;
 
@@ -95,26 +68,51 @@ class ProductPageComponent extends Component {
       hasTitle,
       hasSubtitle
     } = ProductStore;
+    // const { mode } = UiStore;
     const { colors } = ColorsStore;
     const { assetId, asset } = AssetStore;
+    const { assets } = AssetsStore;
     const { templates } = TemplatesStore;
-
+    const { collection } = CollectionStore;
+    console.log("AssetsStore", AssetsStore);
+    console.log("CollectionStore", CollectionStore);
     console.log("templateObject: ", templateObject);
     console.log("hasSubtitle: ", hasSubtitle);
     console.log("templateName: ", templateName);
-    const thisColorObj = colors && colors.filter(color=> color.name === productBackground)[0];
-    console.log('thisColorObj', thisColorObj)
+    const thisColorObj =
+      colors && colors.filter(color => color.name === productBackground)[0];
+    console.log("thisColorObj", thisColorObj);
     return (
       <div
         className={classNames("ProductPage", {
           isTransitioning: !!routerStore.isTransitioning
         })}
-        style={thisColorObj.hueTo && {
-          "--hueFrom": `${thisColorObj.hueFrom}`,
-          "--hueTo": `${thisColorObj.hueTo}`,
-        }}
+        style={
+          thisColorObj.hueTo && {
+            "--hueFrom": `${thisColorObj.hueFrom}`,
+            "--hueTo": `${thisColorObj.hueTo}`
+          }
+        }
       >
-        {/* <Heading level={2}>{stage}</Heading> */}
+        <Heading level={5} margin="small">
+          <Box
+            fill="horizontal"
+            align="start"
+            justify="start"
+            pad="none"
+            direction="row"
+            gap="xsmall"
+            className="breadcrumbs"
+          >
+            <Button onClick={() => this.appLink("home")}>Flaunt</Button>
+            <FormNext color="secondary" />
+            <Button onClick={() => this.appLink("products")}>products</Button>
+            <FormNext color="secondary" />
+            <Button onClick={() => this.appLink("home")}>{productMode}</Button>
+            <FormNext color="secondary" />
+            <Text color="mid">create</Text>
+          </Box>
+        </Heading>
         {stage && stage === "config" && (
           <Box
             basis="full"
@@ -157,6 +155,13 @@ class ProductPageComponent extends Component {
                 }
                 template={templateObject && templateObject.name}
                 sourceImage={asset && asset.image_url_cdn}
+                collection={
+                  (collection &&
+                    collection.assets &&
+                    collection.assets.length > 0 &&
+                    collection.assets) ||
+                  assets
+                }
               />
             </Box>
             <Box
@@ -183,14 +188,25 @@ class ProductPageComponent extends Component {
                   side: "bottom"
                 }}
               >
-                <Heading level={4}>Asset</Heading>
-                <Text>DJ Meowlody</Text>
+                <Heading level={4} margin="none" pad="small">
+                  <Box direction="row" justify="between">
+                    Asset:
+                    <Text>{asset && asset.name}</Text>
+                  </Box>
+                </Heading>
+
                 <Menu
-                  label="Select"
-                  items={[
-                    { label: "Dj Meowlody", onClick: () => {} },
-                    { label: "Glitter", onClick: () => {} }
-                  ]}
+                  label={"Select"}
+                  items={
+                    assets &&
+                    assets.map(asset => {
+                      const obj = {
+                        label: asset.name || asset.id,
+                        onClick: () => this.handleSelectAsset(asset.id)
+                      };
+                      return obj;
+                    })
+                  }
                 />
 
                 <Box
@@ -204,7 +220,10 @@ class ProductPageComponent extends Component {
                   animation="slideLeft"
                 >
                   <Heading margin="none" level={4}>
-                    Template: {templateName}
+                    <Box direction="row" justify="between">
+                      Variant:
+                      <Text>{templateName}</Text>
+                    </Box>
                   </Heading>
                   <Box
                     align="start"
@@ -224,7 +243,9 @@ class ProductPageComponent extends Component {
                             direction="row"
                             justify="between"
                             background={
-                              templateName === template.name && "violet"
+                              templateName === template.name
+                                ? "violet"
+                                : "transparent"
                             }
                           >
                             <Text>{template.name}</Text>
@@ -296,7 +317,7 @@ class ProductPageComponent extends Component {
                     <Box margin={{ top: "small" }}>
                       <TextInput
                         placeholder="title"
-                        value={title}
+                        value={title || (asset && asset.name)}
                         onChange={event => this.handleTitle(event.target.value)}
                         margin="small"
                         className="textInput"
@@ -323,7 +344,7 @@ class ProductPageComponent extends Component {
                       >
                         <TextInput
                           placeholder="subtitle"
-                          value={subtitle}
+                          value={title || (asset && `#${asset.id}`)}
                           onChange={event =>
                             this.handleSubtitle(event.target.value)
                           }
@@ -432,6 +453,7 @@ class ProductPageComponent extends Component {
     ProductStore.productBackground = value;
     ProductStore.contrast =
       thisColorObj && thisColorObj[0] && thisColorObj[0].contrast;
+
     UiStore.productTheme = value;
     UiStore.productContrast =
       thisColorObj && thisColorObj[0] && thisColorObj[0].contrast;
@@ -466,6 +488,26 @@ class ProductPageComponent extends Component {
     //   thisColorObj && thisColorObj[0] && thisColorObj[0].contrast;
     // UiStore.productColorObj = thisColorObj;
     // console.log("ProductStore", ProductStore);
+  };
+
+  handleSelectAsset = id => {
+    console.log("select", id);
+    const {
+      rootStore: { routerStore, AssetStore, AssetsStore, ProductStore }
+    } = this.props;
+
+    const { assets } = AssetsStore;
+    this.setState({
+      selectedAsset: id
+    });
+    AssetStore.assetId = id;
+
+    const thisAsset = assets && assets.filter(asset => asset.id === id)[0];
+    console.log("assets", assets);
+    console.log("thisAsset", thisAsset);
+    if (thisAsset) {
+      AssetStore.asset = thisAsset;
+    }
   };
 
   ////////////////

@@ -4,4 +4,33 @@
   &.isTransitioning {
     opacity: 0;
   }
+  // .Preview.phone {
+  //   &:hover {
+  //     .context {
+  //       .contextImageWrap.phone {
+  //         box-shadow: 0 0.5rem 2rem 1rem rgba(0, 0, 0, 0.3);
+  //       }
+  //     }
+  //   }
+  // }
+  .productSection {
+    // transition: background 0.2s ease-in-out;
+    .Preview {
+      transition: transform 0.2s ease-in-out;
+    }
+    &:hover {
+      // background: #f3f3f3;
+      h3 {
+        // color: violet;
+      }
+      .Preview {
+        transform: translateY(-0.25rem) scale3d(1.05, 1.05, 1.05);
+        cursor: pointer;
+      }
+      button > div {
+        color: violet;
+        // background: #000;
+      }
+    }
+  }
 }

@@ -4,19 +4,7 @@ import classNames from "classnames";
 import "./AssetList.scss";
 import AssetItem from "./../AssetItem/AssetItem";
 
-import {
-  Box,
-  Button,
-  Collapsible,
-  Heading,
-  Grommet,
-  Menu,
-  Tabs,
-  Tab,
-  Layer,
-  Stack,
-  Text
-} from "grommet";
+import { Box, Button, Menu, Text } from "grommet";
 
 class AssetList extends Component {
   state = { collectionName: "" };
@@ -26,11 +14,11 @@ class AssetList extends Component {
       collections,
       assetType = "kitty",
       hasInfo = true,
-      hasFilters = true,
+      // hasFilters = true,
       selectedCollection,
-      onAssetClick = () => console.log("ggg"),
-      onSelectCollection,
-      showAllAssets = () => console.log("nope")
+      onAssetClick = () => console.log("ggg")
+      // onSelectCollection,
+      // showAllAssets = () => console.log("nope")
     } = this.props;
     const { collectionName } = this.state;
     return (

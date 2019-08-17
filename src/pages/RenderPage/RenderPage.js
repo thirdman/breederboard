@@ -2,17 +2,8 @@ import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import domtoimage from "dom-to-image";
-import {
-  Box,
-  Button,
-  Collapsible,
-  Heading,
-  Grommet,
-  Menu,
-  Tabs,
-  Tab
-} from "grommet";
-import { Notification, Nodes } from "grommet-icons";
+import { Box, Button, Heading, Menu, Text } from "grommet";
+import { FormNext } from "grommet-icons";
 import Loading from "../../components/Loading/Loading";
 import Preview from "../../components/Preview/Preview";
 import "./RenderPage.scss";
@@ -50,12 +41,12 @@ class RenderPageComponent extends Component {
     const {
       routerState: { params }
     } = routerStore;
-    const { id, stage } = params;
+    // const { id, stage } = params;
     const {
-      previewBackground,
-      previewMode,
-      doRender,
-      showPreview,
+      // previewBackground,
+      // previewMode,
+      // doRender,
+      // showPreview,
       isRendering,
       hasRendered,
       domId
@@ -76,8 +67,26 @@ class RenderPageComponent extends Component {
           isTransitioning: !!routerStore.isTransitioning
         })}
       >
-        <Heading level={2}>
-          Render {stage} : {id}
+        <Heading level={5} margin="small">
+          <Box
+            fill="horizontal"
+            align="start"
+            justify="start"
+            pad="none"
+            direction="row"
+            gap="xsmall"
+            className="breadcrumbs"
+          >
+            <Button onClick={() => this.appLink("home")}>Flaunt</Button>
+            <FormNext color="secondary" />
+            <Button onClick={() => this.appLink("products")}>products</Button>
+            <FormNext color="secondary" />
+            <Button onClick={() => this.appLink("home")}>{productMode}</Button>
+            <FormNext color="secondary" />
+            <Button onClick={() => this.appLink("product")}>create</Button>
+            <FormNext color="secondary" />
+            <Text color="mid">render</Text>
+          </Box>
         </Heading>
         <Box
           basis="full"

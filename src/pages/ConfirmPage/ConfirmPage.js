@@ -6,8 +6,7 @@ import classNames from "classnames";
 import AppBar from "../../components/AppBar/AppBar";
 import Loading from "../../components/Loading/Loading";
 import {
-  Notification,
-  Nodes,
+  FormNext,
   StatusGood,
   StatusDisabled,
   StatusCritical
@@ -16,11 +15,8 @@ import "./ConfirmPage.scss";
 import {
   Box,
   Button,
-  Collapsible,
   Heading,
-  Grommet,
   Menu,
-  Tabs,
   Table,
   TableHeader,
   TableRow,
@@ -79,8 +75,28 @@ class ConfirmPageComponent extends Component {
           isTransitioning: !!routerStore.isTransitioning
         })}
       >
-        <Heading level={2}>
-          Confirm {stage} : {id}
+        <Heading level={5} margin="small">
+          <Box
+            fill="horizontal"
+            align="start"
+            justify="start"
+            pad="none"
+            direction="row"
+            gap="xsmall"
+            className="breadcrumbs"
+          >
+            <Button onClick={() => this.appLink("home")}>Flaunt</Button>
+            <FormNext color="secondary" />
+            <Button onClick={() => this.appLink("products")}>products</Button>
+            <FormNext color="secondary" />
+            <Button onClick={() => this.appLink("home")}>{productMode}</Button>
+            <FormNext color="secondary" />
+            <Button onClick={() => this.appLink("product")}>create</Button>
+            <FormNext color="secondary" />
+            <Button onClick={() => this.appLink("product")}>render</Button>
+            <FormNext color="secondary" />
+            <Text color="mid">Confirm</Text>
+          </Box>
         </Heading>
         <Box
           basis="full"

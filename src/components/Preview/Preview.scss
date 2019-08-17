@@ -177,7 +177,7 @@
   .grid {
     display: flex;
     align-items: space-between;
-    justify-content: flex-start;
+    justify-content: center;
     flex-wrap: wrap;
     height: 100%;
     z-index: 2;
@@ -218,6 +218,16 @@
           }
         }
       }
+      &:nth-of-type(5n + 4) {
+        flex-basis: 33%;
+        margin-right: 2.5%;
+        margin-left: 5%;
+      }
+      &:nth-of-type(5n + 5) {
+        flex-basis: 33%;
+        margin-left: 2.5%;
+        margin-right: 5%;
+      }
       .circle {
         border-radius: 50rem;
         width: 65%;
@@ -231,6 +241,14 @@
           rgba(255, 255, 255, 0) 70%
         );
         border: 2px solid rgba(255, 255, 255, 0.2);
+
+        background-image: radial-gradient(
+          hsla(var(--hueTo), 99%, 90%, 0.6) 20%,
+          hsla(var(--hueTo), 99%, 77%, 0) 70%
+        );
+
+        border: 2px solid hsla(var(--hueTo), 99%, 87%, 0.15) !important;
+
         text-align: center;
         display: flex;
         align-items: center;

@@ -8,6 +8,7 @@ import { CollectionStore } from "./collection";
 import { ProductStore } from "./product";
 import { ColorsStore } from "./colors";
 import { TemplatesStore } from "./templates";
+import { ThemesStore } from "./themes";
 import { UiStore } from "./ui";
 
 const notFound = new RouterState("notFound");
@@ -20,5 +21,6 @@ export class RootStore {
   ProductStore = ProductStore;
   ColorsStore = ColorsStore;
   TemplatesStore = TemplatesStore;
+  ThemesStore = ThemesStore;
   UiStore = UiStore;
 }

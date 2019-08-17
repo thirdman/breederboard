@@ -3,6 +3,11 @@
   &.isTransitioning {
     opacity: 0;
   }
+  .breadcrumbs {
+    button {
+      text-transform: capitalize;
+    }
+  }
   .swatchButton {
     display: inline-block !important;
     background: transparent !important;
