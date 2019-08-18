@@ -4,27 +4,10 @@ import { RouterView } from "mobx-state-router";
 
 import { HomePage } from "./pages/HomePage/HomePage.js";
 import { AboutPage } from "./pages/AboutPage/AboutPage";
-import { ProductsPage } from "./pages/ProductsPage/ProductsPage";
-import { ProductPage } from "./pages/ProductPage/ProductPage";
-import { RenderPage } from "./pages/RenderPage/RenderPage";
-import { ConfirmPage } from "./pages/ConfirmPage/ConfirmPage";
-import { UserPage } from "./pages/UserPage/UserPage";
-
-// import { LoginPage } from "./pages/LoginPage/LoginPage.js";
 
 const viewMap = {
   home: <HomePage />,
-  products: <ProductsPage />,
-  productsByType: <ProductsPage />,
-  product: <ProductPage />,
-  render: <RenderPage />,
-  confirm: <ConfirmPage />,
-  user: <UserPage />,
   about: <AboutPage />
-
-  // login: <LoginPage />,
-  // profile: <ProfilePage />,
-  // changelog: <ChangelogPage />,
 };
 
 class Shell extends Component {
@@ -33,13 +16,7 @@ class Shell extends Component {
       rootStore: { routerStore }
     } = this.props;
 
-    return (
-      <RouterView
-        routerStore={routerStore}
-        viewMap={viewMap}
-        handleToggle={this.props.handleToggle}
-      />
-    );
+    return <RouterView routerStore={routerStore} viewMap={viewMap} />;
   }
 }
 

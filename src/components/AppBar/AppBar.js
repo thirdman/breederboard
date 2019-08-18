@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Button, Heading } from "grommet";
-import { User, Menu } from "grommet-icons";
+import { User, Menu, FormAdd } from "grommet-icons";
 import "./AppBar.scss";
 const AppBar = props => {
   return (
@@ -18,7 +18,7 @@ const AppBar = props => {
         <Button icon={<Menu />} onClick={props.handleMenu} />
         <Button onClick={() => props.appLink("home")}>
           <Heading level="3" margin="none" weight={100}>
-            Flaunt
+            BreederBoard
           </Heading>
         </Button>
       </Box>
@@ -26,11 +26,9 @@ const AppBar = props => {
         <Button margin="small" onClick={() => props.appLink("home")}>
           Home
         </Button>
-        <Button margin="small" onClick={() => props.appLink("user")}>
-          User
-        </Button>
-        <Button margin="small" onClick={() => props.appLink("products")}>
-          Products
+
+        <Button margin="small" onClick={() => props.appLink("board")}>
+          New Board
         </Button>
         <Button margin="small" onClick={() => props.appLink("about")}>
           About
@@ -38,16 +36,13 @@ const AppBar = props => {
       </Box>
       <Box direction="row" gap="small">
         <Button
-          background="primary"
+          // primary
+          round="medium"
+          color="primary"
+          icon={<FormAdd />}
+          gap="xsmall"
           onClick={() => props.appLink("user")}
-          label="Connect"
-        />
-
-        <Button
-          icon={<User />}
-          onClick={props.handleMenu}
-          className="iconCircle"
-          background="brand"
+          label="New Board"
         />
       </Box>
     </Box>

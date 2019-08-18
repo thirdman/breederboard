@@ -26,7 +26,6 @@ class App extends Component {
     const { showSidebar } = this.state;
 
     return (
-      // <div className="App">
       <Grommet theme={themeFile} style={{ height: "100%" }}>
         <Box>
           <AppBar

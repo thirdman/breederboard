@@ -1,0 +1,26 @@
+.Board {
+  h6 {
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  .textInput {
+    background: #ddd;
+  }
+  .pill {
+    // background: red;
+    padding-left: 1rem;
+    font-weight: 500;
+  }
+  .noData {
+    font-style: italic;
+    opacity: 0.7;
+  }
+  .kitty {
+    background: #eee;
+  }
+  .kittyRow {
+    &:last-child {
+      border-bottom: none !important;
+    }
+  }
+}

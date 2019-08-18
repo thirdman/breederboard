@@ -8,11 +8,7 @@ import config from "../firebase-config";
 
 // let assetId;
 
-const AssetsStore = new Collection({ mode: "on" });
-AssetsStore.assets = [];
-AssetsStore.assetSource = "";
+const BoardsStore = new Document({ mode: "on" });
+BoardsStore.assetId = "1624440";
 
-// ProductStore.path = `products/${productId}`;
-// AssetStore.mode = "on";
-
-export { AssetsStore };
+export { BoardsStore };
