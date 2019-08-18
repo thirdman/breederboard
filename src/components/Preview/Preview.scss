@@ -1,4 +1,9 @@
 @import "./starburst.scss";
+@import "./radial.scss";
+
+:root {
+  --previewWidth: 200px;
+}
 
 .Preview {
   box-sizing: border-box;

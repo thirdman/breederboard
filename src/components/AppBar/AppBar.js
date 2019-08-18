@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Button, Heading } from "grommet";
 import { User, Menu } from "grommet-icons";
-
+import "./AppBar.scss";
 const AppBar = props => {
   return (
     <Box
@@ -42,7 +42,13 @@ const AppBar = props => {
           onClick={() => props.appLink("user")}
           label="Connect"
         />
-        <Button icon={<User />} onClick={props.handleMenu} />
+
+        <Button
+          icon={<User />}
+          onClick={props.handleMenu}
+          className="iconCircle"
+          background="brand"
+        />
       </Box>
     </Box>
   );

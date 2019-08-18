@@ -49,7 +49,7 @@ class Preview extends Component {
 
     return (
       <div
-        className={classNames("Preview", templateType)}
+        className={classNames("Preview", templateType, "radial")}
         ref={this.refCallback}
         data-width={this.state.elementWidth}
         style={{

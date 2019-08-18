@@ -33,6 +33,9 @@ class RenderPageComponent extends Component {
       return false;
     }
   }
+  componentDidMount() {
+    this.getScreenSize();
+  }
   render() {
     const {
       rootStore: { routerStore, ProductStore }
@@ -61,6 +64,7 @@ class RenderPageComponent extends Component {
     } = ProductStore;
     // console.log("params: ", id, stage);
     // console.log("ProductStore", ProductStore);
+
     return (
       <div
         className={classNames("RenderPage", {
@@ -166,6 +170,11 @@ class RenderPageComponent extends Component {
                 ]}
               />
               <Button onClick={() => this.handleRender(domId)} label="Render" />
+              <Heading level={4}>Your device</Heading>
+
+              <div>
+                {this.state.screenW}x{this.state.screenH}
+              </div>
             </Box>
             <Box
               // align="spaceBetween"
@@ -234,7 +243,16 @@ class RenderPageComponent extends Component {
   ////////////////
   // MISC
   ////////////////
-
+  getScreenSize = () => {
+    console.log(
+      "screen.width+screen.height",
+      window.screen.width + "x" + window.screen.height
+    );
+    this.setState({
+      screenW: window.screen.width,
+      screenH: window.screen.height
+    });
+  };
   appLink = (routeName, id, stage) => {
     const {
       rootStore: { routerStore }

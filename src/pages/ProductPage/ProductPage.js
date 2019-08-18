@@ -27,6 +27,9 @@ class ProductPageComponent extends Component {
       return false;
     }
   }
+  componentDidMount() {
+    this.getScreenSize();
+  }
   render() {
     const {
       rootStore: {
@@ -145,11 +148,17 @@ class ProductPageComponent extends Component {
                 displayMode={productMode}
                 hasTitle={hasTitle}
                 hasSubtitle={hasSubtitle}
-                hasBorder={templateObject && templateObject.hasBorder}
+                hasBorder={
+                  (ProductStore && ProductStore.hasBorder) ||
+                  (templateObject && templateObject.hasBorder)
+                }
                 title={(asset && asset.name) || title}
                 subtitle={(asset && `#${asset.id}`) || subtitle}
                 contrast={contrast}
-                aspect={templateObject && templateObject.aspect}
+                aspect={
+                  (ProductStore && ProductStore.aspect) ||
+                  (templateObject && templateObject.aspect)
+                }
                 templateType={
                   (templateObject && templateObject.type) || "poster"
                 }
@@ -253,6 +262,31 @@ class ProductPageComponent extends Component {
                           </Box>
                         </Button>
                       ))}
+
+                    <Button
+                      onClick={() =>
+                        this.handleTemplate(
+                          "device",
+                          `${this.state.screenW}/${this.state.screenH}`
+                        )
+                      }
+                      fill="horizontal"
+                      key={"cutomResolution"}
+                    >
+                      <Box
+                        pad="small"
+                        direction="row"
+                        justify="between"
+                        background={
+                          templateName === "device" ? "violet" : "transparent"
+                        }
+                      >
+                        <Text>Your device</Text>
+                        <Text>
+                          {this.state.screenW}x{this.state.screenH}
+                        </Text>
+                      </Box>
+                    </Button>
                   </Box>
                 </Box>
 
@@ -464,7 +498,7 @@ class ProductPageComponent extends Component {
     // });
   };
 
-  handleTemplate = value => {
+  handleTemplate = (value, aspect) => {
     const {
       rootStore: { ProductStore, TemplatesStore, UiStore }
     } = this.props;
@@ -481,6 +515,8 @@ class ProductPageComponent extends Component {
     }));
     ProductStore.templateName = value;
     ProductStore.templateObject = thisTemplateObj[0];
+    ProductStore.aspect = aspect;
+    ProductStore.hasBorder = false;
     // ProductStore.contrast =
     //   thisColorObj && thisColorObj[0] && thisColorObj[0].contrast;
     // UiStore.productTheme = value;
@@ -513,7 +549,16 @@ class ProductPageComponent extends Component {
   ////////////////
   // MISC
   ////////////////
-
+  getScreenSize = () => {
+    console.log(
+      "screen.width+screen.height",
+      window.screen.width + "x" + window.screen.height
+    );
+    this.setState({
+      screenW: window.screen.width,
+      screenH: window.screen.height
+    });
+  };
   appLink = (routeName, id, stage) => {
     const {
       rootStore: { routerStore }

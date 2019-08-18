@@ -1,0 +1,146 @@
+//vars
+$fg: #e91e63;
+$bg: #8bc34a;
+// $pi: 3.14;
+$pi: 3.14159265359;
+$_precision: 10;
+
+///////////////////////////////////////////////////////////
+// Plain SASS Trigonometry Algorithm in Taylor Expansion //
+//                                                       //
+// Based on                                              //
+//      http://japborst.net/posts/sass-sines-and-cosines //
+///////////////////////////////////////////////////////////
+
+@function pow($base, $exp) {
+  $value: $base;
+  @if $exp > 1 {
+    @for $i from 2 through $exp {
+      $value: $value * $base;
+    }
+  }
+  @if $exp < 1 {
+    @for $i from 0 through -$exp {
+      $value: $value / $base;
+    }
+  }
+  @return $value;
+}
+
+@function fact($num) {
+  $fact: 1;
+  @if $num > 0 {
+    @for $i from 1 through $num {
+      $fact: $fact * $i;
+    }
+  }
+  @return $fact;
+}
+
+@function _to_unitless_rad($angle) {
+  @if unit($angle) == "deg" {
+    $angle: $angle / 180deg * $pi;
+  }
+  @if unit($angle) == "rad" {
+    $angle: $angle / 1rad;
+  }
+  @return $angle;
+}
+
+@function sin($angle) {
+  $a: _to_unitless_rad($angle);
+  $sin: $a;
+  @for $n from 1 through $_precision {
+    $sin: $sin + (pow(-1, $n) / fact(2 * $n + 1)) * pow($a, (2 * $n + 1));
+  }
+  @return $sin;
+}
+
+@function cos($angle) {
+  $a: _to_unitless_rad($angle);
+  $cos: 1;
+  @for $n from 1 through $_precision {
+    $cos: $cos + (pow(-1, $n) / fact(2 * $n)) * pow($a, 2 * $n);
+  }
+  @return $cos;
+}
+
+@function tan($angle) {
+  @return sin($angle) / cos($angle);
+}
+
+//config
+$menu-items: 11+1;
+$open-distance: 105px;
+// $open-distance: calc(var(--previewWidth) / 100 * 90);
+$opening-angle: $pi * 2;
+$degrees: 45;
+$degrees2: 360 / ($menu-items - 1);
+
+.Preview.radial .grid {
+  display: block;
+  &:before {
+    content: "";
+    display: none;
+    border: 1px solid white;
+    border-radius: 100%;
+    width: 200px;
+    width: calc(var(--previewWidth) / 100 * 80); // ie. 100%
+    height: 200px;
+    height: calc(var(--previewWidth) / 100 * 80); // ie. 100%
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: calc(0px - var(--previewWidth) / 100 * 40);
+    // margin-top: -100px;
+    margin-top: calc(0px - var(--previewWidth) / 100 * 40);
+  }
+  .box {
+    display: flex;
+    width: calc(var(--previewWidth) / 100 * 20);
+    height: calc(var(--previewWidth) / 100 * 20);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: calc(0px - var(--previewWidth) / 100 * 10);
+    margin-top: calc(0px - var(--previewWidth) / 100 * 10);
+    &:nth-of-type(5n + 4),
+    &:nth-of-type(5n + 5) {
+      margin-left: -2rem;
+      margin-right: inherit;
+    }
+    &:nth-child(1) {
+      transform: scale3d(2, 2, 1);
+    }
+    &:hover {
+      background: white;
+      color: $fg;
+    }
+    @for $i from 1 through $menu-items {
+      &:nth-child(#{$i + 1}) {
+        $thisDeg: $degrees2 * $i + "deg";
+        transition-duration: 180ms;
+        transform: rotate(#{$thisDeg})
+          translate(calc(0px - var(--previewWidth) / 100 * 35))
+          rotate(-#{$thisDeg});
+      }
+    }
+  }
+
+  .box {
+    transition-timing-function: cubic-bezier(0.935, 0, 0.34, 1.33);
+    // @for $i from 1 through $menu-items {
+    //   $angle: (($pi - $opening-angle)/2)+
+    //     (($opening-angle/($menu-items - 1)) * ($i - 1));
+
+    //   &:nth-child(#{$i + 1 }) {
+    //     transition-duration: 80ms+ (100ms * $i);
+    //     transform: translate3d(
+    //       cos($angle) * $open-distance,
+    //       sin($angle) * $open-distance,
+    //       0
+    //     );
+    //   }
+    // }
+  }
+}
