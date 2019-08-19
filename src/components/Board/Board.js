@@ -5,7 +5,7 @@ import "./Board.scss";
 import apiConfig from "./../../apiConfig";
 import Loading from "../Loading/Loading";
 
-import { FormClose, CaretDown, CaretUp } from "grommet-icons";
+import { FormClose, CaretDown, CaretUp, FormEdit } from "grommet-icons";
 import {
   Box,
   Heading,
@@ -33,7 +33,9 @@ class Board extends Component {
     textTo: "",
     attributeValues: [],
     attributeOptions: [],
-    showKitties: false
+    showKitties: false,
+    editBoard: true,
+    boardTitle: "new board"
   };
   componentDidUpdate() {
     if (this.focusInput) {
@@ -63,7 +65,9 @@ class Board extends Component {
       boardData,
       breederArray,
       showKitties,
-      focus
+      focus,
+      editBoard,
+      boardTitle
     } = this.state;
     // console.log("attributeOptions", attributeOptions);
     // console.log("allAttributes", allAttributes);
@@ -266,6 +270,9 @@ class Board extends Component {
                         style: "solid",
                         side: "left"
                       }}
+                      onClick={() => {
+                        this.removeAttribute(attribute);
+                      }}
                     >
                       <FormClose color="#fff" />
                     </Box>
@@ -278,6 +285,32 @@ class Board extends Component {
             No Attributes Selected
           </Box>
         )}
+        <Box
+          direction="row"
+          align="center"
+          fill="horizontal"
+          justify="center"
+          animate="slideUp"
+        >
+          <Button
+            onClick={() => this.getKitties()}
+            fill="horizontal"
+            round="medium"
+            border="medium"
+          >
+            <Box
+              margin="small"
+              pad="small"
+              border="all"
+              fill="horizontal"
+              align="center"
+              justify="center"
+              primary
+            >
+              get kitties
+            </Box>
+          </Button>
+        </Box>
         {/* <Box
           direction="row"
           alignItems="start"
@@ -302,18 +335,6 @@ class Board extends Component {
           justify="center"
           // gap="small"
         >
-          <Button onClick={() => this.getKitties()}>
-            <Box
-              margin="small"
-              pad="small"
-              border="all"
-              fill="horizontal"
-              align="center"
-              justify="center"
-            >
-              get kitties
-            </Box>
-          </Button>
           {isLoadingBoardData && (
             <Box>
               <Loading text="getting data..." />
@@ -354,19 +375,19 @@ class Board extends Component {
                 ))}
             </Box>
           )}
+
           <Box
             direction="column"
             align="start"
-            gap="xsmall"
             fill="horizontal"
             border={{
-              color: "#cccccc",
-              size: "small",
+              color: "secondary",
+              size: "medium",
               style: "solid",
               side: "all"
             }}
             round="small"
-            elevation="small"
+            elevation="medium"
           >
             <Box
               pad="xsmall"
@@ -375,7 +396,29 @@ class Board extends Component {
               align="center"
               gap="small"
               fill="horizontal"
-              background="#ccc"
+              background="secondary"
+            >
+              <Heading level={3} basis="2/2">
+                Gareths Cool Traits
+              </Heading>
+              <Box basis="1/3">
+                {!editBoard ? (
+                  <Button onClick={() => this.handleEditBoard()} border="all">
+                    <Box border="all">
+                      <FormEdit color="secondary" /> Edit
+                    </Box>
+                  </Button>
+                ) : null}
+              </Box>
+            </Box>
+            <Box
+              pad="xsmall"
+              direction="row"
+              justify="between"
+              align="center"
+              gap="small"
+              fill="horizontal"
+              background="#dfdfdf"
             >
               <Box basis="2/2">Breeder</Box>
               <Box basis="1/3">Number of Cats</Box>
@@ -392,7 +435,11 @@ class Board extends Component {
             )}
             {breederArray &&
               breederArray.map(breeder => (
-                <Box direction="column" fill="horizontal">
+                <Box
+                  direction="column"
+                  fill="horizontal"
+                  key={`breeder-${breeder.nickname}`}
+                >
                   <Box
                     pad="xsmall"
                     direction="row"
@@ -400,7 +447,7 @@ class Board extends Component {
                     align="center"
                     gap="small"
                     fill="horizontal"
-                    key={`breeder-${breeder.nickname}`}
+
                     // border={{
                     //   color: "#cccccc",
                     //   size: "xsmall",
@@ -419,9 +466,9 @@ class Board extends Component {
                         }
                       >
                         {focus === breeder.nickname ? (
-                          <CaretUp />
+                          <CaretUp size="small" />
                         ) : (
-                          <CaretDown />
+                          <CaretDown size="small" color="secondary" />
                         )}
                       </Button>
                     </Box>
@@ -599,6 +646,26 @@ class Board extends Component {
     console.groupEnd();
   };
 
+  removeAttribute = value => {
+    console.group("removeattribute");
+    const { attributeValues } = this.state;
+    const { allAttributes } = this.props;
+    const plainAttributes =
+      allAttributes.map(cattribute => cattribute.description) || [];
+    let newAttributeValues = [...attributeValues];
+    newAttributeValues = newAttributeValues.filter(
+      attribute => attribute !== value
+    );
+
+    this.setState({
+      value: value,
+      options: plainAttributes,
+      attributeOptions: plainAttributes,
+      attributeValues: newAttributeValues
+    });
+    console.groupEnd();
+  };
+
   getKitties = () => {
     console.log("getting kittins");
     // const {
@@ -626,7 +693,7 @@ class Board extends Component {
       .then(response => response.json())
       .then(data => {
         console.log("data", data);
-        this.setState({ kitties: data.kitties });
+        this.setState({ kitties: data.kitties, editBoard: false });
         this.setState({
           isLoadingBoardData: false
         });
@@ -716,6 +783,12 @@ class Board extends Component {
 
   //   this.setState = { attributeValues: attribute };
   // };
+  handleEditBoard = () => {
+    console.log("editing board");
+    this.setState({ editBoard: !this.state.editBoard });
+  };
+
+  //////MISC
 
   compare(a, b) {
     if (a.numberOfCats < b.numberOfCats) {
