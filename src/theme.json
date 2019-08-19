@@ -1,11 +1,12 @@
 {
   "global": {
     "colors": {
-      "brand": "#4c0890",
+      "brand": "#e520af",
       "background": "#f9f9f9",
       "feature": "#cccccc",
       "colorInput": "#dddddd",
-      "secondary": "#9f47d2",
+      "secondary": "#6f1ba0",
+      "secondaryLight": "hsla(278, 71%, 75%, 1)",
       "border": "#ddd",
       "accent": ["#f9f9f9", "#3399cc", "#cc3399", "#cc0000"],
       "light": "rgba(0,0,0,.035)",

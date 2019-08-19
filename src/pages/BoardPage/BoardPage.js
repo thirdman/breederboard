@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
-import { Box, Button, Collapsible, Heading, Stack, Text } from "grommet";
+import { Box, Buttons, Heading, Stack, Text } from "grommet";
 import { Fireball, View } from "grommet-icons";
 import Board from "../../components/Board/Board";
-import "./HomePage.scss";
-import apiConfig from "./../../apiConfig";
+import "./BoardPage.scss";
+import apiConfig from "../../apiConfig";
 
-class HomePageComponent extends Component {
+class BoardPageComponent extends Component {
   state = {
     allAttributes: []
   };
@@ -24,61 +24,42 @@ class HomePageComponent extends Component {
     } = routerStore;
     const { id } = params;
     const { allAttributes } = this.state;
-    console.log("UiStore", UiStore);
-    console.log("UiStore.productTheme", UiStore.productTheme);
-    // if (params.id) {
-    //   BoardStore.path = `baords/${params.id}`;
-    // }
+    // console.log("UiStore", UiStore);
+    // console.log("UiStore.productTheme", UiStore.productTheme);
+    if (params.id) {
+      console.log("params.id", params.id);
+      // BoardStore.path = `boards/${params.id}`;
+    }
 
     return (
-      <div
-        className={classNames("HomePage", {
+      <Box
+        className={classNames("BoardPage", {
           isTransitioning: !!routerStore.isTransitioning
         })}
+        fill="vertical"
+        direction="column"
+        align="stretch"
+        justify="stretch"
+        padding="large"
       >
-        <Collapsible direction="horizontal" open={UiStore && UiStore.hasMenu}>
-          <Box
-            flex
-            width="medium"
-            background="light-2"
-            elevation="small"
-            align="center"
-            justify="center"
-          >
-            sidebar
-          </Box>
-        </Collapsible>
-
         <Box
-          justify="center"
+          // border="all"
           direction="row"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Heading level={2} margin="large">
-            Attribute leaderboards for CryptoKitties
-          </Heading>
-        </Box>
-
-        <Box
-          border={{
-            color: "border",
-            size: "small",
-            style: "solid",
-            side: "top"
-          }}
-          direction="row"
-          justify="stretch"
+          // justify="center"
           align="stretch"
-          justifyContent="center"
+          fill="horizontal"
+          alignSelf="center"
+          basis="100%"
+          // alignItems="center"
+          // justifyContent="center"
           round="none"
           margin="large"
-          alignItems="center"
-          // style={{ maxWidth: "1000px" }}
+          // fill="horizontal"
+          style={{ maxWidth: "1024px" }}
         >
           <Board allAttributes={allAttributes} />
         </Box>
-      </div>
+      </Box>
     );
   }
 
@@ -134,11 +115,11 @@ class HomePageComponent extends Component {
     UiStore.hasMenu = !UiStore.hasMenu;
     console.log("handle menu", UiStore);
   };
-  appLink = (routeName, id) => {
+  appLink = (routeName, id, stage) => {
     const {
       rootStore: { routerStore }
     } = this.props;
-    routerStore.goTo(routeName, { id: id || "new" });
+    routerStore.goTo(routeName, { id: id || "none", stage: stage || "none" });
   };
 }
-export const HomePage = inject("rootStore")(observer(HomePageComponent));
+export const BoardPage = inject("rootStore")(observer(BoardPageComponent));

@@ -3,11 +3,13 @@ import { inject, observer } from "mobx-react";
 import { RouterView } from "mobx-state-router";
 
 import { HomePage } from "./pages/HomePage/HomePage.js";
+import { BoardPage } from "./pages/BoardPage/BoardPage.js";
 import { AboutPage } from "./pages/AboutPage/AboutPage";
 
 const viewMap = {
   home: <HomePage />,
-  about: <AboutPage />
+  about: <AboutPage />,
+  board: <BoardPage />
 };
 
 class Shell extends Component {

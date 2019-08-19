@@ -22,9 +22,9 @@ export const routes = [
     beforeEnter: checkForUserSignedIn
   },
   {
-    name: "products",
-    pattern: "/products"
-    // beforeEnter: checkForUserSignedIn
+    name: "board",
+    pattern: "/board/:id",
+    beforeEnter: checkForUserSignedIn
   },
   {
     name: "productsByType",

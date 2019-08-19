@@ -26,7 +26,12 @@ class App extends Component {
     const { showSidebar } = this.state;
 
     return (
-      <Grommet theme={themeFile} style={{ height: "100%" }}>
+      <Grommet
+        theme={themeFile}
+        style={{ height: "100%" }}
+        fill
+        style={{ minHeight: "100vh" }}
+      >
         <Box>
           <AppBar
             appLink={this.appLink}
@@ -124,11 +129,12 @@ class App extends Component {
   //     showSidebar: !this.state.showSidebar
   //   });
   // };
-  appLink = (routeName, id, stage) => {
+  appLink = (routeName, id = "new") => {
     const { routerStore } = rootStore;
+    console.log("going to applink", routeName, id);
     console.log("routerStore", routerStore);
     this.setState({ showSidebar: false });
-    routerStore.goTo(routeName, { id: id, stage: stage });
+    routerStore.goTo(routeName, { id: id });
   };
 }
 

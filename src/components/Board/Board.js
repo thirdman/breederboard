@@ -35,7 +35,7 @@ class Board extends Component {
     attributeOptions: [],
     showKitties: false,
     editBoard: true,
-    boardTitle: "new board"
+    boardTitle: ""
   };
   componentDidUpdate() {
     if (this.focusInput) {
@@ -67,6 +67,8 @@ class Board extends Component {
       showKitties,
       focus,
       editBoard,
+      sourceCount,
+
       boardTitle
     } = this.state;
     // console.log("attributeOptions", attributeOptions);
@@ -88,19 +90,24 @@ class Board extends Component {
         // gap="small"
       >
         <Box
-          align="center"
-          pad="small"
-          border="bottom"
-          fill="horizontal"
           direction="row"
+          align="stretch"
           justify="between"
+          gap="small"
+          className="test"
+          fill="horizontal"
+          border="bottom"
+          pad={{
+            top: "small",
+            bottom: "small"
+          }}
         >
-          <Box direction="row" align="center" justify="center" gap="small">
-            <Box pad="xsmall" direction="column" align="start" justify="start">
-              <Heading margin="none" level={6}>
-                From:
-              </Heading>
-              <Box>
+          <Box pad="xsmall" direction="column" align="stretch" justify="start">
+            <Heading margin="none" level={6}>
+              From:
+            </Heading>
+            <Box>
+              {editBoard ? (
                 <Keyboard onDown={() => this.setState({ active: true })}>
                   <TextInput
                     ref={ref => {
@@ -117,29 +124,35 @@ class Board extends Component {
                     className="textInput"
                   />
                 </Keyboard>
-              </Box>
-              {active ? (
-                <Drop
-                  target={this.ref}
-                  align={{ top: "bottom", left: "left" }}
-                  onClose={() => this.setState({ active: false })}
-                >
-                  <Box pad="small">
-                    <Calendar
-                      size="small"
-                      date={date}
-                      onSelect={this.onSelect}
-                    />
-                  </Box>
-                </Drop>
-              ) : null}
+              ) : (
+                <Text>{text || "any"}</Text>
+              )}
             </Box>
+            {active ? (
+              <Drop
+                target={this.ref}
+                align={{ top: "bottom", left: "left" }}
+                onClose={() => this.setState({ active: false })}
+              >
+                <Box pad="small">
+                  <Calendar size="small" date={date} onSelect={this.onSelect} />
+                </Box>
+              </Drop>
+            ) : null}
+          </Box>
 
-            <Box pad="xsmall" direction="column" align="start" justify="start">
-              <Heading margin="none" level={6}>
-                To:
-              </Heading>
-              <Box>
+          <Box
+            pad="xsmall"
+            direction="column"
+            align="stretch"
+            justify="stretch"
+            fiull="horizontal"
+          >
+            <Heading margin="none" level={6}>
+              To:
+            </Heading>
+            <Box>
+              {editBoard ? (
                 <Keyboard onDown={() => this.setState({ active: true })}>
                   <TextInput
                     ref={refTo => {
@@ -156,6 +169,58 @@ class Board extends Component {
                     className="textInput"
                   />
                 </Keyboard>
+              ) : (
+                <Text>{text || "any"}</Text>
+              )}
+            </Box>
+            {activeTo ? (
+              <Drop
+                target={this.refTo}
+                align={{ top: "bottom", left: "left" }}
+                onClose={() => this.setState({ activeTo: false })}
+              >
+                <Box pad="small">
+                  <Calendar
+                    size="small"
+                    date={dateTo}
+                    onSelect={this.onSelectTo}
+                  />
+                </Box>
+              </Drop>
+            ) : null}
+          </Box>
+
+          {allAttributes.length > 0 ? (
+            <Box
+              pad="xsmall"
+              direction="column"
+              align="start"
+              justify="stretch"
+              basis="50%"
+            >
+              <Heading margin="none" level={6}>
+                Attributes:
+              </Heading>
+              <Box fill="horizontal">
+                {editBoard ? (
+                  <Select
+                    // options={OPTIONS}
+                    options={attributeOptions}
+                    multiple={true}
+                    value={attributeValues}
+                    onChange={({ option }) => this.setAttribute(option)}
+                    onSearch={searchText => {
+                      console.log("seatch text", searchText);
+                      console.log("OPTIONS", OPTIONS);
+                      const regexp = new RegExp(searchText, "i");
+                      this.setState({
+                        attributeOptions: OPTIONS.filter(o => o.match(regexp))
+                      });
+                    }}
+                  />
+                ) : (
+                  <Box className="titleString">{boardTitle}</Box>
+                )}
               </Box>
               {activeTo ? (
                 <Drop
@@ -173,78 +238,66 @@ class Board extends Component {
                 </Drop>
               ) : null}
             </Box>
-            {allAttributes.length > 0 ? (
-              <Box
-                pad="xsmall"
-                direction="column"
-                align="start"
-                justify="start"
-              >
-                <Heading margin="none" level={6}>
-                  Attributes:
-                </Heading>
-                <Box>
-                  <Select
-                    // options={OPTIONS}
-                    options={attributeOptions}
-                    multiple={true}
-                    value={attributeValues}
-                    onChange={({ option }) => this.setAttribute(option)}
-                    onSearch={searchText => {
-                      console.log("seatch text", searchText);
-                      console.log("OPTIONS", OPTIONS);
-                      const regexp = new RegExp(searchText, "i");
-                      this.setState({
-                        attributeOptions: OPTIONS.filter(o => o.match(regexp))
-                      });
-                    }}
-                  />
-                </Box>
-                {activeTo ? (
-                  <Drop
-                    target={this.refTo}
-                    align={{ top: "bottom", left: "left" }}
-                    onClose={() => this.setState({ activeTo: false })}
-                  >
-                    <Box pad="small">
-                      <Calendar
-                        size="small"
-                        date={dateTo}
-                        onSelect={this.onSelectTo}
-                      />
-                    </Box>
-                  </Drop>
-                ) : null}
+          ) : (
+            <Box
+              pad="xsmall"
+              direction="column"
+              align="stretch"
+              justify="stretch"
+              basis="50%"
+            >
+              <Heading margin="none" level={6}>
+                Cattributes:
+              </Heading>
+              <Box basis="90%" align="start" justify="center">
+                <Loading text="Loading Cattributes..." />
               </Box>
-            ) : (
+            </Box>
+          )}
+          {editBoard && breederArray ? (
+            <Box justify="stretch" align="start">
               <Box
-                pad="xsmall"
-                direction="column"
+                basis="90%"
+                align="start"
+                justify="center"
+                margin={{ top: "small" }}
+              >
+                <Button
+                  onClick={() => this.handleEditBoard()}
+                  border="secondary"
+                  pad="small"
+                  round="small"
+                  label="Cancel"
+                />
+              </Box>
+            </Box>
+          ) : null}
+        </Box>
+
+        <Box
+          pad="xsmall"
+          direction="row"
+          align="stretch"
+          justify="stretch"
+          border="bottom"
+          fill="horizontal"
+          background="#f3f3f3"
+        >
+          <Box direction="column" basis="80%">
+            <Heading margin="none" level={6}>
+              Cattributes:
+            </Heading>
+            {attributeValues && attributeValues.length > 0 ? null : (
+              <Box
+                direction="row"
                 align="start"
                 justify="start"
+                className="noData"
+                pad="small"
               >
-                <Heading margin="none" level={6}>
-                  Attributes:
-                </Heading>
-                <Text>loading Cattributes...</Text>
+                <Text classname="noData">No Attributes Selected</Text>
               </Box>
             )}
-          </Box>
-        </Box>
-        {attributeValues && attributeValues.length > 0 ? (
-          <Box
-            pad="xsmall"
-            direction="column"
-            align="start"
-            justify="start"
-            border="bottom"
-            fill="horizontal"
-            background="#f3f3f3"
-          >
-            <Heading margin="none" level={6}>
-              Attributes:
-            </Heading>
-
             <Box direction="row" align="start" justify="start" gap="xsmall">
               {attributeValues.length > 0 &&
                 attributeValues.map(attribute => (
@@ -280,55 +333,34 @@ class Board extends Component {
                 ))}
             </Box>
           </Box>
-        ) : (
-          <Box direction="row" align="start" justify="start" className="noData">
-            No Attributes Selected
-          </Box>
-        )}
-        <Box
-          direction="row"
-          align="center"
-          fill="horizontal"
-          justify="center"
-          animate="slideUp"
-        >
-          <Button
-            onClick={() => this.getKitties()}
-            fill="horizontal"
-            round="medium"
-            border="medium"
+          <Box
+            border="left"
+            basis="20%"
+            pad="small"
+            align="center"
+            justify="center"
+            // border="all"
           >
-            <Box
-              margin="small"
-              pad="small"
-              border="all"
+            <Button
+              onClick={() => this.getKitties()}
               fill="horizontal"
-              align="center"
-              justify="center"
+              round="small"
+              // border="secondary"
+              pad="large"
               primary
-            >
-              get kitties
-            </Box>
-          </Button>
+              disabled={!attributeValues.length}
+              size="large"
+              label="Get Kitties!"
+              className="heroButton"
+            />
+          </Box>
         </Box>
-        {/* <Box
-          direction="row"
-          alignItems="start"
-          align="start"
-          className={classNames("Board")}
-          padding="small"
-          wrap
-          fill="horizontal"
-          justify="start"
-          // gap="small"
-        >
-          {allAttributes.length}
-        </Box> */}
+
         <Box
           direction="column"
           alignItems="start"
           align="start"
-          className={classNames("Board")}
+          className={classNames("theBoardItems")}
           padding="small"
           wrap
           fill="horizontal"
@@ -336,7 +368,13 @@ class Board extends Component {
           // gap="small"
         >
           {isLoadingBoardData && (
-            <Box>
+            <Box
+              align="center"
+              justify="center"
+              fill="horizontal"
+              pad="large"
+              animation="slideUp"
+            >
               <Loading text="getting data..." />
             </Box>
           )}
@@ -376,161 +414,255 @@ class Board extends Component {
             </Box>
           )}
 
-          <Box
-            direction="column"
-            align="start"
-            fill="horizontal"
-            border={{
-              color: "secondary",
-              size: "medium",
-              style: "solid",
-              side: "all"
-            }}
-            round="small"
-            elevation="medium"
-          >
+          {/* BOARD CONTENT */}
+          {attributeValues.length && !editBoard ? (
             <Box
-              pad="xsmall"
-              direction="row"
-              justify="between"
-              align="center"
-              gap="small"
+              direction="column"
+              align="start"
               fill="horizontal"
-              background="secondary"
+              border={{
+                color: "secondary",
+                size: "medium",
+                style: "solid",
+                side: "all"
+              }}
+              round="small"
+              // elevation="medium"
+              // margin="medium"
+              margin={{
+                top: "medium",
+                right: "none",
+                bottom: "medium",
+                left: "none"
+              }}
+              animation="slideUp"
+              className="theBoard"
             >
-              <Heading level={3} basis="2/2">
-                Gareths Cool Traits
-              </Heading>
-              <Box basis="1/3">
-                {!editBoard ? (
-                  <Button onClick={() => this.handleEditBoard()} border="all">
-                    <Box border="all">
-                      <FormEdit color="secondary" /> Edit
-                    </Box>
-                  </Button>
-                ) : null}
-              </Box>
-            </Box>
-            <Box
-              pad="xsmall"
-              direction="row"
-              justify="between"
-              align="center"
-              gap="small"
-              fill="horizontal"
-              background="#dfdfdf"
-            >
-              <Box basis="2/2">Breeder</Box>
-              <Box basis="1/3">Number of Cats</Box>
-            </Box>
-            {!breederArray && (
               <Box
-                direction="column"
-                fill="horizontal"
-                pad="small"
+                pad="xsmall"
+                direction="row"
+                justify="between"
                 align="center"
+                gap="small"
+                fill="horizontal"
+                background="secondary"
+                className="theBoardHeader"
               >
-                <Text>No Data</Text>
+                <Box basis="80%" pad="none">
+                  <Heading
+                    level={3}
+                    margin={{ top: "small", bottom: "small" }}
+                    className="boardTitle"
+                  >
+                    {boardTitle}
+                  </Heading>
+                  {sourceCount > 0 && (
+                    <Text size="xsmall">
+                      Found {(boardData && boardData.length) || "0"} of{" "}
+                      {sourceCount} Kitties
+                    </Text>
+                  )}
+                </Box>
+                <Box basis="20%" align="end">
+                  <Button
+                    onClick={() => this.handleEditBoard()}
+                    icon={
+                      editBoard ? (
+                        <FormEdit color="white" />
+                      ) : (
+                        <FormEdit color="white" />
+                      )
+                    }
+                    gap="xsmall"
+                    margin="small"
+                    label={editBoard ? "Cancel" : "Edit"}
+                    // border={{
+                    //   side: "all",
+                    //   color: "secondaryLight",
+                    //   size: "xsmall"
+                    // }}
+                    plain
+                  />
+                </Box>
               </Box>
-            )}
-            {breederArray &&
-              breederArray.map(breeder => (
+
+              {!breederArray && (
                 <Box
                   direction="column"
                   fill="horizontal"
-                  key={`breeder-${breeder.nickname}`}
+                  pad="small"
+                  align="center"
                 >
-                  <Box
-                    pad="xsmall"
-                    direction="row"
-                    justify="stretch"
-                    align="center"
-                    gap="small"
-                    fill="horizontal"
-
-                    // border={{
-                    //   color: "#cccccc",
-                    //   size: "xsmall",
-                    //   style: "dashed",
-                    //   side: "top"
-                    // }}
-                  >
-                    <Box basis="75%">{breeder.nickname}</Box>
-                    <Box basis="20%">{breeder.numberOfCats} Kitties</Box>
-                    <Box basis="5%">
-                      <Button
-                        onClick={() =>
-                          this.setFocus(
-                            focus === breeder.nickname ? "" : breeder.nickname
-                          )
-                        }
-                      >
-                        {focus === breeder.nickname ? (
-                          <CaretUp size="small" />
-                        ) : (
-                          <CaretDown size="small" color="secondary" />
-                        )}
-                      </Button>
-                    </Box>
-                  </Box>
-                  {focus === breeder.nickname && (
+                  <Text>No Data</Text>
+                </Box>
+              )}
+              <Box
+                pad="xsmall"
+                direction="row"
+                justify="between"
+                align="center"
+                gap="small"
+                fill="horizontal"
+                // background="rgba(0,0,0,.2)"
+                background="secondaryLight"
+                className="theBoardHeaderRow"
+              >
+                <Box basis="75%">
+                  <Heading level={6} margin="none">
+                    Breeder
+                  </Heading>
+                </Box>
+                <Box basis="20%">
+                  <Heading level={6} margin="none">
+                    Kitty Count
+                  </Heading>
+                </Box>
+                <Box basis="10%">
+                  <Heading level={6} margin="none">
+                    Points
+                  </Heading>
+                </Box>
+                <Box basis="5%">-</Box>
+              </Box>
+              <Box className="theBoardContent" fill="horizontal">
+                {breederArray &&
+                  breederArray.map(breeder => (
                     <Box
                       direction="column"
-                      background="#f3f3f3"
-                      pad="small"
-                      round="xsmall"
-                      margin="small"
-                      animation="zoomIn"
+                      fill="horizontal"
+                      key={`breeder-${breeder.nickname}`}
+                      className="breederRow"
                     >
-                      {breeder.kitties.map(kittyItem => (
+                      <Box
+                        pad="xsmall"
+                        direction="row"
+                        justify="stretch"
+                        align="center"
+                        gap="small"
+                        fill="horizontal"
+
+                        // border={{
+                        //   color: "#cccccc",
+                        //   size: "xsmall",
+                        //   style: "dashed",
+                        //   side: "top"
+                        // }}
+                      >
+                        <Box basis="75%" className="breederNickname">
+                          {breeder.nickname}
+                        </Box>
+                        <Box basis="20%">{breeder.numberOfCats} Kitties</Box>
+                        <Box basis="10%">{breeder.breederPoints}</Box>
+                        <Box basis="5%">
+                          <Button
+                            onClick={() =>
+                              this.setFocus(
+                                focus === breeder.nickname
+                                  ? ""
+                                  : breeder.nickname
+                              )
+                            }
+                          >
+                            {focus === breeder.nickname ? (
+                              <CaretUp size="small" />
+                            ) : (
+                              <CaretDown size="small" color="secondary" />
+                            )}
+                          </Button>
+                        </Box>
+                      </Box>
+                      {focus === breeder.nickname && (
                         <Box
-                          pad="xsmall"
-                          direction="row"
-                          justify="stretch"
-                          align="center"
-                          gap="small"
-                          border={{
-                            color: "#cccccc",
-                            size: "xsmall",
-                            style: "dashed",
-                            side: "bottom"
-                          }}
-                          className="kittyRow"
+                          direction="column"
+                          background="#f3f3f3"
+                          pad="small"
+                          round="xsmall"
+                          margin="small"
+                          animation="zoomIn"
                         >
                           <Box
-                            basis="30%"
+                            pad="xsmall"
                             direction="row"
+                            justify="stretch"
                             align="center"
-                            //justify="stretch"
+                            gap="small"
+                            border={{
+                              color: "#cccccc",
+                              size: "xsmall",
+                              style: "dashed",
+                              side: "bottom"
+                            }}
+                            className="kittyRow header"
                           >
-                            <img
-                              src={kittyItem.kittyImg}
-                              style={{ width: "2rem" }}
-                              alt=""
-                            />
-                            {kittyItem.kittyName}
+                            <Box
+                              basis="30%"
+                              direction="row"
+                              align="center"
+                              //justify="stretch"
+                            >
+                              Kitty
+                            </Box>
+                            <Box basis="10%">Attr count</Box>
+
+                            <Box basis="50%" direction="row" gap="xsmall">
+                              attributes
+                            </Box>
+                            <Box basis="10%">points</Box>
                           </Box>
-                          <Box basis="10%">
-                            {kittyItem.kittyAttributes.length}
-                          </Box>
-                          <Box basis="50%" direction="row" gap="xsmall">
-                            {kittyItem.kittyAttributes.map(atr => (
+
+                          {breeder.kitties.map(kittyItem => (
+                            <Box
+                              pad="xsmall"
+                              direction="row"
+                              justify="stretch"
+                              align="center"
+                              gap="small"
+                              border={{
+                                color: "#cccccc",
+                                size: "xsmall",
+                                style: "dashed",
+                                side: "bottom"
+                              }}
+                              className="kittyRow"
+                            >
                               <Box
-                                background="#ccc"
-                                round="medium"
-                                pad="xsmall"
+                                basis="30%"
+                                direction="row"
+                                align="center"
+                                //justify="stretch"
                               >
-                                <Text size="small">{atr.description}</Text>
+                                <img
+                                  src={kittyItem.kittyImg}
+                                  style={{ width: "2rem" }}
+                                  alt=""
+                                />
+                                {kittyItem.kittyName}
                               </Box>
-                            ))}
-                          </Box>
+                              <Box basis="10%">
+                                {kittyItem.kittyAttributes.length}
+                              </Box>
+
+                              <Box basis="50%" direction="row" gap="xsmall">
+                                {kittyItem.kittyAttributes.map(atr => (
+                                  <Box
+                                    background="#ccc"
+                                    round="medium"
+                                    pad="xsmall"
+                                  >
+                                    <Text size="small">{atr.description}</Text>
+                                  </Box>
+                                ))}
+                              </Box>
+                              <Box basis="10%">{kittyItem.points}</Box>
+                            </Box>
+                          ))}
                         </Box>
-                      ))}
+                      )}
                     </Box>
-                  )}
-                </Box>
-              ))}
-          </Box>
+                  ))}
+              </Box>
+            </Box>
+          ) : null}
         </Box>
       </Box>
     );
@@ -695,7 +827,8 @@ class Board extends Component {
         console.log("data", data);
         this.setState({ kitties: data.kitties, editBoard: false });
         this.setState({
-          isLoadingBoardData: false
+          isLoadingBoardData: false,
+          sourceCount: data.kitties.length
         });
         // console.log("hasdata");
         this.handleCalc(data);
@@ -705,7 +838,7 @@ class Board extends Component {
 
   handleCalc = data => {
     let boardArray = [];
-    const { attributeValues } = this.state;
+    const { attributeValues, boardTitle } = this.state;
     console.log("attributeValues", attributeValues);
     const tempAttr = ["leopard", "pouty", "greymatter"];
     if (attributeValues.length < 1) {
@@ -715,8 +848,6 @@ class Board extends Component {
     data &&
       data.kitties.map(kitty => {
         // console.log("kitty", kitty);
-        console.group("calc");
-        // console.log("kitty by", kitty.hatcher && kitty.hatcher.nickname);
         const nickname = kitty.hatcher && kitty.hatcher.nickname;
         let tempObj = {};
 
@@ -742,7 +873,7 @@ class Board extends Component {
           // boardArray.push({[nickname]: []};
           const itemObj = {
             nickname: nickname,
-            points: thisAtrrCount,
+            points: thisAtrrCount > 1 ? thisAtrrCount * 2 : thisAtrrCount,
             kittyId: kitty.id,
             kittyName: kitty.name,
             kittyImg: kitty.image_url,
@@ -754,7 +885,6 @@ class Board extends Component {
         }
 
         // boardArray[nickname].push(tempObj);
-        console.groupEnd();
       });
     console.log("boardArray", boardArray);
     let breederArray = [];
@@ -766,16 +896,32 @@ class Board extends Component {
         rowItem => rowItem.nickname === row.nickname
       );
       const numberOfCats = thisUserKitties.length;
+      // const reducer = (accumulator, currentValue) => accumulator + currentValue;
+      const breederPoints = this.sumValues(thisUserKitties, "points");
+
+      thisUserKitties.reduce((sum, x) => sum + x);
+      
       const breederObj = {
         nickname: row.nickname,
         kitties: thisUserKitties,
-        numberOfCats: numberOfCats
+        numberOfCats: numberOfCats,
+        breederPoints: breederPoints
       };
       breederArray.push(breederObj);
     });
-    breederArray.sort(this.compare);
+    // breederArray.sort(this.compareCats);
+    breederArray.sort(this.comparePoints);
     console.log("breederArray", breederArray);
-    this.setState({ boardData: boardArray, breederArray: breederArray });
+    console.log("boardTitle", boardTitle);
+
+    this.generateName(attributeValues);
+    console.log(this.generateName(attributeValues));
+    this.setState({
+      boardData: boardArray,
+      breederArray: breederArray,
+      boardTitle: this.generateName(attributeValues)
+      //boardTitle === "" ? this.generateName(attributeValues) : boardTitle
+    });
   };
   // setAttribute = attribute => {
   //   console.log("setting attribute", attribute);
@@ -790,7 +936,7 @@ class Board extends Component {
 
   //////MISC
 
-  compare(a, b) {
+  compareCats(a, b) {
     if (a.numberOfCats < b.numberOfCats) {
       return 1;
     }
@@ -799,9 +945,33 @@ class Board extends Component {
     }
     return 0;
   }
+  comparePoints(a, b) {
+    if (a.breederPoints < b.breederPoints) {
+      return 1;
+    }
+    if (a.breederPoints > b.breederPoints) {
+      return -1;
+    }
+    return 0;
+  }
 
   setFocus = nickname => {
     this.setState({ focus: nickname });
+  };
+
+  generateName = array => {
+    // const name = array.join(", ") + " breederboard";
+    // const name = array.join(", ");
+
+    const name = [array.slice(0, -1).join(", "), array.slice(-1)[0]].join(
+      array.length < 2 ? "" : " & "
+    );
+
+    return name;
+  };
+
+  sumValues = (array, key) => {
+    return array.reduce((a, b) => a + (b[key] || 0), 0);
   };
 }
 
