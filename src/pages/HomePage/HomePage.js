@@ -6,10 +6,11 @@ import { Fireball, View } from "grommet-icons";
 import Board from "../../components/Board/Board";
 import "./HomePage.scss";
 import apiConfig from "./../../apiConfig";
-
+import Loading from "./../../components/Loading/Loading";
 class HomePageComponent extends Component {
   state = {
-    allAttributes: []
+    allAttributes: [],
+    isCreating: false
   };
   componentDidMount() {
     this.handleLoad();
@@ -18,12 +19,12 @@ class HomePageComponent extends Component {
     const {
       rootStore: { routerStore, UiStore, BoardStore, BoardsStore }
     } = this.props;
-
     const {
       routerState: { params }
     } = routerStore;
+    const { isCreating } = this.state;
     const { id } = params;
-    const { allAttributes } = this.state;
+    const { allAttributes } = UiStore;
     console.log("UiStore", UiStore);
     console.log("UiStore.productTheme", UiStore.productTheme);
     // if (params.id) {
@@ -61,22 +62,26 @@ class HomePageComponent extends Component {
         </Box>
 
         <Box
-          border={{
-            color: "border",
-            size: "small",
-            style: "solid",
-            side: "top"
-          }}
-          direction="row"
+          direction="columns"
           justify="stretch"
           align="stretch"
-          justifyContent="center"
+          // justifyContent="center"
           round="none"
           margin="large"
-          alignItems="center"
+          // alignItems="center"
+          fill="horizontal"
           // style={{ maxWidth: "1000px" }}
         >
-          <Board allAttributes={allAttributes} />
+          {!isCreating && (
+            <Button
+              margin="medium"
+              pad="medium"
+              round="medium"
+              onClick={() => this.handleNew()}
+              label="New Board"
+            />
+          )}
+          {isCreating && <Loading text="creating board..." />}
         </Box>
       </div>
     );
@@ -93,7 +98,7 @@ class HomePageComponent extends Component {
 
   getAttributes = address => {
     const {
-      rootStore: { UiStore }
+      rootStore: { UiStore, SiteStore }
     } = this.props;
 
     console.log("address", address);
@@ -123,6 +128,23 @@ class HomePageComponent extends Component {
       });
   };
 
+  handleNew = async () => {
+    console.log("handle new");
+    const {
+      rootStore: { BoardsStore }
+    } = this.props;
+    this.setState({ isCreating: true });
+    console.log("BoardStore", BoardsStore);
+    await BoardsStore.ready();
+    const doc = await BoardsStore.add({
+      editBoard: true,
+      title: "new board"
+    });
+    console.log("doc.id", doc.id);
+    // this.setState({ isCreating: false });
+    this.appLink("board", doc.id);
+  };
+
   ////////////////
   // MISC
   ////////////////
@@ -134,11 +156,18 @@ class HomePageComponent extends Component {
     UiStore.hasMenu = !UiStore.hasMenu;
     console.log("handle menu", UiStore);
   };
-  appLink = (routeName, id) => {
+  appLink = (routeName, id, attributes) => {
     const {
       rootStore: { routerStore }
     } = this.props;
-    routerStore.goTo(routeName, { id: id || "new" });
+    console.log("applink id: ", id);
+    routerStore.goTo(
+      routeName,
+      {
+        id: id || "new"
+      },
+      { attributes: attributes }
+    );
   };
 }
 export const HomePage = inject("rootStore")(observer(HomePageComponent));

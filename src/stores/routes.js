@@ -27,6 +27,12 @@ export const routes = [
     beforeEnter: checkForUserSignedIn
   },
   {
+    name: "boardWithAttributes",
+    pattern: "/board/:id/:attributes",
+    beforeEnter: checkForUserSignedIn
+  },
+
+  {
     name: "productsByType",
     pattern: "/products/:id/:stage"
     // beforeEnter: checkForUserSignedIn

@@ -4,11 +4,10 @@ import { initFirestorter, Collection, Document } from "firestorter";
 import config from "../firebase-config";
 
 !firebase.apps.length ? firebase.initializeApp(config) : firebase.app();
-// initFirestorter({ firebase: firebase });
+initFirestorter({ firebase: firebase });
 
 // let assetId;
 
-const BoardsStore = new Document({ mode: "on" });
-BoardsStore.assetId = "1624440";
+const BoardsStore = new Collection("boards", { mode: "on" });
 
 export { BoardsStore };

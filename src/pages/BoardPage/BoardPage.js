@@ -20,12 +20,19 @@ class BoardPageComponent extends Component {
     } = this.props;
 
     const {
-      routerState: { params }
+      routerState: { params, queryParams }
     } = routerStore;
     const { id } = params;
+
     const { allAttributes } = this.state;
+    // const { allAttributes } = UiStore;
     // console.log("UiStore", UiStore);
     // console.log("UiStore.productTheme", UiStore.productTheme);
+    console.log("params", params);
+    console.log("queryParams", queryParams);
+    if (params.attributes) {
+      console.log("params.attributes", params.attributes);
+    }
     if (params.id) {
       console.log("params.id", params.id);
       // BoardStore.path = `boards/${params.id}`;
@@ -57,7 +64,14 @@ class BoardPageComponent extends Component {
           // fill="horizontal"
           style={{ maxWidth: "1024px" }}
         >
-          <Board allAttributes={allAttributes} />
+          <Board
+            allAttributes={allAttributes}
+            queryParams={
+              queryParams && queryParams.attributes
+                ? queryParams.attributes.split(" ")
+                : []
+            }
+          />
         </Box>
       </Box>
     );
@@ -65,8 +79,31 @@ class BoardPageComponent extends Component {
 
   handleLoad = async () => {
     console.log("handling load");
+    const {
+      rootStore: { routerStore, UiStore, BoardStore }
+    } = this.props;
+    const {
+      routerState: { params, queryParams }
+    } = routerStore;
+    const { id } = params;
+    console.log("params", params);
+    console.log("queryParams", queryParams);
+    if (queryParams.attributes) {
+      console.log("queryParams.attributes", queryParams.attributes);
+      BoardStore.boardAttributes = queryParams.attributes;
+      console.log(
+        "queryParams.attributes.split",
+        queryParams.attributes.split(" ")
+      );
+    }
 
-    this.setState({ isLoadingAttributes: true });
+    this.setState({
+      isLoadingAttributes: true,
+      queryParams:
+        queryParams && queryParams.attributes
+          ? queryParams.attributes.split(" ")
+          : []
+    });
     await this.getAttributes();
     // await this.getCollections();
     this.setState({ isLoadingAttributes: false });

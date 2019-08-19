@@ -28,8 +28,8 @@ class App extends Component {
     return (
       <Grommet
         theme={themeFile}
-        style={{ height: "100%" }}
-        fill
+        // style={{ height: "100%" }}
+
         style={{ minHeight: "100vh" }}
       >
         <Box>
@@ -129,12 +129,23 @@ class App extends Component {
   //     showSidebar: !this.state.showSidebar
   //   });
   // };
-  appLink = (routeName, id = "new") => {
+  // appLink = (routeName, id = "new", attributes = "") => {
+  //   const { routerStore } = rootStore;
+  //   console.log("going to applink", routeName, id);
+  //   console.log("routerStore", routerStore);
+  //   this.setState({ showSidebar: false });
+  //   routerStore.goTo(routeName, { id: id });
+  // };
+  appLink = (routeName, id, attributes) => {
     const { routerStore } = rootStore;
-    console.log("going to applink", routeName, id);
-    console.log("routerStore", routerStore);
     this.setState({ showSidebar: false });
-    routerStore.goTo(routeName, { id: id });
+    routerStore.goTo(
+      routeName,
+      {
+        id: id || "new"
+      },
+      { attributes: attributes }
+    );
   };
 }
 

@@ -1,11 +1,11 @@
 const config = {
-  apiKey: "AIzaSyBSgVy0GGc60oAQs7KH3y9bOUXVHwLKYVk",
-  authDomain: "flawntapp.firebaseapp.com",
-  databaseURL: "https://flawntapp.firebaseio.com",
-  projectId: "flawntapp",
-  storageBucket: "",
-  messagingSenderId: "386483040808",
-  appId: "1:386483040808:web:28202c9ee7d32efd",
+  apiKey: "AIzaSyCmQtsM_LLGfG0apyD7MprP2XpSdq1qnKM",
+  authDomain: "breederboard.firebaseapp.com",
+  databaseURL: "https://breederboard.firebaseio.com",
+  projectId: "breederboard",
+  storageBucket: "breederboard.appspot.com",
+  messagingSenderId: "16885677430",
+  appId: "1:16885677430:web:e69ec1fdb556fdb4",
 
   // GENERAL SETTINGS:
   settings: {

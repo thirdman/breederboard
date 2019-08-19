@@ -4,12 +4,11 @@ import { initFirestorter, Collection, Document } from "firestorter";
 import config from "../firebase-config";
 
 !firebase.apps.length ? firebase.initializeApp(config) : firebase.app();
+// initFirestorter({ firebase: firebase });
 
-// let templateId;
+// let assetId;
+let pathId = "site";
+const SiteStore = new Document({ mode: "on" });
+SiteStore.attributes = [];
 
-const UiStore = new Document({ mode: "on" });
-UiStore.hasMenu = false;
-UiStore.productTheme = "sunset";
-UiStore.allAttributes = [];
-
-export { UiStore };
+export { SiteStore };

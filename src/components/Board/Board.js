@@ -31,12 +31,29 @@ class Board extends Component {
     collectionName: "",
     text: "",
     textTo: "",
-    attributeValues: [],
+    // attributeValues: [],
     attributeOptions: [],
     showKitties: false,
     editBoard: true,
     boardTitle: ""
   };
+  componentDidMount() {
+    if (this.props.queryParams) {
+      console.log("component did mount", this.props.queryParams);
+      console.log(
+        "this.props.queryParams && this.props.queryParams.length > 0",
+        this.props.queryParams && this.props.queryParams.length > 0
+      );
+      if (this.props.queryParams && this.props.queryParams.length > 0) {
+        // console.log("setting true");
+        // this.setState({ editBoard: false });
+        this.getKitties();
+      } else {
+        // console.log("setting false");
+        this.setState({ editBoard: true });
+      }
+    }
+  }
   componentDidUpdate() {
     if (this.focusInput) {
       const element = document.getElementById("date-input");
@@ -49,7 +66,7 @@ class Board extends Component {
   }
 
   render() {
-    const { allAttributes } = this.props;
+    const { allAttributes, queryParams } = this.props;
 
     const {
       active,
@@ -58,7 +75,7 @@ class Board extends Component {
       dateTo,
       text,
       textTo,
-      attributeValues,
+      attributeValues = this.props.queryParams || [],
       attributeOptions,
       isLoadingBoardData,
       kitties,
@@ -68,9 +85,9 @@ class Board extends Component {
       focus,
       editBoard,
       sourceCount,
-
       boardTitle
     } = this.state;
+    console.log("Board queryParams", queryParams);
     // console.log("attributeOptions", attributeOptions);
     // console.log("allAttributes", allAttributes);
     // const OPTIONS = ["First", "Second", "Third"];
@@ -299,10 +316,11 @@ class Board extends Component {
               </Box>
             )}
             <Box direction="row" align="start" justify="start" gap="xsmall">
-              {attributeValues.length > 0 &&
+              {attributeValues &&
+                attributeValues.length > 0 &&
                 attributeValues.map(attribute => (
                   <Box
-                    className="pill"
+                    className="pill hasClose"
                     round="medium"
                     background="secondary"
                     key={`attributePill-${attribute}`}
@@ -579,6 +597,7 @@ class Board extends Component {
                           round="xsmall"
                           margin="small"
                           animation="zoomIn"
+                          className="kittyBlock"
                         >
                           <Box
                             pad="xsmall"
@@ -624,6 +643,7 @@ class Board extends Component {
                                 side: "bottom"
                               }}
                               className="kittyRow"
+                              key={`kittyItem${kittyItem.kittyId}`}
                             >
                               <Box
                                 basis="30%"
@@ -645,9 +665,11 @@ class Board extends Component {
                               <Box basis="50%" direction="row" gap="xsmall">
                                 {kittyItem.kittyAttributes.map(atr => (
                                   <Box
-                                    background="#ccc"
-                                    round="medium"
+                                    className="pill"
+                                    round="xsmall"
                                     pad="xsmall"
+                                    background="secondary"
+                                    key={`kittycattribute-${atr}`}
                                   >
                                     <Text size="small">{atr.description}</Text>
                                   </Box>
@@ -753,7 +775,7 @@ class Board extends Component {
   setAttribute = value => {
     console.group("setattribute");
     console.log("event, value", value);
-    const { attributeValues } = this.state;
+    const { attributeValues = this.props.queryParams || [] } = this.state;
     const { allAttributes } = this.props;
     const plainAttributes =
       allAttributes.map(cattribute => cattribute.description) || [];
@@ -838,7 +860,8 @@ class Board extends Component {
 
   handleCalc = data => {
     let boardArray = [];
-    const { attributeValues, boardTitle } = this.state;
+    const { attributeValues = this.props.queryParams, boardTitle } = this.state;
+
     console.log("attributeValues", attributeValues);
     const tempAttr = ["leopard", "pouty", "greymatter"];
     if (attributeValues.length < 1) {
@@ -864,16 +887,12 @@ class Board extends Component {
         });
 
         const thisAtrrCount = attrs.length;
-        // console.log("kitty.enhanced_cattributes", kitty.enhanced_cattributes);
-        // console.log(attrs);
-        // console.log(thisAtrrCount);
-        // if (kitty.enhanced_cattributes)
+        const thisPoints = this.calculatePoints(attrs);
+
         if (nickname) {
-          // && !boardArray.includes(nickname)
-          // boardArray.push({[nickname]: []};
           const itemObj = {
             nickname: nickname,
-            points: thisAtrrCount > 1 ? thisAtrrCount * 2 : thisAtrrCount,
+            points: thisPoints,
             kittyId: kitty.id,
             kittyName: kitty.name,
             kittyImg: kitty.image_url,
@@ -900,7 +919,7 @@ class Board extends Component {
       const breederPoints = this.sumValues(thisUserKitties, "points");
 
       thisUserKitties.reduce((sum, x) => sum + x);
-      
+
       const breederObj = {
         nickname: row.nickname,
         kitties: thisUserKitties,
@@ -934,6 +953,14 @@ class Board extends Component {
     this.setState({ editBoard: !this.state.editBoard });
   };
 
+  calculatePoints = array => {
+    console.log("calculate Points");
+    const attributeMultiplier = 2;
+    const attrCount = array.length;
+    const points = attrCount * attrCount;
+    console.log("points", points);
+    return points;
+  };
   //////MISC
 
   compareCats(a, b) {

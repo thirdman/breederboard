@@ -5,6 +5,7 @@ import { routes } from "./routes";
 import { UiStore } from "./ui";
 import { BoardStore } from "./board";
 import { BoardsStore } from "./boards";
+import { SiteStore } from "./site";
 
 const notFound = new RouterState("notFound");
 
@@ -13,4 +14,5 @@ export class RootStore {
   UiStore = UiStore;
   BoardStore = BoardStore;
   BoardsStore = BoardsStore;
+  SiteStore = SiteStore;
 }

@@ -17,13 +17,13 @@
   }
   .pill {
     // background: red;
-    padding-left: 1rem;
+
     font-weight: 500;
     // background: linear-gradient(90deg, hsl(276, 90%, 51%), hsl(296, 90%, 41%));
     background-image: linear-gradient(
       120deg,
       hsl(286, 90%, 41%),
-      hsl(256, 90%, 61%)
+      hsl(256, 90%, 51%)
     );
     transition: background-image 0.3s ease, box-shadow 0.3s ease;
     @media (hover: hover) {
@@ -31,10 +31,13 @@
         background-image: linear-gradient(
           120deg,
           hsl(286, 100%, 51%),
-          hsl(256, 100%, 71%)
+          hsl(256, 100%, 61%)
         );
         box-shadow: 0 4px 1rem 0.25rem rgba(0, 0, 0, 0.2);
       }
+    }
+    &.hasClose {
+      padding-left: 1rem;
     }
   }
   .noData {
@@ -44,18 +47,22 @@
   .kitty {
     background: #eee;
   }
-  .kittyRow {
-    &:last-child {
-      border-bottom: none !important;
-    }
-    &.header {
-      text-transform: uppercase;
-      font-size: 0.75rem;
-      font-weight: bold;
-      color: hsl(286, 90%, 41%);
+  .kittyBlock {
+    background: #fff;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+    .kittyRow {
+      font-size: 0.875rem;
+      &:last-child {
+        border-bottom: none !important;
+      }
+      &.header {
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        font-weight: bold;
+        color: hsl(286, 90%, 41%);
+      }
     }
   }
-
   .theBoard {
     z-index: 10;
     position: relative;
