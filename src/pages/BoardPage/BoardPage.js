@@ -25,7 +25,7 @@ class BoardPageComponent extends Component {
     const { id } = params;
 
     const { allAttributes = UiStore.allAttributes } = this.state;
-    // const { allAttributes } = UiStore;
+    const { allFancies } = UiStore;
     // console.log("UiStore", UiStore);
     // console.log("UiStore.productTheme", UiStore.productTheme);
     // console.log("params", params);
@@ -67,10 +67,12 @@ class BoardPageComponent extends Component {
         >
           <Board
             allAttributes={allAttributes}
+            allFancies={allFancies}
             initialAttributes={UiStore.allAttributes}
+            boardId={id}
             queryParams={
               queryParams && queryParams.attributes
-                ? queryParams.attributes.split(" ")
+                ? queryParams.attributes.split(",")
                 : []
             }
           />
@@ -103,7 +105,7 @@ class BoardPageComponent extends Component {
       isLoadingAttributes: true,
       queryParams:
         queryParams && queryParams.attributes
-          ? queryParams.attributes.split(" ")
+          ? queryParams.attributes.split(",")
           : []
     });
     await this.getAttributes();
@@ -138,7 +140,34 @@ class BoardPageComponent extends Component {
         });
         UiStore.allAttributes = data;
 
-        console.log("UiStore");
+        // console.log("UiStore");
+        return true;
+      });
+  };
+
+  getFancies = () => {
+    const {
+      rootStore: { UiStore }
+    } = this.props;
+
+    let theHeaders = new Headers();
+    this.setState({
+      isLoadingAssets: true
+    });
+    // Add a few headers
+    theHeaders.append("Content-Type", "application/json");
+    theHeaders.append("x-api-token", apiConfig.apiToken);
+    const API = "https://public.api.cryptokitties.co/v1/cattributes";
+    fetch(API, { headers: theHeaders })
+      .then(response => response.json())
+      .then(data => {
+        this.setState({ allAttributes: data });
+        this.setState({
+          isLoadingAttributes: false
+        });
+        UiStore.allAttributes = data;
+
+        // console.log("UiStore");
         return true;
       });
   };

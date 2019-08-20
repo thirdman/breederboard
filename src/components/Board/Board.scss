@@ -3,6 +3,9 @@
     font-weight: 500;
     text-transform: uppercase;
   }
+  .noWrap {
+    white-space: nowrap;
+  }
   .textInput {
     background: #ddd;
   }
@@ -18,11 +21,12 @@
   }
   .boardTitle,
   .titleString {
-    text-transform: capitalize;
+    // text-transform: capitalize;
   }
   .pill {
     // background: red;
-
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
     font-weight: 500;
     // background: linear-gradient(90deg, hsl(276, 90%, 51%), hsl(296, 90%, 41%));
     background-image: linear-gradient(
