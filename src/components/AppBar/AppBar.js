@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Button, Heading } from "grommet";
-import { User, Menu, FormAdd } from "grommet-icons";
+import { FormAdd } from "grommet-icons";
 import "./AppBar.scss";
 import logo from "../../assets/icons/logo.svg";
 const AppBar = props => {

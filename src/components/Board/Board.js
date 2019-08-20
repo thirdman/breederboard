@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { parseISO, formatDistanceStrict, formatDistanceToNow } from "date-fns";
@@ -29,7 +30,8 @@ const MONTH_DAY_REGEXP = new RegExp(
 );
 const MONTH_DAY_YEAR_REGEXP = new RegExp("^(\\d{1,2})/(\\d{1,2})/(\\d{4})$");
 const domain = "https://breederboard.com";
-class Board extends Component {
+
+class BoardComponent extends Component {
   state = {
     collectionName: "",
     text: "",
@@ -40,7 +42,8 @@ class Board extends Component {
     editBoard: true,
     boardTitle: "",
     searchMode: "recent",
-    showShareModal: false
+    showShareModal: false,
+    pageCount: 50
   };
   componentDidMount() {
     if (this.props.queryParams) {
@@ -66,6 +69,7 @@ class Board extends Component {
 
   render() {
     const {
+      rootStore: { routerStore, UiStore, BoardStore },
       allAttributes,
       allFancies,
       initialAttributes,
@@ -97,7 +101,8 @@ class Board extends Component {
       boardTitle,
       totalPoints = 100,
       searchMode,
-      showShareModal
+      showShareModal,
+      pageCount
     } = this.state;
     // console.log("Board queryParams", queryParams);
     // console.log("attributeOptions", attributeOptions);
@@ -122,6 +127,11 @@ class Board extends Component {
     }
     if (attributeValues.length) {
       canGenerate = true;
+    }
+    if (boardId) {
+      console.log("boardId is", boardId);
+      BoardStore.path = `/boards/${boardId}`;
+      console.log("BoardStore.data", BoardStore.data);
     }
     const dateNow = new Date();
     return (
@@ -208,7 +218,7 @@ class Board extends Component {
               <Heading margin="none" level={6}>
                 Number:
               </Heading>
-              <Box basis="75%">50</Box>
+              <Box basis="75%">{pageCount}</Box>
             </Box>
           )}
           {searchMode === "dates" && (
@@ -1073,6 +1083,9 @@ class Board extends Component {
   };
 
   setAttribute = value => {
+    const {
+      rootStore: { BoardStore }
+    } = this.props;
     // console.group("setattribute");
     const { attributeValues = this.props.queryParams || [] } = this.state;
     const { allAttributes } = this.props;
@@ -1093,31 +1106,34 @@ class Board extends Component {
       attributeOptions: plainAttributes,
       attributeValues: newAttributeValues
     });
+    BoardStore.update({
+      // value: value,
+      options: plainAttributes,
+      attributeOptions: plainAttributes,
+      attributeValues: newAttributeValues
+    });
     // console.groupEnd();
   };
   setFancy = value => {
-    // console.group("setattribute");
-
-    const { allFancies } = this.props;
-    const fancyOptions = this.props.allFancies.map(fancy => fancy.value) || [];
-
-    // if (attributeValues.includes(value)) {
-    //   newAttributeValues = newAttributeValues.filter(
-    //     attribute => attribute !== value
-    //   );
-    // } else {
-    //   newAttributeValues.push(value);
-    // }
-    // BoardStore.fancyValue = value
+    const {
+      rootStore: { BoardStore }
+    } = this.props;
+    // const { allFancies } = this.props;
+    // const fancyOptions = this.props.allFancies.map(fancy => fancy.value) || [];
     const thisValue = [`${value}`];
     this.setState({
+      fancyValue: thisValue
+    });
+    BoardStore.update({
       fancyValue: thisValue
     });
     // console.groupEnd();
   };
 
   removeAttribute = value => {
-    // console.group("removeattribute");
+    const {
+      rootStore: { BoardStore }
+    } = this.props;
     const { attributeValues } = this.state;
     const { allAttributes } = this.props;
     const plainAttributes =
@@ -1133,23 +1149,29 @@ class Board extends Component {
       attributeOptions: plainAttributes,
       attributeValues: newAttributeValues
     });
-    // console.groupEnd();
+    BoardStore.update({
+      ptions: plainAttributes,
+      attributeOptions: plainAttributes,
+      attributeValues: newAttributeValues
+    });
   };
   removeFancy = () => {
+    const {
+      rootStore: { BoardStore }
+    } = this.props;
     this.setState({
+      fancyValue: undefined
+    });
+    BoardStore.update({
       fancyValue: undefined
     });
   };
 
   getKitties = () => {
-    // const {
-    //   rootStore: { UiStore }
-    // } = this.props;
-
-    // const {
-    //   rootStore: { AssetsStore }
-    // } = this.props;
-
+    const {
+      rootStore: { BoardStore }
+    } = this.props;
+    const { pageCount = 50 } = this.state;
     this.setState({
       isLoadingBoardData: true
     });
@@ -1158,11 +1180,7 @@ class Board extends Component {
 
     theHeaders.append("Content-Type", "application/json");
     theHeaders.append("x-api-token", apiConfig.apiToken);
-    // const API = "https://public.api.cryptokitties.co/v1/kitties";
-    // const API =
-    //   "https://public.api.cryptokitties.co/v1/kitties?orderBy=kitties.created_at&orderDirection=desc&limit=50";
-    const API =
-      "https://public.api.cryptokitties.co/v1/kitties?orderBy=created_at&orderDirection=desc&limit=50";
+    const API = `https://public.api.cryptokitties.co/v1/kitties?orderBy=created_at&orderDirection=desc&limit=${pageCount}`;
 
     // fetch(API + DEFAULT_QUERY)
     fetch(API, { headers: theHeaders })
@@ -1175,12 +1193,17 @@ class Board extends Component {
           sourceCount: data.kitties.length
         });
         // console.log("hasdata");
+
         this.handleCalc(data);
         return true;
       });
   };
 
   handleCalc = data => {
+    const {
+      rootStore: { BoardStore }
+    } = this.props;
+
     let boardArray = [];
     const {
       attributeValues = this.props.queryParams,
@@ -1273,14 +1296,9 @@ class Board extends Component {
       };
       breederArray.push(breederObj);
     });
-    // breederArray.sort(this.compareCats);
     breederArray.sort(this.comparePoints);
-    // console.log("breederArray", breederArray);
-    // console.log("boardTitle", boardTitle);
     const theTotalPoints = this.sumValues(breederArray, "breederPoints");
-    // console.log("theTotalPoints", theTotalPoints);
     this.generateName(attributeValues);
-    // console.log(this.generateName(attributeValues));
     this.setState({
       totalPoints: theTotalPoints,
       boardData: boardArray,
@@ -1288,13 +1306,18 @@ class Board extends Component {
       boardTitle: this.generateName(attributeValues)
       //boardTitle === "" ? this.generateName(attributeValues) : boardTitle
     });
+    BoardStore.update({
+      breederArray: breederArray,
+      kitties: data,
+      boardData: boardArray,
+      boardTitle: boardTitle,
+      titleEdited: false,
+      totalPoints: theTotalPoints,
+      attributeValues: attributeValues,
+      fancyValue: fancyValue
+    });
   };
-  // setAttribute = attribute => {
-  //   console.log("setting attribute", attribute);
-  //   // const {attributeValue} = this.state;
 
-  //   this.setState = { attributeValues: attribute };
-  // };
   handleEditBoard = () => {
     this.setState({ editBoard: !this.state.editBoard });
   };
@@ -1389,4 +1412,4 @@ class Board extends Component {
   };
 }
 
-export default Board;
+export const Board = inject("rootStore")(observer(BoardComponent));

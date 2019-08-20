@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { Box, Buttons, Heading, Stack, Text } from "grommet";
 import { Fireball, View } from "grommet-icons";
-import Board from "../../components/Board/Board";
+import { Board } from "../../components/Board/Board";
 import "./BoardPage.scss";
 import apiConfig from "../../apiConfig";
 
@@ -26,10 +26,6 @@ class BoardPageComponent extends Component {
 
     const { allAttributes = UiStore.allAttributes } = this.state;
     const { allFancies } = UiStore;
-    // console.log("UiStore", UiStore);
-    // console.log("UiStore.productTheme", UiStore.productTheme);
-    // console.log("params", params);
-    // console.log("queryParams", queryParams);
     if (params.attributes) {
       // console.log("params.attributes", params.attributes);
     }
@@ -139,7 +135,6 @@ class BoardPageComponent extends Component {
           isLoadingAttributes: false
         });
         UiStore.allAttributes = data;
-
         // console.log("UiStore");
         return true;
       });

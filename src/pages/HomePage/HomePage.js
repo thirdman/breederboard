@@ -131,14 +131,16 @@ class HomePageComponent extends Component {
   handleNew = async () => {
     console.log("handle new");
     const {
-      rootStore: { BoardsStore }
+      rootStore: { BoardsStore, UiStore }
     } = this.props;
     this.setState({ isCreating: true });
     console.log("BoardStore", BoardsStore);
     await BoardsStore.ready();
     const doc = await BoardsStore.add({
       editBoard: true,
-      title: "new board"
+      title: "new board",
+      allAttributes: UiStore.allAttributes,
+      isPublic: false
     });
     console.log("doc.id", doc.id);
     // this.setState({ isCreating: false });
