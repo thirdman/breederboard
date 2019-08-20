@@ -26,7 +26,7 @@ class HomePageComponent extends Component {
     const { id } = params;
     const { allAttributes } = UiStore;
     console.log("UiStore", UiStore);
-    console.log("UiStore.productTheme", UiStore.productTheme);
+    // console.log("UiStore.productTheme", UiStore.productTheme);
     // if (params.id) {
     //   BoardStore.path = `baords/${params.id}`;
     // }
@@ -63,11 +63,11 @@ class HomePageComponent extends Component {
 
         <Box
           direction="columns"
-          justify="stretch"
-          align="stretch"
+          justify="center"
+          align="center"
           // justifyContent="center"
           round="none"
-          margin="large"
+          pad="large"
           // alignItems="center"
           fill="horizontal"
           // style={{ maxWidth: "1000px" }}

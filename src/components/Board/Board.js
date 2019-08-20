@@ -4,8 +4,9 @@ import { parseISO, formatDistanceStrict, formatDistanceToNow } from "date-fns";
 import "./Board.scss";
 import apiConfig from "./../../apiConfig";
 import Loading from "../Loading/Loading";
+import ButtonGroup from "../ButtonGroup/ButtonGroup";
 
-import { FormClose, CaretDown, CaretUp, FormEdit } from "grommet-icons";
+import { FormClose, CaretDown, CaretUp, FormEdit, Share } from "grommet-icons";
 import {
   Box,
   Heading,
@@ -35,7 +36,8 @@ class Board extends Component {
     attributeOptions: [],
     showKitties: false,
     editBoard: true,
-    boardTitle: ""
+    boardTitle: "",
+    searchMode: "recent"
   };
   componentDidMount() {
     if (this.props.queryParams) {
@@ -66,7 +68,7 @@ class Board extends Component {
   }
 
   render() {
-    const { allAttributes, queryParams } = this.props;
+    const { allAttributes, initialAttributes, queryParams } = this.props;
 
     const {
       active,
@@ -85,14 +87,28 @@ class Board extends Component {
       focus,
       editBoard,
       sourceCount,
-      boardTitle
+      boardTitle,
+      totalPoints = 100,
+      searchMode
     } = this.state;
     console.log("Board queryParams", queryParams);
     // console.log("attributeOptions", attributeOptions);
     // console.log("allAttributes", allAttributes);
     // const OPTIONS = ["First", "Second", "Third"];
-    const OPTIONS =
-      allAttributes.map(cattribute => cattribute.description) || [];
+    let OPTIONS;
+    if (allAttributes.length < 1) {
+      console.log("less than 0");
+      console.log("this.props.initialAttributes", this.props.initialAttributes);
+      OPTIONS =
+        this.props.initialAttributes.map(
+          cattribute => cattribute.description
+        ) || [];
+    } else {
+      console.log("More than 0");
+      OPTIONS = allAttributes.map(cattribute => cattribute.description) || [];
+    }
+    // const OPTIONS =
+    //   allAttributes.map(cattribute => cattribute.description) || [];
     const dateNow = new Date();
     return (
       <Box
@@ -119,95 +135,162 @@ class Board extends Component {
             bottom: "small"
           }}
         >
-          <Box pad="xsmall" direction="column" align="stretch" justify="start">
-            <Heading margin="none" level={6}>
-              From:
-            </Heading>
-            <Box>
-              {editBoard ? (
-                <Keyboard onDown={() => this.setState({ active: true })}>
-                  <TextInput
-                    ref={ref => {
-                      this.ref = ref;
-                    }}
-                    border="none"
-                    margin="xsmall"
-                    id="date-input"
-                    placeholder="DD/MM/YYYY"
-                    value={text}
-                    onInput={this.onInput}
-                    onFocus={this.onFocus}
-                    onBlur={this.onBlur}
-                    className="textInput"
-                  />
-                </Keyboard>
-              ) : (
-                <Text>{text || "any"}</Text>
-              )}
-            </Box>
-            {active ? (
-              <Drop
-                target={this.ref}
-                align={{ top: "bottom", left: "left" }}
-                onClose={() => this.setState({ active: false })}
-              >
-                <Box pad="small">
-                  <Calendar size="small" date={date} onSelect={this.onSelect} />
-                </Box>
-              </Drop>
-            ) : null}
-          </Box>
-
           <Box
             pad="xsmall"
             direction="column"
             align="stretch"
-            justify="stretch"
-            fiull="horizontal"
+            justify="start"
+            basis="20%"
+            className="buttonGroupWrap"
           >
             <Heading margin="none" level={6}>
-              To:
+              Search:
             </Heading>
-            <Box>
-              {editBoard ? (
-                <Keyboard onDown={() => this.setState({ active: true })}>
-                  <TextInput
-                    ref={refTo => {
-                      this.refTo = refTo;
-                    }}
-                    border="none"
-                    margin="xsmall"
-                    id="date-input-to"
-                    placeholder="DD/MM/YYYY"
-                    value={textTo}
-                    onInput={this.onInputTo}
-                    onFocus={this.onFocusTo}
-                    onBlur={this.onBlurTo}
-                    className="textInput"
-                  />
-                </Keyboard>
-              ) : (
-                <Text>{text || "any"}</Text>
-              )}
+            <Box align="start" justify="center" basis="75%">
+              <ButtonGroup>
+                <Button onClick={() => this.handleSearchMode("recent")}>
+                  <Box
+                    pad="xsmall"
+                    //border="all"
+                    round="medium"
+                    background={
+                      searchMode === "recent" ? "brand" : "transparent"
+                    }
+                    border={searchMode === "recent" ? "all" : "none"}
+                  >
+                    <Text size="small">Recent</Text>
+                  </Box>
+                </Button>
+                <Button onClick={() => this.handleSearchMode("dates")}>
+                  <Box
+                    pad="xsmall"
+                    round="medium"
+                    background={
+                      searchMode === "dates" ? "brand" : "transparent"
+                    }
+                    border={searchMode === "dates" ? "all" : "none"}
+                  >
+                    <Text size="small">Dates</Text>
+                  </Box>
+                </Button>
+              </ButtonGroup>
             </Box>
-            {activeTo ? (
-              <Drop
-                target={this.refTo}
-                align={{ top: "bottom", left: "left" }}
-                onClose={() => this.setState({ activeTo: false })}
-              >
-                <Box pad="small">
-                  <Calendar
-                    size="small"
-                    date={dateTo}
-                    onSelect={this.onSelectTo}
-                  />
-                </Box>
-              </Drop>
-            ) : null}
           </Box>
-
-          {allAttributes.length > 0 ? (
+          {searchMode === "recent" && (
+            <Box
+              pad="xsmall"
+              direction="column"
+              align="stretch"
+              justify="start"
+            >
+              <Heading margin="none" level={6}>
+                Number:
+              </Heading>
+              <Box basis="75%">50</Box>
+            </Box>
+          )}
+          {searchMode === "dates" && (
+            <Box
+              pad="xsmall"
+              direction="column"
+              align="stretch"
+              justify="start"
+            >
+              <Heading margin="none" level={6}>
+                From:
+              </Heading>
+              <Box>
+                {editBoard ? (
+                  <Keyboard onDown={() => this.setState({ active: true })}>
+                    <TextInput
+                      ref={ref => {
+                        this.ref = ref;
+                      }}
+                      border="none"
+                      margin="xsmall"
+                      id="date-input"
+                      placeholder="DD/MM/YYYY"
+                      value={text}
+                      onInput={this.onInput}
+                      onFocus={this.onFocus}
+                      onBlur={this.onBlur}
+                      className="textInput"
+                    />
+                  </Keyboard>
+                ) : (
+                  <Text>{text || "any"}</Text>
+                )}
+              </Box>
+              {active ? (
+                <Drop
+                  target={this.ref}
+                  align={{ top: "bottom", left: "left" }}
+                  onClose={() => this.setState({ active: false })}
+                >
+                  <Box pad="small">
+                    <Calendar
+                      size="small"
+                      date={date}
+                      onSelect={this.onSelect}
+                    />
+                  </Box>
+                </Drop>
+              ) : null}
+              <Text color="red" size="xsmall">(*Not currently working)</Text>
+            </Box>
+          )}
+          {searchMode === "dates" && (
+            <Box
+              pad="xsmall"
+              direction="column"
+              align="stretch"
+              justify="stretch"
+              fiull="horizontal"
+            >
+              <Heading margin="none" level={6}>
+                To:
+              </Heading>
+              <Box>
+                {editBoard ? (
+                  <Keyboard onDown={() => this.setState({ active: true })}>
+                    <TextInput
+                      ref={refTo => {
+                        this.refTo = refTo;
+                      }}
+                      border="none"
+                      margin="xsmall"
+                      id="date-input-to"
+                      placeholder="DD/MM/YYYY"
+                      value={textTo}
+                      onInput={this.onInputTo}
+                      onFocus={this.onFocusTo}
+                      onBlur={this.onBlurTo}
+                      className="textInput"
+                    />
+                  </Keyboard>
+                ) : (
+                  <Text>{text || "any"}</Text>
+                )}
+              </Box>
+              {activeTo ? (
+                <Drop
+                  target={this.refTo}
+                  align={{ top: "bottom", left: "left" }}
+                  onClose={() => this.setState({ activeTo: false })}
+                >
+                  <Box pad="small">
+                    <Calendar
+                      size="small"
+                      date={dateTo}
+                      onSelect={this.onSelectTo}
+                    />
+                  </Box>
+                </Drop>
+              ) : null}
+            </Box>
+          )}
+          {/* {allAttributes.length > 0 ? ( */}
+          {OPTIONS.length > 0 ? (
             <Box
               pad="xsmall"
               direction="column"
@@ -481,7 +564,7 @@ class Board extends Component {
                     </Text>
                   )}
                 </Box>
-                <Box basis="20%" align="end">
+                <Box basis="20%" align="end" direction="row">
                   <Button
                     onClick={() => this.handleEditBoard()}
                     icon={
@@ -501,6 +584,16 @@ class Board extends Component {
                     // }}
                     plain
                   />
+                  {!editBoard && (
+                    <Button
+                      onClick={() => this.handleShareBoard()}
+                      icon={<Share color="white" size="small" />}
+                      gap="xsmall"
+                      margin="small"
+                      label={"Share"}
+                      plain
+                    />
+                  )}
                 </Box>
               </Box>
 
@@ -566,8 +659,21 @@ class Board extends Component {
                         //   side: "top"
                         // }}
                       >
-                        <Box basis="75%" className="breederNickname">
-                          {breeder.nickname}
+                        <Box
+                          basis="75%"
+                          className="breederNickname"
+                          direction="row"
+                          align="center"
+                          justify="start"
+                        >
+                          <div
+                            className="breederBar"
+                            style={{
+                              width: `${(breeder.breederPoints / totalPoints) *
+                                100}%`
+                            }}
+                          />
+                          <span>{breeder.nickname}</span>
                         </Box>
                         <Box basis="20%">{breeder.numberOfCats} Kitties</Box>
                         <Box basis="10%">{breeder.breederPoints}</Box>
@@ -582,9 +688,9 @@ class Board extends Component {
                             }
                           >
                             {focus === breeder.nickname ? (
-                              <CaretUp size="small" />
+                              <CaretDown size="small" />
                             ) : (
-                              <CaretDown size="small" color="secondary" />
+                              <CaretUp size="small" color="secondary" />
                             )}
                           </Button>
                         </Box>
@@ -669,7 +775,9 @@ class Board extends Component {
                                     round="xsmall"
                                     pad="xsmall"
                                     background="secondary"
-                                    key={`kittycattribute-${atr}`}
+                                    key={`kittycattribute-${kittyItem.kittyId}${
+                                      atr.description
+                                    }`}
                                   >
                                     <Text size="small">{atr.description}</Text>
                                   </Box>
@@ -839,8 +947,10 @@ class Board extends Component {
     theHeaders.append("Content-Type", "application/json");
     theHeaders.append("x-api-token", apiConfig.apiToken);
     // const API = "https://public.api.cryptokitties.co/v1/kitties";
+    // const API =
+    //   "https://public.api.cryptokitties.co/v1/kitties?orderBy=kitties.created_at&orderDirection=desc&limit=50";
     const API =
-      "https://public.api.cryptokitties.co/v1/kitties?orderBy=kitties.created_at&orderDirection=desc&limit=50";
+      "https://public.api.cryptokitties.co/v1/kitties?orderBy=created_at&orderDirection=desc&limit=50";
 
     // fetch(API + DEFAULT_QUERY)
     fetch(API, { headers: theHeaders })
@@ -862,8 +972,8 @@ class Board extends Component {
     let boardArray = [];
     const { attributeValues = this.props.queryParams, boardTitle } = this.state;
 
-    console.log("attributeValues", attributeValues);
-    const tempAttr = ["leopard", "pouty", "greymatter"];
+    // console.log("attributeValues", attributeValues);
+
     if (attributeValues.length < 1) {
       console.error("no cattributesvalues");
       return;
@@ -930,12 +1040,14 @@ class Board extends Component {
     });
     // breederArray.sort(this.compareCats);
     breederArray.sort(this.comparePoints);
-    console.log("breederArray", breederArray);
-    console.log("boardTitle", boardTitle);
-
+    // console.log("breederArray", breederArray);
+    // console.log("boardTitle", boardTitle);
+    const theTotalPoints = this.sumValues(breederArray, "breederPoints");
+    // console.log("theTotalPoints", theTotalPoints);
     this.generateName(attributeValues);
     console.log(this.generateName(attributeValues));
     this.setState({
+      totalPoints: theTotalPoints,
       boardData: boardArray,
       breederArray: breederArray,
       boardTitle: this.generateName(attributeValues)
@@ -953,12 +1065,17 @@ class Board extends Component {
     this.setState({ editBoard: !this.state.editBoard });
   };
 
+  handleShareBoard = () => {
+    console.log("share");
+  };
+
+  handleSearchMode = type => {
+    this.setState({ searchMode: type });
+  };
+
   calculatePoints = array => {
-    console.log("calculate Points");
-    const attributeMultiplier = 2;
     const attrCount = array.length;
     const points = attrCount * attrCount;
-    console.log("points", points);
     return points;
   };
   //////MISC

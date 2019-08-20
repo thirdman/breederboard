@@ -11,6 +11,11 @@
     // background: linear-gradient(90deg, #e520af, hsl(276, 90%, 41%));
     border: none;
   }
+  .buttonGroupWrap {
+    .ButtonGroup {
+      white-space: nowrap;
+    }
+  }
   .boardTitle,
   .titleString {
     text-transform: capitalize;
@@ -95,6 +100,15 @@
       .breederNickname {
         font-weight: 500;
         // font-size: 0.875rem;
+        .breederBar {
+          width: 50%;
+          height: 1rem;
+          display: inline-block;
+          background: violet;
+          border-radius: 0 0.25rem 0.25rem 0;
+          left: -0.4rem;
+          position: relative;
+        }
       }
     }
     &:before {

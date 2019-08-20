@@ -24,17 +24,17 @@ class BoardPageComponent extends Component {
     } = routerStore;
     const { id } = params;
 
-    const { allAttributes } = this.state;
+    const { allAttributes = UiStore.allAttributes } = this.state;
     // const { allAttributes } = UiStore;
     // console.log("UiStore", UiStore);
     // console.log("UiStore.productTheme", UiStore.productTheme);
-    console.log("params", params);
-    console.log("queryParams", queryParams);
+    // console.log("params", params);
+    // console.log("queryParams", queryParams);
     if (params.attributes) {
-      console.log("params.attributes", params.attributes);
+      // console.log("params.attributes", params.attributes);
     }
     if (params.id) {
-      console.log("params.id", params.id);
+      // console.log("params.id", params.id);
       // BoardStore.path = `boards/${params.id}`;
     }
 
@@ -57,6 +57,7 @@ class BoardPageComponent extends Component {
           fill="horizontal"
           alignSelf="center"
           basis="100%"
+          pad="small"
           // alignItems="center"
           // justifyContent="center"
           round="none"
@@ -66,6 +67,7 @@ class BoardPageComponent extends Component {
         >
           <Board
             allAttributes={allAttributes}
+            initialAttributes={UiStore.allAttributes}
             queryParams={
               queryParams && queryParams.attributes
                 ? queryParams.attributes.split(" ")
@@ -78,7 +80,7 @@ class BoardPageComponent extends Component {
   }
 
   handleLoad = async () => {
-    console.log("handling load");
+    // console.log("handling load");
     const {
       rootStore: { routerStore, UiStore, BoardStore }
     } = this.props;
@@ -86,15 +88,15 @@ class BoardPageComponent extends Component {
       routerState: { params, queryParams }
     } = routerStore;
     const { id } = params;
-    console.log("params", params);
-    console.log("queryParams", queryParams);
+    // console.log("params", params);
+    // console.log("queryParams", queryParams);
     if (queryParams.attributes) {
-      console.log("queryParams.attributes", queryParams.attributes);
+      // console.log("queryParams.attributes", queryParams.attributes);
       BoardStore.boardAttributes = queryParams.attributes;
-      console.log(
-        "queryParams.attributes.split",
-        queryParams.attributes.split(" ")
-      );
+      // console.log(
+      //   "queryParams.attributes.split",
+      //   queryParams.attributes.split(" ")
+      // );
     }
 
     this.setState({
@@ -114,11 +116,11 @@ class BoardPageComponent extends Component {
       rootStore: { UiStore }
     } = this.props;
 
-    console.log("address", address);
+    // console.log("address", address);
     const {
       rootStore: { AssetsStore }
     } = this.props;
-    console.log("AssetsStore");
+    // console.log("AssetsStore");
     let theHeaders = new Headers();
     this.setState({
       isLoadingAssets: true
@@ -148,9 +150,9 @@ class BoardPageComponent extends Component {
     const {
       rootStore: { UiStore }
     } = this.props;
-    console.log("hasMenu", UiStore.hasMenu);
+    // console.log("hasMenu", UiStore.hasMenu);
     UiStore.hasMenu = !UiStore.hasMenu;
-    console.log("handle menu", UiStore);
+    // console.log("handle menu", UiStore);
   };
   appLink = (routeName, id, stage) => {
     const {
