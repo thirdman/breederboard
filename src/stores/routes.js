@@ -3,7 +3,7 @@
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const checkForUserSignedIn = (fromState, toState, routerStore) => {
-  // console.log(fromState, toState);
+  // console.table(fromState, toState, routerStore);
   // const { rootStore: { authStore } } = routerStore;
   // if (authStore.user) {
   // eslint-disable-next-line
@@ -18,64 +18,20 @@ const checkForUserSignedIn = (fromState, toState, routerStore) => {
 export const routes = [
   {
     name: "home",
-    pattern: "/",
-    beforeEnter: checkForUserSignedIn
+    pattern: "/"
+    // beforeEnter: checkForUserSignedIn
   },
   {
     name: "board",
-    pattern: "/board/:id",
-    beforeEnter: checkForUserSignedIn
+    pattern: "/board/:id"
+    // beforeEnter: checkForUserSignedIn
   },
   {
     name: "boardWithAttributes",
-    pattern: "/board/:id/:attributes",
-    beforeEnter: checkForUserSignedIn
+    pattern: "/board/:id/:attributes"
+    // beforeEnter: checkForUserSignedIn
   },
 
-  {
-    name: "productsByType",
-    pattern: "/products/:id/:stage"
-    // beforeEnter: checkForUserSignedIn
-  },
-  {
-    name: "product",
-    pattern: "/product/:id/:stage"
-    // beforeEnter: checkForUserSignedIn
-  },
-  {
-    name: "render",
-    pattern: "/render/:id/:stage"
-    // beforeEnter: checkForUserSignedIn
-  },
-  {
-    name: "type",
-    pattern: "/type",
-    beforeEnter: checkForUserSignedIn
-  },
-  {
-    name: "create",
-    pattern: "/create/:id",
-    beforeEnter: checkForUserSignedIn
-  },
-  {
-    name: "options",
-    pattern: "/options/:id",
-    beforeEnter: checkForUserSignedIn
-  },
-  {
-    name: "preview",
-    pattern: "/preview/:id",
-    beforeEnter: checkForUserSignedIn
-  },
-  {
-    name: "confirm",
-    pattern: "/confirm/:id/:stage",
-    beforeEnter: checkForUserSignedIn
-  },
-  {
-    name: "checkout",
-    pattern: "/checkout/:id"
-  },
   {
     name: "login",
     pattern: "/login",

@@ -24,16 +24,19 @@ class BoardPageComponent extends Component {
     } = routerStore;
     const { id } = params;
 
-    const { allAttributes = UiStore.allAttributes } = this.state;
+    const {
+      allAttributes = UiStore.allAttributes,
+      isLoadingStore = true
+    } = this.state;
     const { allFancies } = UiStore;
     if (params.attributes) {
       // console.log("params.attributes", params.attributes);
     }
     if (params.id) {
-      // console.log("params.id", params.id);
-      // BoardStore.path = `boards/${params.id}`;
+      console.log("params.id", params.id);
+      BoardStore.path = `boards/${params.id}`;
     }
-
+    const isReady = BoardStore.ready();
     return (
       <Box
         className={classNames("BoardPage", {
@@ -61,17 +64,19 @@ class BoardPageComponent extends Component {
           // fill="horizontal"
           style={{ maxWidth: "1024px" }}
         >
-          <Board
-            allAttributes={allAttributes}
-            allFancies={allFancies}
-            initialAttributes={UiStore.allAttributes}
-            boardId={id}
-            queryParams={
-              queryParams && queryParams.attributes
-                ? queryParams.attributes.split(",")
-                : []
-            }
-          />
+          {!isLoadingStore && (
+            <Board
+              allAttributes={allAttributes}
+              allFancies={allFancies}
+              initialAttributes={UiStore.allAttributes}
+              boardId={id}
+              queryParams={
+                queryParams && queryParams.attributes
+                  ? queryParams.attributes.split(",")
+                  : []
+              }
+            />
+          )}
         </Box>
       </Box>
     );
@@ -86,6 +91,9 @@ class BoardPageComponent extends Component {
       routerState: { params, queryParams }
     } = routerStore;
     const { id } = params;
+    if (id) {
+      BoardStore.path = `boards/${id}`;
+    }
     // console.log("params", params);
     // console.log("queryParams", queryParams);
     if (queryParams.attributes) {
@@ -96,7 +104,13 @@ class BoardPageComponent extends Component {
       //   queryParams.attributes.split(" ")
       // );
     }
-
+    console.log("before ready");
+    await BoardStore.ready();
+    console.log(BoardStore.data.allAttributes);
+    console.log("ready");
+    await UiStore.ready();
+    // console.log(UiStore.allAttributes);
+    console.log("ready");
     this.setState({
       isLoadingAttributes: true,
       queryParams:
@@ -104,9 +118,13 @@ class BoardPageComponent extends Component {
           ? queryParams.attributes.split(",")
           : []
     });
-    await this.getAttributes();
-    // await this.getCollections();
-    this.setState({ isLoadingAttributes: false });
+    this.setState({ isLoadingStore: false });
+    // await this.getAttributes();
+
+    this.setState({
+      isLoadingAttributes: false,
+      isLoadingStore: false
+    });
   };
 
   getAttributes = address => {
@@ -134,38 +152,37 @@ class BoardPageComponent extends Component {
         this.setState({
           isLoadingAttributes: false
         });
-        UiStore.allAttributes = data;
+        // UiStore.allAttributes = data;
         // console.log("UiStore");
         return true;
       });
   };
 
-  getFancies = () => {
-    const {
-      rootStore: { UiStore }
-    } = this.props;
+  // getFancies = () => {
+  //   const {
+  //     rootStore: { UiStore }
+  //   } = this.props;
 
-    let theHeaders = new Headers();
-    this.setState({
-      isLoadingAssets: true
-    });
-    // Add a few headers
-    theHeaders.append("Content-Type", "application/json");
-    theHeaders.append("x-api-token", apiConfig.apiToken);
-    const API = "https://public.api.cryptokitties.co/v1/cattributes";
-    fetch(API, { headers: theHeaders })
-      .then(response => response.json())
-      .then(data => {
-        this.setState({ allAttributes: data });
-        this.setState({
-          isLoadingAttributes: false
-        });
-        UiStore.allAttributes = data;
+  //   let theHeaders = new Headers();
+  //   this.setState({
+  //     isLoadingAssets: true
+  //   });
+  //   // Add a few headers
+  //   theHeaders.append("Content-Type", "application/json");
+  //   theHeaders.append("x-api-token", apiConfig.apiToken);
+  //   const API = "https://public.api.cryptokitties.co/v1/cattributes";
+  //   fetch(API, { headers: theHeaders })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       this.setState({ allAttributes: data });
+  //       this.setState({
+  //         isLoadingAttributes: false
+  //       });
 
-        // console.log("UiStore");
-        return true;
-      });
-  };
+  //       // console.log("UiStore");
+  //       return true;
+  //     });
+  // };
 
   ////////////////
   // MISC

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import firebase from "firebase/app";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -17,7 +18,7 @@ import {
   Keyboard,
   TextInput,
   Button,
-  // Menu,
+  CheckBox,
   Layer,
   Text,
   Select
@@ -37,10 +38,10 @@ class BoardComponent extends Component {
     text: "",
     textTo: "",
     // attributeValues: [],
-    attributeOptions: [],
+    // attributeOptions: [],
     showKitties: false,
     editBoard: true,
-    boardTitle: "",
+    // boardTitle: "",
     searchMode: "recent",
     showShareModal: false,
     pageCount: 50
@@ -48,29 +49,43 @@ class BoardComponent extends Component {
   componentDidMount() {
     if (this.props.queryParams) {
       // console.log("component did mount", this.props.queryParams);
-
       if (this.props.queryParams && this.props.queryParams.length > 0) {
         this.getKitties();
       } else {
         this.setState({ editBoard: true });
       }
     }
+    const {
+      rootStore: { routerStore, UiStore, BoardStore }
+    } = this.props;
+    BoardStore.ready().then(() => {
+      const { attributeValues } = BoardStore.data;
+      console.log("did moutn, ready");
+      console.log(
+        "attributeValues",
+        attributeValues,
+        BoardStore.data.attributeValues
+      );
+      if (attributeValues && attributeValues.length > 0) {
+        this.getKitties();
+      }
+    });
   }
   componentDidUpdate() {
-    if (this.focusInput) {
-      const element = document.getElementById("date-input");
-      element.focus();
-    }
-    if (this.focusInputTo) {
-      const element = document.getElementById("date-input-to");
-      element.focus();
-    }
+    // if (this.focusInput) {
+    //   const element = document.getElementById("date-input");
+    //   element.focus();
+    // }
+    // if (this.focusInputTo) {
+    //   const element = document.getElementById("date-input-to");
+    //   element.focus();
+    // }
   }
 
   render() {
     const {
       rootStore: { routerStore, UiStore, BoardStore },
-      allAttributes,
+      // allAttributes,
       allFancies,
       initialAttributes,
       queryParams,
@@ -84,12 +99,12 @@ class BoardComponent extends Component {
       dateTo,
       text,
       textTo,
-      attributeValues = this.props.queryParams || [],
-      attributeOptions,
+      // attributeValues = this.props.queryParams || [],
+      attributeOptions = [],
       fancyOptionsFiltered = this.props.allFancies.map(fancy => fancy.value) ||
         [],
       // fancyOptions = this.props.allFancies || [],
-      fancyValue = "",
+
       isLoadingBoardData,
       kitties,
       boardData,
@@ -98,28 +113,40 @@ class BoardComponent extends Component {
       focus,
       editBoard,
       sourceCount,
-      boardTitle,
+      // boardTitle,
       totalPoints = 100,
       searchMode,
       showShareModal,
       pageCount
     } = this.state;
+    // const isPublic = false;
+
+    const {
+      isPublic = false,
+      attributeValues = [],
+      boardTitle,
+      fancyValue = []
+      // allAttributes
+    } = BoardStore.data;
+    const { allAttributes } = UiStore;
     // console.log("Board queryParams", queryParams);
     // console.log("attributeOptions", attributeOptions);
     // console.log("allAttributes", allAttributes);
     // const OPTIONS = ["First", "Second", "Third"];
-    let OPTIONS;
-    if (allAttributes.length < 1) {
-      // console.log("less than 0");
-      // console.log("this.props.initialAttributes", this.props.initialAttributes);
-      OPTIONS = this.props.initialAttributes.map(cattribute => cattribute);
-      // console.log("OPTIONS 1: ", OPTIONS);
-    } else {
-      // console.log("More than 0");
-      // console.log("this.props.allAttributes", this.props.allAttributes);
-      OPTIONS = allAttributes.map(cattribute => cattribute.description);
-      // console.log("OPTIONS 2: ", OPTIONS);
-    }
+    // let OPTIONS = [];
+
+    // if (allAttributes.length < 1) {
+    //   // console.log("less than 0");
+    //   // console.log("this.props.initialAttributes", this.props.initialAttributes);
+    //   OPTIONS = this.props.initialAttributes.map(cattribute => cattribute);
+    //   // console.log("OPTIONS 1: ", OPTIONS);
+    // } else {
+    //   // console.log("More than 0");
+    //   // console.log("this.props.allAttributes", this.props.allAttributes);
+    //   OPTIONS = allAttributes.map(cattribute => cattribute.description);
+    //   // console.log("OPTIONS 2: ", OPTIONS);
+    // }
+    let OPTIONS = allAttributes;
     const fancyOptions = this.props.allFancies.map(fancy => fancy.value) || [];
     let canGenerate = false;
     if (fancyValue && fancyValue[0]) {
@@ -130,7 +157,7 @@ class BoardComponent extends Component {
     }
     if (boardId) {
       console.log("boardId is", boardId);
-      BoardStore.path = `/boards/${boardId}`;
+      // BoardStore.path = `boards/${boardId}`;
       console.log("BoardStore.data", BoardStore.data);
     }
     const dateNow = new Date();
@@ -347,6 +374,7 @@ class BoardComponent extends Component {
                       // console.log("seatch text", searchText);
                       // console.log("OPTIONS", OPTIONS);
                       const regexp = new RegExp(searchText, "i");
+                      console.log("OPTIONS", OPTIONS);
                       this.setState({
                         attributeOptions: OPTIONS.filter(o => o.match(regexp))
                       });
@@ -441,39 +469,109 @@ class BoardComponent extends Component {
           ) : null}
         </Box>
 
-        <Box
-          pad="xsmall"
-          direction="row"
-          align="stretch"
-          justify="stretch"
-          border="bottom"
-          fill="horizontal"
-          background="#f3f3f3"
-        >
-          <Box direction="column" basis="80%">
-            <Heading margin="none" level={6}>
-              Cattributes:
-            </Heading>
-            {attributeValues && attributeValues.length > 0 ? null : (
-              <Box
-                direction="row"
-                align="start"
-                justify="start"
-                className="noData"
-                pad="small"
-              >
-                <Text classname="noData">No Attributes Selected</Text>
+        {BoardStore.isLoading ? (
+          <Box
+            pad="xsmall"
+            direction="row"
+            align="stretch"
+            justify="stretch"
+            border="bottom"
+            fill="horizontal"
+            background="#f3f3f3"
+          >
+            <Loading text="loading board meta..." />
+          </Box>
+        ) : (
+          <Box
+            pad="xsmall"
+            direction="row"
+            align="stretch"
+            justify="stretch"
+            border="bottom"
+            fill="horizontal"
+            background="#f3f3f3"
+          >
+            <Box direction="column" basis="70%">
+              <Heading margin="none" level={6}>
+                Cattributes:
+              </Heading>
+              {attributeValues && attributeValues.length > 0 ? null : (
+                <Box
+                  direction="row"
+                  align="start"
+                  justify="start"
+                  className="noData"
+                  pad="small"
+                >
+                  <Text classname="noData">No Attributes Selected</Text>
+                </Box>
+              )}
+              <Box direction="row" align="start" justify="start" gap="xsmall">
+                {attributeValues &&
+                  attributeValues.length > 0 &&
+                  attributeValues.map(attribute => (
+                    <Box
+                      className={classNames(
+                        "pill",
+                        editBoard ? "hasClose" : ""
+                      )}
+                      round="medium"
+                      background="secondary"
+                      key={`attributePill-${attribute}`}
+                      pad="xsmall"
+                      gap="xsmall"
+                      direction="row"
+                      animation="slideUp"
+                      align="center"
+                      justify="center"
+                    >
+                      <Text size="small" color="#fff">
+                        {attribute}
+                      </Text>
+                      {editBoard && (
+                        <Box
+                          border={{
+                            color: "white",
+                            size: "xsmall",
+                            style: "solid",
+                            side: "left"
+                          }}
+                          onClick={() => {
+                            this.removeAttribute(attribute);
+                          }}
+                        >
+                          <FormClose color="#fff" />
+                        </Box>
+                      )}
+                    </Box>
+                  ))}
               </Box>
-            )}
-            <Box direction="row" align="start" justify="start" gap="xsmall">
-              {attributeValues &&
-                attributeValues.length > 0 &&
-                attributeValues.map(attribute => (
+            </Box>
+            <Box direction="column" basis="30%">
+              <Heading margin="none" level={6}>
+                Fancy:
+              </Heading>
+              {!fancyValue && (
+                <Box
+                  direction="row"
+                  align="start"
+                  justify="start"
+                  className="noData"
+                  pad="small"
+                >
+                  <Text classname="noData">No Fancy Selected</Text>
+                </Box>
+              )}
+              <Box direction="row" align="start" justify="start" gap="xsmall">
+                {fancyValue && (
                   <Box
-                    className={classNames("pill", editBoard ? "hasClose" : "")}
+                    className={classNames(
+                      "pill",
+                      "fancy",
+                      editBoard ? "hasClose" : ""
+                    )}
                     round="medium"
                     background="secondary"
-                    key={`attributePill-${attribute}`}
                     pad="xsmall"
                     gap="xsmall"
                     direction="row"
@@ -482,7 +580,7 @@ class BoardComponent extends Component {
                     justify="center"
                   >
                     <Text size="small" color="#fff">
-                      {attribute}
+                      {fancyValue}
                     </Text>
                     {editBoard && (
                       <Box
@@ -493,93 +591,39 @@ class BoardComponent extends Component {
                           side: "left"
                         }}
                         onClick={() => {
-                          this.removeAttribute(attribute);
+                          this.removeFancy();
                         }}
                       >
                         <FormClose color="#fff" />
                       </Box>
                     )}
                   </Box>
-                ))}
-            </Box>
-          </Box>
-          <Box direction="column" basis="30%">
-            <Heading margin="none" level={6}>
-              Fancy:
-            </Heading>
-            {!fancyValue && (
-              <Box
-                direction="row"
-                align="start"
-                justify="start"
-                className="noData"
-                pad="small"
-              >
-                <Text classname="noData">No Fancy Selected</Text>
+                )}
               </Box>
-            )}
-            <Box direction="row" align="start" justify="start" gap="xsmall">
-              {fancyValue && (
-                <Box
-                  className={classNames(
-                    "pill",
-                    "fancy",
-                    editBoard ? "hasClose" : ""
-                  )}
-                  round="medium"
-                  background="secondary"
-                  pad="xsmall"
-                  gap="xsmall"
-                  direction="row"
-                  animation="slideUp"
-                  align="center"
-                  justify="center"
-                >
-                  <Text size="small" color="#fff">
-                    {fancyValue}
-                  </Text>
-                  {editBoard && (
-                    <Box
-                      border={{
-                        color: "white",
-                        size: "xsmall",
-                        style: "solid",
-                        side: "left"
-                      }}
-                      onClick={() => {
-                        this.removeFancy();
-                      }}
-                    >
-                      <FormClose color="#fff" />
-                    </Box>
-                  )}
-                </Box>
-              )}
+            </Box>
+            <Box
+              border="left"
+              basis="25%"
+              pad="small"
+              align="center"
+              justify="center"
+              // border="all"
+            >
+              <Button
+                onClick={() => this.getKitties()}
+                fill="horizontal"
+                round="small"
+                // border="secondary"
+                pad="large"
+                primary
+                disabled={!canGenerate}
+                size="large"
+                label={editBoard ? "Show Results!" : "Refresh"}
+                className="heroButton noWrap"
+              />
             </Box>
           </Box>
-          <Box
-            border="left"
-            basis="25%"
-            pad="small"
-            align="center"
-            justify="center"
-            // border="all"
-          >
-            <Button
-              onClick={() => this.getKitties()}
-              fill="horizontal"
-              round="small"
-              // border="secondary"
-              pad="large"
-              primary
-              disabled={!canGenerate}
-              size="large"
-              label={editBoard ? "Show Results!" : "Refresh"}
-              className="heroButton noWrap"
-            />
-          </Box>
-        </Box>
-
+        )}
         <Box
           direction="column"
           alignItems="start"
@@ -801,8 +845,22 @@ class BoardComponent extends Component {
                               width: `${(breeder.breederPoints / totalPoints) *
                                 100}%`
                             }}
-                          />
+                          >
+                            
+                          </div>
                           <span>{breeder.nickname}</span>
+                          
+                              {breeder.fancyArray &&
+                                breeder.fancyArray.length > 0 && breeder.fancyArray.map(fancy => (
+                                  <Box className="fancyWrap">
+                                            <img
+                                    src={fancy.kittyImg}
+                                    alt=""
+                                    style={{ width: "1.5rem" }}
+                                  />
+                                  </Box>
+                                ))}
+                            
                         </Box>
                         <Box basis="20%">{breeder.numberOfCats} Kitties</Box>
                         <Box basis="10%">{breeder.breederPoints}</Box>
@@ -953,12 +1011,7 @@ class BoardComponent extends Component {
             onEsc={() => this.setShowShare(false)}
             onClickOutside={() => this.setShowShare(false)}
           >
-            <Box
-              pad="medium"
-              round="small"
-              elevation="medium"
-              background="white"
-            >
+            <Box pad="none" round="small" elevation="medium" background="white">
               <CopyToClipboard
                 text={this.generateShareString(
                   domain,
@@ -972,7 +1025,7 @@ class BoardComponent extends Component {
                   }, 3000);
                 }}
               >
-                <Box pad="small" direction="row" gap="small">
+                <Box pad="medium" direction="row" gap="small">
                   <TextInput
                     value={this.generateShareString(
                       domain,
@@ -991,8 +1044,36 @@ class BoardComponent extends Component {
                   )}
                 </Box>
               </CopyToClipboard>
-
-              <Button label="close" onClick={() => this.setShowShare(false)} />
+              <Box pad="medium">
+                <CheckBox
+                  checked={!isPublic}
+                  label={"Private"}
+                  onChange={event =>
+                    this.handleSetPrivate(event.target.checked)
+                  }
+                />
+              </Box>
+              <Box
+                background="light"
+                pad="small"
+                align="center"
+                justify="start"
+              >
+                <Button
+                  label="close"
+                  border={{
+                    side: "all",
+                    color: "red",
+                    style: "solid",
+                    size: "small"
+                  }}
+                  color="accent-1"
+                  icon={<FormClose />}
+                  onClick={() => this.setShowShare(false)}
+                >
+                  Close
+                </Button>
+              </Box>
             </Box>
           </Layer>
         )}
@@ -1084,13 +1165,13 @@ class BoardComponent extends Component {
 
   setAttribute = value => {
     const {
-      rootStore: { BoardStore }
+      rootStore: { UiStore, BoardStore }
     } = this.props;
-    // console.group("setattribute");
+    const { fancyValue } = BoardStore.data;
     const { attributeValues = this.props.queryParams || [] } = this.state;
-    const { allAttributes } = this.props;
-    const plainAttributes =
-      allAttributes.map(cattribute => cattribute.description) || [];
+    const { allAttributes } = UiStore;
+    // const plainAttributes =
+    //   allAttributes.map(cattribute => cattribute.description) || [];
 
     let newAttributeValues = [...attributeValues];
     if (attributeValues.includes(value)) {
@@ -1100,17 +1181,19 @@ class BoardComponent extends Component {
     } else {
       newAttributeValues.push(value);
     }
+    const newBoardTitle = this.generateName(attributeValues, fancyValue);
     this.setState({
       value: value,
-      options: plainAttributes,
-      attributeOptions: plainAttributes,
+      options: allAttributes,
+      attributeOptions: allAttributes,
       attributeValues: newAttributeValues
     });
     BoardStore.update({
       // value: value,
-      options: plainAttributes,
-      attributeOptions: plainAttributes,
-      attributeValues: newAttributeValues
+      options: allAttributes,
+      attributeOptions: allAttributes,
+      attributeValues: newAttributeValues,
+      boardTitle: newBoardTitle
     });
     // console.groupEnd();
   };
@@ -1118,26 +1201,29 @@ class BoardComponent extends Component {
     const {
       rootStore: { BoardStore }
     } = this.props;
+    const { attributeValues } = BoardStore.data;
     // const { allFancies } = this.props;
     // const fancyOptions = this.props.allFancies.map(fancy => fancy.value) || [];
     const thisValue = [`${value}`];
+    const newBoardTitle = this.generateName(attributeValues, thisValue);
     this.setState({
       fancyValue: thisValue
     });
     BoardStore.update({
-      fancyValue: thisValue
+      fancyValue: thisValue,
+      boardTitle: newBoardTitle
     });
     // console.groupEnd();
   };
 
   removeAttribute = value => {
     const {
-      rootStore: { BoardStore }
+      rootStore: { UiStore, BoardStore }
     } = this.props;
     const { attributeValues } = this.state;
-    const { allAttributes } = this.props;
-    const plainAttributes =
-      allAttributes.map(cattribute => cattribute.description) || [];
+    const { allAttributes } = UiStore;
+    // const plainAttributes =
+    //   allAttributes.map(cattribute => cattribute.description) || [];
     let newAttributeValues = [...attributeValues];
     newAttributeValues = newAttributeValues.filter(
       attribute => attribute !== value
@@ -1145,13 +1231,13 @@ class BoardComponent extends Component {
 
     this.setState({
       value: value,
-      options: plainAttributes,
-      attributeOptions: plainAttributes,
+      options: allAttributes,
+      attributeOptions: allAttributes,
       attributeValues: newAttributeValues
     });
     BoardStore.update({
-      ptions: plainAttributes,
-      attributeOptions: plainAttributes,
+      options: allAttributes,
+      attributeOptions: allAttributes,
       attributeValues: newAttributeValues
     });
   };
@@ -1160,10 +1246,10 @@ class BoardComponent extends Component {
       rootStore: { BoardStore }
     } = this.props;
     this.setState({
-      fancyValue: undefined
+      fancyValue: []
     });
     BoardStore.update({
-      fancyValue: undefined
+      fancyValue: []
     });
   };
 
@@ -1205,13 +1291,11 @@ class BoardComponent extends Component {
     } = this.props;
 
     let boardArray = [];
-    const {
-      attributeValues = this.props.queryParams,
-      boardTitle,
-      fancyValue
-    } = this.state;
+
+    const { attributeValues, fancyValue = [] } = BoardStore.data;
+
     // console.log("fancyValue", fancyValue);
-    const tempFancyValue = fancyValue[0];
+    const tempFancyValue = fancyValue.length && fancyValue[0];
     // console.log("attributeValues", attributeValues);
 
     if (attributeValues.length < 1 && !fancyValue) {
@@ -1275,13 +1359,22 @@ class BoardComponent extends Component {
       });
     // console.log("boardArray", boardArray);
     let breederArray = [];
+    let fancyArray = [];
+
     boardArray.map(row => {
       if (breederArray.filter(i => i.nickname === row.nickname).length > 0) {
         return;
       }
+
       const thisUserKitties = boardArray.filter(
         rowItem => rowItem.nickname === row.nickname
       );
+      const thisUserFancyKitties = thisUserKitties.filter(
+        rowItem => rowItem.isFancy === true
+      );
+      // console.log("thisuserKitties", thisUserKitties);
+      // console.log("thisUserFancyKitties", thisUserFancyKitties);
+
       const numberOfCats = thisUserKitties.length;
       // const reducer = (accumulator, currentValue) => accumulator + currentValue;
       const breederPoints = this.sumValues(thisUserKitties, "points");
@@ -1292,29 +1385,35 @@ class BoardComponent extends Component {
         nickname: row.nickname,
         kitties: thisUserKitties,
         numberOfCats: numberOfCats,
-        breederPoints: breederPoints
+        breederPoints: breederPoints,
+        fancyArray: thisUserFancyKitties
       };
       breederArray.push(breederObj);
     });
     breederArray.sort(this.comparePoints);
     const theTotalPoints = this.sumValues(breederArray, "breederPoints");
-    this.generateName(attributeValues);
+    console.log("breederArray", breederArray);
+    // console.log("will generate NAME FROM", attributeValues, fancyValue);
+    const newBoardTitle = this.generateName(attributeValues, fancyValue);
     this.setState({
       totalPoints: theTotalPoints,
       boardData: boardArray,
-      breederArray: breederArray,
-      boardTitle: this.generateName(attributeValues)
+      breederArray: breederArray
+      // boardTitle: newBoardTitle
       //boardTitle === "" ? this.generateName(attributeValues) : boardTitle
     });
+    let dateNow = firebase.firestore.Timestamp.fromDate(new Date());
     BoardStore.update({
       breederArray: breederArray,
       kitties: data,
       boardData: boardArray,
-      boardTitle: boardTitle,
+      boardTitle: newBoardTitle,
+      title: newBoardTitle,
       titleEdited: false,
       totalPoints: theTotalPoints,
       attributeValues: attributeValues,
-      fancyValue: fancyValue
+      fancyValue: fancyValue,
+      dateModified: dateNow
     });
   };
 
@@ -1362,6 +1461,16 @@ class BoardComponent extends Component {
     });
     return `${domain}/board/${boardId}?attributes=${attributeString}`;
   };
+
+  handleSetPrivate = checked => {
+    const {
+      rootStore: { BoardStore }
+    } = this.props;
+
+    this.setState({ isPublic: checked });
+    BoardStore.update({ isPublic: checked });
+  };
+
   //////MISC
 
   compareCats(a, b) {
@@ -1387,10 +1496,24 @@ class BoardComponent extends Component {
     this.setState({ focus: nickname });
   };
 
-  generateName = array => {
+  generateName = (array, fancyArray) => {
     // const name = array.join(", ") + " breederboard";
     // const name = array.join(", ");
-    const upperCaseArray = array.map(item => this.makeUpper(item));
+    console.log("fancYarray: ", fancyArray);
+    console.log("fancYarray: ", fancyArray && fancyArray.length > 0);
+    console.log(
+      "fancYarray: ",
+      fancyArray && fancyArray.length > 0 && fancyArray[0]
+    );
+    const fancyName = fancyArray && fancyArray.length > 0 && fancyArray[0];
+    let upperCaseArray = [];
+    if (fancyName) {
+      upperCaseArray.push(fancyName);
+    }
+    array.map(item => {
+      this.makeUpper(item);
+      upperCaseArray.push(item);
+    });
 
     const name = [
       upperCaseArray.slice(0, -1).join(", "),

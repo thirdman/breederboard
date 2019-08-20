@@ -8,6 +8,8 @@ import config from "../firebase-config";
 let boardId;
 
 const BoardStore = new Document({ mode: "on" });
+BoardStore.path = `boardId/${boardId}`;
+
 BoardStore.boardId = boardId;
 BoardStore.name = "New baord";
 BoardStore.attributes = [];

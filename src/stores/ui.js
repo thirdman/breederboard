@@ -5,6 +5,7 @@ import config from "../firebase-config";
 
 !firebase.apps.length ? firebase.initializeApp(config) : firebase.app();
 
+initFirestorter({ firebase: firebase });
 // let templateId;
 
 const UiStore = new Document({ mode: "on" });

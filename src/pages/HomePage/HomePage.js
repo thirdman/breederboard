@@ -1,7 +1,9 @@
 import React, { Component } from "react";
+import firebase from "firebase/app";
+import { formatDistanceStrict, fromUnixTime } from "date-fns";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
-import { Box, Button, Collapsible, Heading, Stack, Text } from "grommet";
+import { Box, Button, Text, Collapsible, Heading } from "grommet";
 import { Fireball, View } from "grommet-icons";
 import Board from "../../components/Board/Board";
 import "./HomePage.scss";
@@ -25,12 +27,14 @@ class HomePageComponent extends Component {
     const { isCreating } = this.state;
     const { id } = params;
     const { allAttributes } = UiStore;
-    console.log("UiStore", UiStore);
+    // console.log("UiStore", UiStore);
     // console.log("UiStore.productTheme", UiStore.productTheme);
     // if (params.id) {
     //   BoardStore.path = `baords/${params.id}`;
     // }
+    const { docs } = BoardsStore;
 
+    const dateNow = new Date();
     return (
       <div
         className={classNames("HomePage", {
@@ -62,7 +66,7 @@ class HomePageComponent extends Component {
         </Box>
 
         <Box
-          direction="columns"
+          direction="column"
           justify="center"
           align="center"
           // justifyContent="center"
@@ -82,6 +86,57 @@ class HomePageComponent extends Component {
             />
           )}
           {isCreating && <Loading text="creating board..." />}
+          {BoardsStore.isLoading ? (
+            <Box pad="medium">
+              <Loading text="Loading Boards" />
+            </Box>
+          ) : (
+            <Box fill="horizontal" align="between" justify="center">
+              <Box
+                className="BoardRow header"
+                direction="row"
+                background="white"
+                margin="xsmall"
+                gap="small"
+              >
+                <Box basis="85%" padding="small">
+                  Attributes
+                </Box>
+                <Box basis="15%" padding="small">
+                  Updated
+                </Box>
+              </Box>
+              {docs.map(doc => {
+                console.log("doc.data", doc.data);
+                return (
+                  <Box
+                    className="BoardRow"
+                    key={doc.id}
+                    onClick={() => this.appLink("board", doc.id)}
+                    direction="row"
+                    background="accent-1"
+                    margin="xsmall"
+                    gap="small"
+                  >
+                    <Box basis="85%" padding="small">
+                      {doc.data.title}
+                    </Box>
+                    <Box basis="15%" padding="small">
+                      <Text size="small">
+                        {doc.data.dateModified &&
+                          doc.data.dateModified.seconds &&
+                          formatDistanceStrict(
+                            fromUnixTime(doc.data.dateModified.seconds),
+                            Date.now()
+                          )}{" "}
+                        ago
+                      </Text>
+                    </Box>
+                  </Box>
+                );
+              })}
+            </Box>
+          )}
         </Box>
       </div>
     );
@@ -134,10 +189,13 @@ class HomePageComponent extends Component {
       rootStore: { BoardsStore, UiStore }
     } = this.props;
     this.setState({ isCreating: true });
+    let dateNow = firebase.firestore.Timestamp.fromDate(new Date());
     console.log("BoardStore", BoardsStore);
     await BoardsStore.ready();
     const doc = await BoardsStore.add({
       editBoard: true,
+      dateCreated: dateNow,
+      dateModified: dateNow,
       title: "new board",
       allAttributes: UiStore.allAttributes,
       isPublic: false
