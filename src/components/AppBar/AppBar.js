@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Button, Heading } from "grommet";
-import { FormAdd } from "grommet-icons";
+import { StatusInfo } from "grommet-icons";
 import "./AppBar.scss";
 import logo from "../../assets/icons/logo.svg";
 const AppBar = props => {
@@ -49,10 +49,12 @@ const AppBar = props => {
           // primary
           round="medium"
           color="primary"
-          icon={<FormAdd />}
+          // color={props.showSidebar ? "red" : "transparent"}
+          icon={<StatusInfo />}
           gap="xsmall"
-          onClick={() => props.appLink("board", "new")}
-          label="New Board"
+          onClick={() => props.handleInfo()}
+          // label="New Board"
+          className={props.showSidebar ? "infoButton active" : "infoButton"}
         />
       </Box>
     </Box>

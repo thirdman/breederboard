@@ -4,7 +4,7 @@ import { formatDistanceStrict, fromUnixTime } from "date-fns";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { Box, Button, Text, Collapsible, Heading } from "grommet";
-import { Fireball, View } from "grommet-icons";
+import { FormAdd, View } from "grommet-icons";
 import Board from "../../components/Board/Board";
 import "./HomePage.scss";
 import apiConfig from "./../../apiConfig";
@@ -61,7 +61,7 @@ class HomePageComponent extends Component {
           justifyContent="center"
         >
           <Heading level={2} margin="large">
-            Attribute leaderboards for CryptoKitties
+            Attribute leaderboards for Kitty Breeders
           </Heading>
         </Box>
 
@@ -83,6 +83,7 @@ class HomePageComponent extends Component {
               round="medium"
               onClick={() => this.handleNew()}
               label="New Board"
+              icon={<FormAdd color="primary" />}
             />
           )}
           {isCreating && <Loading text="creating board..." />}
@@ -91,48 +92,136 @@ class HomePageComponent extends Component {
               <Loading text="Loading Boards" />
             </Box>
           ) : (
-            <Box fill="horizontal" align="between" justify="center">
+            <Box
+              fill="horizontal"
+              align="center"
+              justify="between"
+              className="BoardList"
+              style={{ maxWidth: "1024px" }}
+            >
               <Box
                 className="BoardRow header"
                 direction="row"
-                background="white"
                 margin="xsmall"
+                fill="horizontal"
+                justify="stretch"
                 gap="small"
               >
-                <Box basis="85%" padding="small">
-                  Attributes
+                <Box basis="80%" padding="small">
+                  <Heading margin="none" level={6}>
+                    Attributes
+                  </Heading>
                 </Box>
-                <Box basis="15%" padding="small">
-                  Updated
+                <Box basis="20%" padding="small">
+                  <Heading margin="none" level={6}>
+                    Updated
+                  </Heading>
+                </Box>
+
+                <Box basis="5%" padding="small">
+                  <Heading level={6} margin="none" />
                 </Box>
               </Box>
               {docs.map(doc => {
                 console.log("doc.data", doc.data);
+                const isNotNew = doc.data && doc.data.isNew === "no";
                 return (
-                  <Box
-                    className="BoardRow"
-                    key={doc.id}
-                    onClick={() => this.appLink("board", doc.id)}
-                    direction="row"
-                    background="accent-1"
-                    margin="xsmall"
-                    gap="small"
-                  >
-                    <Box basis="85%" padding="small">
-                      {doc.data.title}
+                  isNotNew && (
+                    <Box
+                      className="BoardRow"
+                      key={doc.id}
+                      onClick={() => this.appLink("board", doc.id)}
+                      direction="row"
+                      round="small"
+                      // background="accent-1"
+                      margin="xsmall"
+                      gap="small"
+                      pad="xsmall"
+                      align="stretch"
+                      justify="stretch"
+                      // border="bottom"
+                      fill="horizontal"
+                      background="#f3f3f3"
+                      border="bottom"
+                      animation="slideUp"
+                    >
+                      <Box
+                        pad="xsmall"
+                        direction="row"
+                        align="stretch"
+                        justify="stretch"
+                        fill="horizontal"
+                        basis="80%"
+                      >
+                        <Box
+                          direction="row"
+                          align="start"
+                          justify="start"
+                          gap="xsmall"
+                        >
+                          {doc.data.fancyValue && doc.data.fancyValue[0] && (
+                            <Box
+                              className={classNames("pill", "fancy")}
+                              round="small"
+                              background="secondary"
+                              key={`attributePill-${doc.data.fancyValue[0]}`}
+                              pad="xsmall"
+                              gap="xsmall"
+                              direction="row"
+                              animation="slideUp"
+                              align="center"
+                              justify="center"
+                            >
+                              <Text size="small" color="#fff">
+                                {doc.data.fancyValue[0]}
+                              </Text>
+                            </Box>
+                          )}
+                          {doc.data.attributeValues.map(attribute => (
+                            <Box
+                              className={classNames("pill", "attribute")}
+                              round="medium"
+                              background="secondary"
+                              key={`attributePill-${attribute}`}
+                              pad="xsmall"
+                              gap="xsmall"
+                              direction="row"
+                              animation="slideUp"
+                              align="center"
+                              justify="center"
+                            >
+                              <Text size="small" color="#fff">
+                                {attribute}
+                              </Text>
+                            </Box>
+                          ))}
+                        </Box>
+                      </Box>
+
+                      <Box basis="20%" pad="small">
+                        {doc.data.titleEdited && (
+                          <Box>{doc.data.boardTitle}</Box>
+                        )}
+                        <Text size="small">
+                          {doc.data.dateModified &&
+                            doc.data.dateModified.seconds &&
+                            formatDistanceStrict(
+                              fromUnixTime(doc.data.dateModified.seconds),
+                              Date.now()
+                            )}{" "}
+                          ago
+                        </Text>
+                      </Box>
+                      <Box
+                        basis="5%"
+                        pad="small"
+                        align="center"
+                        justify="stretch"
+                      >
+                        <View className="viewIcon" />
+                      </Box>
                     </Box>
-                    <Box basis="15%" padding="small">
-                      <Text size="small">
-                        {doc.data.dateModified &&
-                          doc.data.dateModified.seconds &&
-                          formatDistanceStrict(
-                            fromUnixTime(doc.data.dateModified.seconds),
-                            Date.now()
-                          )}{" "}
-                        ago
-                      </Text>
-                    </Box>
-                  </Box>
+                  )
                 );
               })}
             </Box>
@@ -197,6 +286,7 @@ class HomePageComponent extends Component {
       dateCreated: dateNow,
       dateModified: dateNow,
       title: "new board",
+      isNew: "yes",
       allAttributes: UiStore.allAttributes,
       isPublic: false
     });

@@ -11,6 +11,8 @@ import config from "../firebase-config";
 const BoardsStore = new Collection("boards", { mode: "on" });
 // BoardsStore.query = ref => ref.where("status", ">=", "a");
 // BoardsStore.query = ref => ref.where("isPublic", "==", true);
-BoardsStore.query = ref => ref.orderBy("dateCreated", "desc");
+// BoardsStore.query = ref =>
+//  ref.where("isNew", "==", "no").orderBy("dateCreated", "desc");
+BoardsStore.query = ref => ref.orderBy("dateModified", "desc");
 
 export { BoardsStore };

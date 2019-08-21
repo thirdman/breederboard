@@ -8,7 +8,7 @@ import { history } from "./utils/history";
 import Shell from "./Shell";
 import "./App.scss";
 
-import { Box, Button, Grommet, Layer } from "grommet";
+import { Box, Button, Grommet, Text, Collapsible } from "grommet";
 import { Close } from "grommet-icons";
 import themeFile from "./theme.json";
 import AppBar from "./components/AppBar/AppBar";
@@ -20,10 +20,11 @@ historyAdapter.observeRouterStateChanges();
 
 class App extends Component {
   state = {
-    showSidebar: false
+    showSidebar: false,
+    showInfo: false
   };
   render() {
-    const { showSidebar } = this.state;
+    const { showSidebar, showInfo } = this.state;
 
     return (
       <Grommet
@@ -34,13 +35,15 @@ class App extends Component {
       >
         <Box>
           <AppBar
+            showSidebar={showSidebar}
             appLink={this.appLink}
             handleMenu={() =>
               this.setState({ showSidebar: !this.state.showSidebar })
             }
+            handleInfo={this.handleInfo}
           />
           <Box direction="row" flex full overflow={{ horizontal: "hidden" }}>
-            {showSidebar && (
+            {/* {showSidebar && (
               <Layer
                 full
                 plain
@@ -48,8 +51,8 @@ class App extends Component {
                 modal={true}
                 onEsc={() => this.setState({ showSidebar: false })}
                 onClickOutside={() => this.setState({ showSidebar: false })}
-                position="left"
-                responsive={false}
+                position="right"
+                // responsive={false}
                 margin={{
                   top: "73px"
                 }}
@@ -59,65 +62,90 @@ class App extends Component {
                   flex
                   width="medium"
                   // full
+                  pad="medium"
                   background="light-2"
                   elevation="small"
-                  align="center"
-                  justify="center"
+                  align="start"
+                  justify="start"
                 >
                   <Button
                     icon={<Close />}
                     onClick={() => this.setState({ showSidebar: false })}
                   />
 
-                  <Button
-                    onClick={() => this.appLink("home", "none", "none")}
-                    margin="medium"
-                  >
-                    Home
-                  </Button>
-                  <Button
-                    onClick={() => this.appLink("products", "none", "none")}
-                    margin="medium"
-                  >
-                    Products
-                  </Button>
-                  <Button
-                    onClick={() => this.appLink("user", "none", "none")}
-                    margin="medium"
-                  >
-                    Assets
-                  </Button>
-                  <Button
-                    onClick={() => this.appLink("about", "none", "none")}
-                    margin="medium"
-                  >
-                    About
-                  </Button>
+                  <Box>A thirdman plan.</Box>
+                  <Box>Original Idea: @angrymOOse</Box>
                 </Box>
               </Layer>
-            )}
-            {/* <Collapsible direction="horizontal" open={showSidebar}>
+            )} */}
+
+            <Box flex align="stretch" justify="start">
+              <Provider rootStore={rootStore}>
+                <Shell handleToggle={this.handleToggle} />
+                {/* {showInfo && <Box>info</Box>} */}
+              </Provider>
+            </Box>
+            <Collapsible direction="horizontal" open={showSidebar}>
               <Box
                 flex
                 width="medium"
                 // full
-                background="light-2"
+                pad="medium"
+                // background="light-2"
+                background="brand"
+                color="white"
                 elevation="small"
-                align="center"
-                justify="center"
+                align="start"
+                justify="start"
+                className="sideBar"
               >
-                sidebar
-                <Button pad="medium">Home</Button>
-                <Button pad="medium">products</Button>
-                <Button pad="medium">assets</Button>
-                <Button pad="medium">about</Button>
+                <Button
+                  icon={<Close color="white" />}
+                  onClick={() => this.setState({ showSidebar: false })}
+                />
+                <Box
+                  direction="column"
+                  pad="small"
+                  align="start"
+                  fill="horizontal"
+                  justify="between"
+                  className="pointsDescription"
+                  gap="small"
+                  border="bottom"
+                >
+                  <Box direction="row" justify="between" fill="horizontal">
+                    <Text>1 cattribute:</Text> <strong>1pt</strong>
+                  </Box>
+
+                  <Box direction="row" justify="between" fill="horizontal">
+                    <Text>2 cattributes:</Text>
+                    <strong>4pt</strong>
+                  </Box>
+                  <Box direction="row" justify="between" fill="horizontal">
+                    <Text>3 cattributes:</Text>
+                    <strong>9pt</strong>
+                  </Box>
+                  <Box direction="row" justify="between" fill="horizontal">
+                    <Text>Fancy:</Text>
+                    <strong>10pt</strong>
+                  </Box>
+                  <Box direction="row" justify="between" fill="horizontal">
+                    <Text>Fancy (top 10):</Text>
+                    <strong>20pt</strong>
+                  </Box>
+                  <Box direction="row" justify="between" fill="horizontal">
+                    <Text>Fancy (First):</Text>
+                    <strong>100pt</strong>
+                  </Box>
+                </Box>
+                <Box className="credits">
+                  <Box margin="xsmall">
+                    Breederboard is thirdman plot, based on original Idea by
+                    @rudemOOse
+                  </Box>
+                </Box>
               </Box>
-            </Collapsible> */}
-            <Box flex align="stretch" justify="start">
-              <Provider rootStore={rootStore}>
-                <Shell handleToggle={this.handleToggle} />
-              </Provider>
-            </Box>
+            </Collapsible>
           </Box>
         </Box>
       </Grommet>
@@ -136,6 +164,13 @@ class App extends Component {
   //   this.setState({ showSidebar: false });
   //   routerStore.goTo(routeName, { id: id });
   // };
+  handleInfo = () => {
+    this.setState({
+      showInfo: !this.state.showInfo,
+      showSidebar: !this.state.showSidebar
+    });
+  };
+
   appLink = (routeName, id, attributes) => {
     const { routerStore } = rootStore;
     this.setState({ showSidebar: false });

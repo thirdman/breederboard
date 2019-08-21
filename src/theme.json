@@ -2,6 +2,7 @@
   "global": {
     "colors": {
       "brand": "#e520af",
+      "primary": "#e520af",
       "background": "#f9f9f9",
       "feature": "#cccccc",
       "colorInput": "#dddddd",

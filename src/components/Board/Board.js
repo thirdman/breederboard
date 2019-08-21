@@ -9,7 +9,15 @@ import apiConfig from "./../../apiConfig";
 import Loading from "../Loading/Loading";
 import ButtonGroup from "../ButtonGroup/ButtonGroup";
 
-import { FormClose, CaretDown, CaretUp, FormEdit, Share } from "grommet-icons";
+import {
+  FormClose,
+  CaretDown,
+  CaretUp,
+  FormEdit,
+  Share,
+  Checkmark,
+  Close
+} from "grommet-icons";
 import {
   Box,
   Heading,
@@ -41,6 +49,7 @@ class BoardComponent extends Component {
     // attributeOptions: [],
     showKitties: false,
     editBoard: true,
+    editTitle: false,
     // boardTitle: "",
     searchMode: "recent",
     showShareModal: false,
@@ -112,6 +121,7 @@ class BoardComponent extends Component {
       showKitties,
       focus,
       editBoard,
+      editTitle,
       sourceCount,
       // boardTitle,
       totalPoints = 100,
@@ -547,7 +557,7 @@ class BoardComponent extends Component {
                   ))}
               </Box>
             </Box>
-            <Box direction="column" basis="30%">
+            <Box direction="column" basis="40%">
               <Heading margin="none" level={6}>
                 Fancy:
               </Heading>
@@ -563,14 +573,14 @@ class BoardComponent extends Component {
                 </Box>
               )}
               <Box direction="row" align="start" justify="start" gap="xsmall">
-                {fancyValue && (
+                {fancyValue && fancyValue[0] && (
                   <Box
                     className={classNames(
                       "pill",
                       "fancy",
                       editBoard ? "hasClose" : ""
                     )}
-                    round="medium"
+                    round="small"
                     background="secondary"
                     pad="xsmall"
                     gap="xsmall"
@@ -580,7 +590,7 @@ class BoardComponent extends Component {
                     justify="center"
                   >
                     <Text size="small" color="#fff">
-                      {fancyValue}
+                      {fancyValue[0]}
                     </Text>
                     {editBoard && (
                       <Box
@@ -614,6 +624,7 @@ class BoardComponent extends Component {
                 fill="horizontal"
                 round="small"
                 // border="secondary"
+                margin={{ top: "small" }}
                 pad="large"
                 primary
                 disabled={!canGenerate}
@@ -681,7 +692,6 @@ class BoardComponent extends Component {
                 ))}
             </Box>
           )}
-
           {/* BOARD CONTENT */}
           {//attributeValues.length && !editBoard ? (
           canGenerate && !editBoard ? (
@@ -718,13 +728,64 @@ class BoardComponent extends Component {
                 className="theBoardHeader"
               >
                 <Box basis="80%" pad="none">
-                  <Heading
-                    level={3}
-                    margin={{ top: "small", bottom: "small" }}
-                    className="boardTitle"
-                  >
-                    {boardTitle}
-                  </Heading>
+                  <Box direction="row">
+                    <Heading
+                      level={3}
+                      margin={{ top: "small", bottom: "small" }}
+                      className="boardTitle"
+                    >
+                      {!editTitle ? (
+                        <span>{boardTitle}</span>
+                      ) : (
+                        <TextInput
+                          // border="none"
+                          margin="xsmall"
+                          // id="date-input"
+                          // placeholder="DD/MM/YYYY"
+                          defaultValue={boardTitle || this.state.boardTitle}
+                          onChange={event => this.setTitle(event.target.value)}
+                          className="textInput"
+                        />
+                      )}
+                    </Heading>
+                    {!editTitle ? (
+                      <Button
+                        className="editTitleButton"
+                        onClick={() => this.handleEditTitle()}
+                        icon={
+                          editBoard ? (
+                            <FormEdit color="white" />
+                          ) : (
+                            <FormEdit color="white" />
+                          )
+                        }
+                        gap="xsmall"
+                        margin="small"
+                        // label={editBoard ? "Cancel" : "Edit"}
+
+                        plain
+                      />
+                    ) : (
+                      <Box direction="row">
+                        <Button
+                          className="editTitleButton"
+                          onClick={() => this.saveTitle(this.state.boardTitle)}
+                          icon={<Checkmark color="white" />}
+                          gap="xsmall"
+                          margin="small"
+                          plain
+                        />
+                        <Button
+                          className="editTitleButton"
+                          onClick={() => this.handleEditTitle()}
+                          icon={<Close color="white" />}
+                          gap="xsmall"
+                          margin="small"
+                          plain
+                        />
+                      </Box>
+                    )}
+                  </Box>
                   {sourceCount > 0 && (
                     <Text size="xsmall">
                       Found {(boardData && boardData.length) || "0"} of{" "}
@@ -845,22 +906,23 @@ class BoardComponent extends Component {
                               width: `${(breeder.breederPoints / totalPoints) *
                                 100}%`
                             }}
-                          >
-                            
-                          </div>
+                          />
                           <span>{breeder.nickname}</span>
-                          
-                              {breeder.fancyArray &&
-                                breeder.fancyArray.length > 0 && breeder.fancyArray.map(fancy => (
-                                  <Box className="fancyWrap">
-                                            <img
-                                    src={fancy.kittyImg}
-                                    alt=""
-                                    style={{ width: "1.5rem" }}
-                                  />
-                                  </Box>
-                                ))}
-                            
+
+                          {breeder.fancyArray &&
+                            breeder.fancyArray.length > 0 &&
+                            breeder.fancyArray.map((fancy, index) => (
+                              <Box
+                                className="fancyWrap"
+                                key={`${breeder.nickname}fancy${index}`}
+                              >
+                                <img
+                                  src={fancy.kittyImg}
+                                  alt=""
+                                  style={{ width: "1.5rem" }}
+                                />
+                              </Box>
+                            ))}
                         </Box>
                         <Box basis="20%">{breeder.numberOfCats} Kitties</Box>
                         <Box basis="10%">{breeder.breederPoints}</Box>
@@ -965,7 +1027,7 @@ class BoardComponent extends Component {
                                 {kittyItem.kittyAttributes.map(atr => (
                                   <Box
                                     className="pill"
-                                    round="xsmall"
+                                    round="medium"
                                     pad="xsmall"
                                     background="secondary"
                                     key={`kittycattribute-${kittyItem.kittyId}${
@@ -978,7 +1040,7 @@ class BoardComponent extends Component {
                                 {kittyItem.isFancy && (
                                   <Box
                                     className="pill fancy"
-                                    round="xsmall"
+                                    round="small"
                                     pad="xsmall"
                                     background="secondary"
                                   >
@@ -1006,6 +1068,35 @@ class BoardComponent extends Component {
             </Box>
           ) : null}
         </Box>
+        {/* <Box
+          direction="row"
+          pad="small"
+          align="center"
+          fill="horizontal"
+          justify="center"
+          className="pointsDescription"
+          gap="small"
+        >
+          <Box direction="row">
+            1 cattribute: <strong>1pt</strong>
+          </Box>
+
+          <Box direction="row">
+            2 cattributes: <strong>4pt</strong>
+          </Box>
+          <Box direction="row">
+            3 cattributes: <strong>9pt</strong>
+          </Box>
+          <Box direction="row">
+            Fancy: <strong>10pt</strong>
+          </Box>
+          <Box direction="row">
+            Fancy (top 10): <strong>20pt</strong>
+          </Box>
+          <Box direction="row">
+            Fancy (First): <strong>100pt</strong>
+          </Box>
+        </Box> */}
         {showShareModal && (
           <Layer
             onEsc={() => this.setShowShare(false)}
@@ -1167,7 +1258,7 @@ class BoardComponent extends Component {
     const {
       rootStore: { UiStore, BoardStore }
     } = this.props;
-    const { fancyValue } = BoardStore.data;
+    const { fancyValue, titleEdited, boardTitle } = BoardStore.data;
     const { attributeValues = this.props.queryParams || [] } = this.state;
     const { allAttributes } = UiStore;
     // const plainAttributes =
@@ -1193,7 +1284,8 @@ class BoardComponent extends Component {
       options: allAttributes,
       attributeOptions: allAttributes,
       attributeValues: newAttributeValues,
-      boardTitle: newBoardTitle
+      boardTitle: titleEdited ? boardTitle : newBoardTitle,
+      isNew: "no"
     });
     // console.groupEnd();
   };
@@ -1201,7 +1293,7 @@ class BoardComponent extends Component {
     const {
       rootStore: { BoardStore }
     } = this.props;
-    const { attributeValues } = BoardStore.data;
+    const { attributeValues, titleEdited, boardTitle } = BoardStore.data;
     // const { allFancies } = this.props;
     // const fancyOptions = this.props.allFancies.map(fancy => fancy.value) || [];
     const thisValue = [`${value}`];
@@ -1211,7 +1303,7 @@ class BoardComponent extends Component {
     });
     BoardStore.update({
       fancyValue: thisValue,
-      boardTitle: newBoardTitle
+      boardTitle: titleEdited ? boardTitle : newBoardTitle
     });
     // console.groupEnd();
   };
@@ -1292,7 +1384,12 @@ class BoardComponent extends Component {
 
     let boardArray = [];
 
-    const { attributeValues, fancyValue = [] } = BoardStore.data;
+    const {
+      attributeValues,
+      fancyValue = [],
+      titleEdited,
+      boardTitle
+    } = BoardStore.data;
 
     // console.log("fancyValue", fancyValue);
     const tempFancyValue = fancyValue.length && fancyValue[0];
@@ -1407,18 +1504,36 @@ class BoardComponent extends Component {
       breederArray: breederArray,
       kitties: data,
       boardData: boardArray,
-      boardTitle: newBoardTitle,
-      title: newBoardTitle,
-      titleEdited: false,
+      // boardTitle: newBoardTitle,
+      boardTitle: titleEdited ? boardTitle : newBoardTitle,
+      title: titleEdited ? boardTitle : newBoardTitle,
+      titleEdited: titleEdited,
       totalPoints: theTotalPoints,
       attributeValues: attributeValues,
       fancyValue: fancyValue,
-      dateModified: dateNow
+      dateModified: dateNow,
+      isNew: "no"
     });
   };
 
   handleEditBoard = () => {
     this.setState({ editBoard: !this.state.editBoard });
+  };
+  handleEditTitle = () => {
+    this.setState({ editTitle: !this.state.editTitle });
+  };
+
+  setTitle = value => {
+    this.setState({ boardTitle: value });
+  };
+
+  saveTitle = value => {
+    const {
+      rootStore: { BoardStore }
+    } = this.props;
+
+    BoardStore.update({ title: value, boardTitle: value, titleEdited: true });
+    this.setState({ editTitle: false, titleEdited: true });
   };
 
   handleShareBoard = () => {
