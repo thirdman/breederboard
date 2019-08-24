@@ -1,6 +1,6 @@
 {
   "name": "BreederBoard",
-  "version": "0.1",
+  "version": "0.2",
   "private": true,
   "dependencies": {
     "@dapperlabs/dappauth": "^2.0.1",
