@@ -1,5 +1,16 @@
 ### Version 0.1
 - fix: refine board ui
+- feat: points based on number of attributes
+- add: move board into board page, add query params for linking
+- added: Search mode toggle
+- feat: include fancy kitties
+- Bumped version to 0.1
+- add: implement initial data store (origin/master, origin/HEAD)
+- feat: added icons for fancy citties
+- feat: editing board title
+
+### Version 0.1
+- fix: refine board ui
 - feat: points based on number of attributes (origin/master, origin/HEAD)
 - add: move board into board page, add query params for linking
 - added: Search mode toggle

@@ -24,6 +24,10 @@
     &.header {
       background: transparent;
     }
+    &.isOwner {
+      border-left: 4px solid violet;
+      border-right: 4px solid violet;
+    }
     svg.viewIcon {
       // path {
       //   stroke: violet;

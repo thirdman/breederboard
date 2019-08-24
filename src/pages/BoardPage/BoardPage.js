@@ -75,6 +75,7 @@ class BoardPageComponent extends Component {
                   ? queryParams.attributes.split(",")
                   : []
               }
+              appLink={this.appLink}
             />
           )}
         </Box>

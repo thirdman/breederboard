@@ -4,7 +4,7 @@ import { formatDistanceStrict, fromUnixTime } from "date-fns";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { Box, Button, Text, Collapsible, Heading } from "grommet";
-import { FormAdd, View } from "grommet-icons";
+import { FormAdd, View, Edit } from "grommet-icons";
 import Board from "../../components/Board/Board";
 import "./HomePage.scss";
 import apiConfig from "./../../apiConfig";
@@ -24,7 +24,7 @@ class HomePageComponent extends Component {
     const {
       routerState: { params }
     } = routerStore;
-    const { isCreating } = this.state;
+    const { isCreating, userBoards } = this.state;
     const { id } = params;
     const { allAttributes } = UiStore;
     // console.log("UiStore", UiStore);
@@ -61,7 +61,7 @@ class HomePageComponent extends Component {
           justifyContent="center"
         >
           <Heading level={2} margin="large">
-            Attribute leaderboards for Kitty Breeders
+            Attribute Leaderboards for Kitty Breeders
           </Heading>
         </Box>
 
@@ -128,7 +128,11 @@ class HomePageComponent extends Component {
                 return (
                   isNotNew && (
                     <Box
-                      className="BoardRow"
+                      className={`BoardRow ${
+                        userBoards && userBoards.includes(doc.id)
+                          ? "isOwner"
+                          : "not"
+                      }`}
                       key={doc.id}
                       onClick={() => this.appLink("board", doc.id)}
                       direction="row"
@@ -218,7 +222,11 @@ class HomePageComponent extends Component {
                         align="center"
                         justify="stretch"
                       >
-                        <View className="viewIcon" />
+                        {userBoards && userBoards.includes(doc.id) ? (
+                          <Edit className="viewIcon" />
+                        ) : (
+                          <View className="viewIcon" />
+                        )}
                       </Box>
                     </Box>
                   )
@@ -235,6 +243,11 @@ class HomePageComponent extends Component {
     console.log("handling load");
 
     this.setState({ isLoadingAttributes: true });
+
+    const userBoardsString = localStorage.getItem("breederboards");
+    const userBoards = JSON.parse(userBoardsString);
+
+    this.setState({ userBoards: userBoards });
     await this.getAttributes();
     // await this.getCollections();
     this.setState({ isLoadingAttributes: false });
@@ -286,11 +299,19 @@ class HomePageComponent extends Component {
       dateCreated: dateNow,
       dateModified: dateNow,
       title: "new board",
+      titleEdited: false,
       isNew: "yes",
       allAttributes: UiStore.allAttributes,
       isPublic: false
     });
     console.log("doc.id", doc.id);
+
+    const userBoards = JSON.parse(localStorage.getItem("userBoards"));
+    let thisBoards = userBoards && userBoards.length ? userBoards.slice() : [];
+
+    thisBoards.push(doc.id);
+    localStorage.setItem("breederboards", JSON.stringify(thisBoards));
+    // console.log(localStorage.getItem("breederboards"));
     // this.setState({ isCreating: false });
     this.appLink("board", doc.id);
   };

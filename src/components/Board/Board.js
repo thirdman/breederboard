@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import firebase from "firebase/app";
+import { Document } from "firestorter";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -16,7 +17,8 @@ import {
   FormEdit,
   Share,
   Checkmark,
-  Close
+  Close,
+  Trash
 } from "grommet-icons";
 import {
   Box,
@@ -31,6 +33,7 @@ import {
   Text,
   Select
 } from "grommet";
+import { BoardsStore } from "../../stores/boards";
 const MONTHS = ["[2-9]", "0[1-9]", "1[0-2]"];
 const DAYS = ["[4-9]", "0[1-9]", "[1-2][0-9]", "3[0-1]"];
 const MONTH_REGEXP = new RegExp(MONTHS.map(m => `^${m}$`).join("|"));
@@ -67,6 +70,12 @@ class BoardComponent extends Component {
     const {
       rootStore: { routerStore, UiStore, BoardStore }
     } = this.props;
+    const userBoardsString = localStorage.getItem("breederboards");
+    console.log("userBoardsString", userBoardsString);
+    const userBoards = JSON.parse(userBoardsString);
+    console.log("getting local storage....");
+    console.log("userBoards", userBoards);
+    this.setState({ userBoards: userBoards });
     BoardStore.ready().then(() => {
       const { attributeValues } = BoardStore.data;
       console.log("did moutn, ready");
@@ -127,7 +136,9 @@ class BoardComponent extends Component {
       totalPoints = 100,
       searchMode,
       showShareModal,
-      pageCount
+      pageCount,
+      userBoards
+      // canEdit
     } = this.state;
     // const isPublic = false;
 
@@ -171,6 +182,8 @@ class BoardComponent extends Component {
       console.log("BoardStore.data", BoardStore.data);
     }
     const dateNow = new Date();
+    const canEdit = boardId && userBoards && userBoards.includes(boardId);
+    // const canEdit = true;
     return (
       <Box
         direction="column"
@@ -748,41 +761,51 @@ class BoardComponent extends Component {
                         />
                       )}
                     </Heading>
-                    {!editTitle ? (
-                      <Button
-                        className="editTitleButton"
-                        onClick={() => this.handleEditTitle()}
-                        icon={
-                          editBoard ? (
-                            <FormEdit color="white" />
-                          ) : (
-                            <FormEdit color="white" />
-                          )
-                        }
-                        gap="xsmall"
-                        margin="small"
-                        // label={editBoard ? "Cancel" : "Edit"}
-
-                        plain
-                      />
-                    ) : (
+                    {canEdit && (
                       <Box direction="row">
-                        <Button
-                          className="editTitleButton"
-                          onClick={() => this.saveTitle(this.state.boardTitle)}
-                          icon={<Checkmark color="white" />}
-                          gap="xsmall"
-                          margin="small"
-                          plain
-                        />
-                        <Button
-                          className="editTitleButton"
-                          onClick={() => this.handleEditTitle()}
-                          icon={<Close color="white" />}
-                          gap="xsmall"
-                          margin="small"
-                          plain
-                        />
+                        {!editTitle ? (
+                          <Button
+                            className="editTitleButton"
+                            onClick={() => this.handleEditTitle()}
+                            icon={
+                              editBoard ? (
+                                <FormEdit color="white" />
+                              ) : (
+                                <FormEdit color="white" />
+                              )
+                            }
+                            gap="xsmall"
+                            margin="small"
+                            // label={editBoard ? "Cancel" : "Edit"}
+
+                            plain
+                          />
+                        ) : (
+                          <Box direction="row">
+                            {canEdit && (
+                              <React.Fragment>
+                                <Button
+                                  className="editTitleButton"
+                                  onClick={() =>
+                                    this.saveTitle(this.state.boardTitle)
+                                  }
+                                  icon={<Checkmark color="white" />}
+                                  gap="xsmall"
+                                  margin="small"
+                                  plain
+                                />
+                                <Button
+                                  className="editTitleButton"
+                                  onClick={() => this.handleEditTitle()}
+                                  icon={<Close color="white" />}
+                                  gap="xsmall"
+                                  margin="small"
+                                  plain
+                                />
+                              </React.Fragment>
+                            )}
+                          </Box>
+                        )}
                       </Box>
                     )}
                   </Box>
@@ -793,26 +816,38 @@ class BoardComponent extends Component {
                     </Text>
                   )}
                 </Box>
-                <Box basis="20%" align="end" direction="row">
-                  <Button
-                    onClick={() => this.handleEditBoard()}
-                    icon={
-                      editBoard ? (
-                        <FormEdit color="white" />
-                      ) : (
-                        <FormEdit color="white" />
-                      )
-                    }
-                    gap="xsmall"
-                    margin="small"
-                    label={editBoard ? "Cancel" : "Edit"}
-                    // border={{
-                    //   side: "all",
-                    //   color: "secondaryLight",
-                    //   size: "xsmall"
-                    // }}
-                    plain
-                  />
+                <Box basis="20%" align="center" justify="end" direction="row">
+                  {canEdit && (
+                    <React.Fragment>
+                      <Button
+                        onClick={() => this.handleEditBoard()}
+                        icon={
+                          editBoard ? (
+                            <FormEdit color="white" />
+                          ) : (
+                            <FormEdit color="white" />
+                          )
+                        }
+                        gap="xsmall"
+                        margin="small"
+                        label={editBoard ? "Cancel" : "Edit"}
+                        // border={{
+                        //   side: "all",
+                        //   color: "secondaryLight",
+                        //   size: "xsmall"
+                        // }}
+                        plain
+                      />
+                      <Button
+                        onClick={() => this.handleDeleteBoard(boardId)}
+                        icon={<Trash color="white" size="small" />}
+                        gap="xsmall"
+                        margin="small"
+                        label={"Delete"}
+                        plain
+                      />
+                    </React.Fragment>
+                  )}
                   {!editBoard && (
                     <Button
                       onClick={() => this.handleShareBoard()}
@@ -1507,7 +1542,7 @@ class BoardComponent extends Component {
       // boardTitle: newBoardTitle,
       boardTitle: titleEdited ? boardTitle : newBoardTitle,
       title: titleEdited ? boardTitle : newBoardTitle,
-      titleEdited: titleEdited,
+      titleEdited: titleEdited || false,
       totalPoints: theTotalPoints,
       attributeValues: attributeValues,
       fancyValue: fancyValue,
@@ -1536,6 +1571,18 @@ class BoardComponent extends Component {
     this.setState({ editTitle: false, titleEdited: true });
   };
 
+  handleDeleteBoard = async boardId => {
+    const {
+      rootStore: { BoardsStore }
+    } = this.props;
+    if (boardId) {
+      console.log("will delete", boardId);
+      const boardRef = new Document(`boards/${boardId}`);
+      boardRef.delete().then(() => {
+        this.props.appLink("home");
+      });
+    }
+  };
   handleShareBoard = () => {
     console.log("share");
     this.setShowShare();
