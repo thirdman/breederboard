@@ -1,4 +1,5 @@
 ### Version 0.1
+
 - fix: refine board ui
 - feat: points based on number of attributes
 - add: move board into board page, add query params for linking
@@ -10,6 +11,7 @@
 - feat: editing board title
 
 ### Version 0.1
+
 - fix: refine board ui
 - feat: points based on number of attributes (origin/master, origin/HEAD)
 - add: move board into board page, add query params for linking

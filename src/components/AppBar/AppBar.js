@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Button, Heading } from "grommet";
-import { StatusInfo } from "grommet-icons";
+import { Close, CircleQuestion } from "grommet-icons";
 import "./AppBar.scss";
 import logo from "../../assets/icons/logo.svg";
 const AppBar = props => {
@@ -50,7 +50,7 @@ const AppBar = props => {
           round="medium"
           color="primary"
           // color={props.showSidebar ? "red" : "transparent"}
-          icon={<StatusInfo />}
+          icon={props.showSidebar ? <Close /> : <CircleQuestion />}
           gap="xsmall"
           onClick={() => props.handleInfo()}
           // label="New Board"

@@ -25,6 +25,7 @@ import {
   Heading,
   Calendar,
   Drop,
+  Menu,
   Keyboard,
   TextInput,
   Button,
@@ -56,7 +57,8 @@ class BoardComponent extends Component {
     // boardTitle: "",
     searchMode: "recent",
     showShareModal: false,
-    pageCount: 50
+    pageCount: 50,
+    idFrom: ""
   };
   componentDidMount() {
     if (this.props.queryParams) {
@@ -117,6 +119,7 @@ class BoardComponent extends Component {
       dateTo,
       text,
       textTo,
+
       // attributeValues = this.props.queryParams || [],
       attributeOptions = [],
       fancyOptionsFiltered = this.props.allFancies.map(fancy => fancy.value) ||
@@ -137,7 +140,9 @@ class BoardComponent extends Component {
       searchMode,
       showShareModal,
       pageCount,
-      userBoards
+      userBoards,
+      idFrom,
+      error
       // canEdit
     } = this.state;
     // const isPublic = false;
@@ -183,6 +188,7 @@ class BoardComponent extends Component {
     }
     const dateNow = new Date();
     const canEdit = boardId && userBoards && userBoards.includes(boardId);
+    const pageCounts = ["20", "50", "100", "200"];
     // const canEdit = true;
     return (
       <Box
@@ -252,6 +258,16 @@ class BoardComponent extends Component {
                       <Text size="small">Dates</Text>
                     </Box>
                   </Button>
+                  <Button onClick={() => this.handleSearchMode("id")}>
+                    <Box
+                      pad="xsmall"
+                      round="medium"
+                      background={searchMode === "id" ? "brand" : "transparent"}
+                      border={searchMode === "id" ? { style: "hidden" } : "all"}
+                    >
+                      <Text size="small">ID</Text>
+                    </Box>
+                  </Button>
                 </ButtonGroup>
               ) : (
                 <Text>{searchMode}</Text>
@@ -268,9 +284,57 @@ class BoardComponent extends Component {
               <Heading margin="none" level={6}>
                 Number:
               </Heading>
-              <Box basis="75%">{pageCount}</Box>
+
+              <Box basis="75%">
+                {editBoard ? (
+                  <Menu
+                    label={pageCount || "Select"}
+                    items={
+                      pageCounts &&
+                      pageCounts.map(count => {
+                        const obj = {
+                          label: count,
+                          onClick: () => this.handleSetPageCount(count)
+                        };
+                        return obj;
+                      })
+                    }
+                  />
+                ) : (
+                  <Text>{pageCount || "50"}</Text>
+                )}
+              </Box>
             </Box>
           )}
+          {searchMode === "id" && (
+            <Box
+              pad="xsmall"
+              direction="column"
+              align="stretch"
+              justify="start"
+              basis="20%"
+            >
+              <Heading margin="none" level={6}>
+                From:
+              </Heading>
+              <Box>
+                {editBoard ? (
+                  <TextInput
+                    placeholder="kitty Id"
+                    margin="xsmall"
+                    // id="date-input"
+                    // placeholder="DD/MM/YYYY"
+                    defaultValue={idFrom}
+                    onChange={event => this.setIdFrom(event.target.value)}
+                    className="textInput"
+                  />
+                ) : (
+                  <Text>{idFrom || "any"}</Text>
+                )}
+              </Box>
+            </Box>
+          )}
+
           {searchMode === "dates" && (
             <Box
               pad="xsmall"
@@ -374,7 +438,8 @@ class BoardComponent extends Component {
             </Box>
           )}
           {/* {allAttributes.length > 0 ? ( */}
-          {OPTIONS.length > 0 ? (
+
+          {OPTIONS && OPTIONS.length > 0 ? (
             <Box
               pad="xsmall"
               direction="column"
@@ -462,9 +527,9 @@ class BoardComponent extends Component {
                     // console.log("OPTIONS", OPTIONS);
                     const regexp = new RegExp(searchText, "i");
                     this.setState({
-                      fancyOptionsFiltered: fancyOptions.filter(o =>
-                        o.match(regexp)
-                      )
+                      fancyOptionsFiltered:
+                        fancyOptions &&
+                        fancyOptions.filter(o => o.match(regexp))
                     });
                   }}
                 />
@@ -659,6 +724,36 @@ class BoardComponent extends Component {
           justify="center"
           // gap="small"
         >
+          {error && (
+            <Box
+              // margin="medium"
+              fill="horizontal"
+              direction="row"
+              align="center"
+              justify="center"
+              // background="red"
+              // round="medium"
+            >
+              <Box background="red" round="medium" pad="medium">
+                <Text color="white">{error}</Text>
+              </Box>
+            </Box>
+          )}
+          {error && (
+            <Box
+              // margin="medium"
+              fill="horizontal"
+              direction="row"
+              align="center"
+              justify="center"
+              // background="red"
+              // round="medium"
+            >
+              <Box background="red" round="medium" pad="small">
+                <Text color="white">{error}</Text>
+              </Box>
+            </Box>
+          )}
           {isLoadingBoardData && (
             <Box
               align="center"
@@ -1380,20 +1475,38 @@ class BoardComponent extends Component {
     });
   };
 
+  handleSetPageCount = count => {
+    this.setState({ pageCount: count });
+  };
+
   getKitties = () => {
     const {
       rootStore: { BoardStore }
     } = this.props;
-    const { pageCount = 50 } = this.state;
+    const { pageCount = 50, searchMode, idFrom } = this.state;
+    if (searchMode === "id" && !idFrom) {
+      this.setState({ error: "No id set" });
+      return;
+    }
     this.setState({
       isLoadingBoardData: true
     });
     let theHeaders = new Headers();
     // Add a few headers
+    console.log("searchMode: ", searchMode);
 
     theHeaders.append("Content-Type", "application/json");
     theHeaders.append("x-api-token", apiConfig.apiToken);
-    const API = `https://public.api.cryptokitties.co/v1/kitties?orderBy=created_at&orderDirection=desc&limit=${pageCount}`;
+
+    let API = `https://public.api.cryptokitties.co/v1/kitties?orderBy=created_at&orderDirection=desc&limit=${pageCount}`;
+    if (searchMode === "id") {
+      const { idFrom = 1000 } = this.state;
+      const kittyRange = pageCount;
+      const idTo = idFrom + kittyRange;
+
+      API = `https://public.api.cryptokitties.co/v1/kitties?kittyId=${idFrom}-${idTo}?orderBy=created_at&orderDirection=${"asc"}&limit=${pageCount}`;
+      console.log("api searchmode id: ", API);
+    }
 
     // fetch(API + DEFAULT_QUERY)
     fetch(API, { headers: theHeaders })
@@ -1560,6 +1673,10 @@ class BoardComponent extends Component {
 
   setTitle = value => {
     this.setState({ boardTitle: value });
+  };
+
+  setIdFrom = value => {
+    this.setState({ idFrom: value });
   };
 
   saveTitle = value => {

@@ -10,13 +10,15 @@
     transition: box-shadow 0.3s ease-in-out;
     @media (hover: hover) {
       &:hover {
-        cursor: pointer;
-        background: #fff;
-        box-shadow: 0 2px 1rem -0.25rem rgba(0, 0, 0, 0.2);
-        svg.viewIcon {
-          // border: 10px solid red;
-          path {
-            stroke: $primary;
+        &:not(.header) {
+          cursor: pointer;
+          background: #fff;
+          box-shadow: 0 2px 1rem -0.25rem rgba(0, 0, 0, 0.2);
+          svg.viewIcon {
+            // border: 10px solid red;
+            path {
+              stroke: $primary;
+            }
           }
         }
       }

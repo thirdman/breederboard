@@ -140,8 +140,7 @@ class App extends Component {
                 </Box>
                 <Box className="credits">
                   <Box margin="xsmall">
-                    Breederboard is thirdman plot, based on original Idea by
-                    @rudemOOse
+                    Breederboard is thirdman plot. Original idea by @rudemOOse
                   </Box>
                 </Box>
               </Box>

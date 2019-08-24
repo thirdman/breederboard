@@ -248,7 +248,7 @@ class HomePageComponent extends Component {
     const userBoards = JSON.parse(userBoardsString);
 
     this.setState({ userBoards: userBoards });
-    await this.getAttributes();
+    // await this.getAttributes();
     // await this.getCollections();
     this.setState({ isLoadingAttributes: false });
   };
