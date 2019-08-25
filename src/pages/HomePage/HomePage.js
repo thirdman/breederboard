@@ -107,14 +107,14 @@ class HomePageComponent extends Component {
                 justify="stretch"
                 gap="small"
               >
-                <Box basis="80%" padding="small">
+                <Box basis="75%" padding="small">
                   <Heading margin="none" level={6}>
                     Attributes
                   </Heading>
                 </Box>
-                <Box basis="20%" padding="small">
+                <Box basis="25%" padding="small">
                   <Heading margin="none" level={6}>
-                    Updated
+                    Info
                   </Heading>
                 </Box>
 
@@ -123,7 +123,7 @@ class HomePageComponent extends Component {
                 </Box>
               </Box>
               {docs.map(doc => {
-                console.log("doc.data", doc.data);
+                // console.log("doc.data", doc.data);
                 const isNotNew = doc.data && doc.data.isNew === "no";
                 return (
                   isNotNew && (
@@ -155,7 +155,7 @@ class HomePageComponent extends Component {
                         align="stretch"
                         justify="stretch"
                         fill="horizontal"
-                        basis="80%"
+                        basis="75%"
                       >
                         <Box
                           direction="row"
@@ -202,10 +202,30 @@ class HomePageComponent extends Component {
                         </Box>
                       </Box>
 
-                      <Box basis="20%" pad="small">
+                      <Box basis="25%" pad="small">
                         {doc.data.titleEdited && (
                           <Box>{doc.data.boardTitle}</Box>
                         )}
+                        <Box className="boardSubtitle">
+                          {doc.data.searchMode &&
+                            doc.data.searchMode === "recent" && (
+                              <Text size="xsmall">
+                                From {doc.data.pageCount} {doc.data.searchMode}{" "}
+                                kitties
+                              </Text>
+                            )}
+                          {doc.data.searchMode && doc.data.searchMode === "id" && (
+                            <Text size="xsmall">
+                              From #{doc.data.idFrom} to #
+                              {doc.data.idTo
+                                ? doc.data.idTo
+                                : this.calcFom(
+                                    doc.data.idFrom,
+                                    doc.data.pageCount
+                                  )}
+                            </Text>
+                          )}
+                        </Box>
                         <Text size="small">
                           {doc.data.dateModified &&
                             doc.data.dateModified.seconds &&
@@ -316,9 +336,18 @@ class HomePageComponent extends Component {
     this.appLink("board", doc.id);
   };
 
+  calcFom = (idFrom, pageCount = 50) => {
+    if (!idFrom) {
+      return "";
+    }
+    const thisIdFrom = parseInt(idFrom);
+    const thisIdTo = thisIdFrom + 100;
+    return thisIdTo;
+  };
   ////////////////
   // MISC
   ////////////////
+
   handleMenu = value => {
     const {
       rootStore: { UiStore }

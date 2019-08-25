@@ -49,12 +49,9 @@ class BoardComponent extends Component {
     collectionName: "",
     text: "",
     textTo: "",
-    // attributeValues: [],
-    // attributeOptions: [],
     showKitties: false,
     editBoard: true,
     editTitle: false,
-    // boardTitle: "",
     searchMode: "recent",
     showShareModal: false,
     pageCount: 50,
@@ -62,7 +59,6 @@ class BoardComponent extends Component {
   };
   componentDidMount() {
     if (this.props.queryParams) {
-      // console.log("component did mount", this.props.queryParams);
       if (this.props.queryParams && this.props.queryParams.length > 0) {
         this.getKitties();
       } else {
@@ -73,14 +69,27 @@ class BoardComponent extends Component {
       rootStore: { routerStore, UiStore, BoardStore }
     } = this.props;
     const userBoardsString = localStorage.getItem("breederboards");
-    console.log("userBoardsString", userBoardsString);
     const userBoards = JSON.parse(userBoardsString);
-    console.log("getting local storage....");
-    console.log("userBoards", userBoards);
     this.setState({ userBoards: userBoards });
     BoardStore.ready().then(() => {
-      const { attributeValues } = BoardStore.data;
-      console.log("did moutn, ready");
+      console.log("BoardStore, did mount, ready: ", BoardStore);
+      const {
+        attributeValues,
+        searchMode,
+        idFrom,
+        idTo,
+        pageCount,
+        title,
+        titleEdited
+      } = BoardStore.data;
+      this.setState({
+        searchMode,
+        idFrom,
+        idTo,
+        pageCount,
+        title,
+        titleEdited
+      });
       console.log(
         "attributeValues",
         attributeValues,
@@ -175,21 +184,25 @@ class BoardComponent extends Component {
     let OPTIONS = allAttributes;
     const fancyOptions = this.props.allFancies.map(fancy => fancy.value) || [];
     let canGenerate = false;
+    console.log("does it have fancy: ", fancyValue.length);
     if (fancyValue && fancyValue[0]) {
       canGenerate = true;
     }
+    console.log("does it have attr: ", attributeValues.length);
     if (attributeValues.length) {
       canGenerate = true;
     }
+    console.log("therefore cangenerate is", canGenerate);
+
     if (boardId) {
       console.log("boardId is", boardId);
       // BoardStore.path = `boards/${boardId}`;
       console.log("BoardStore.data", BoardStore.data);
     }
     const dateNow = new Date();
-    const canEdit = boardId && userBoards && userBoards.includes(boardId);
+    // const canEdit = boardId && userBoards && userBoards.includes(boardId);
+    const canEdit = true;
     const pageCounts = ["20", "50", "100", "200"];
-    // const canEdit = true;
     return (
       <Box
         direction="column"
@@ -274,7 +287,7 @@ class BoardComponent extends Component {
               )}
             </Box>
           </Box>
-          {searchMode === "recent" && (
+          {(searchMode === "recent" || searchMode === "id") && (
             <Box
               pad="xsmall"
               direction="column"
@@ -639,7 +652,8 @@ class BoardComponent extends Component {
               <Heading margin="none" level={6}>
                 Fancy:
               </Heading>
-              {!fancyValue && (
+
+              {(!fancyValue || fancyValue.length < 1) && (
                 <Box
                   direction="row"
                   align="start"
@@ -691,7 +705,7 @@ class BoardComponent extends Component {
             </Box>
             <Box
               border="left"
-              basis="25%"
+              basis="30%"
               pad="small"
               align="center"
               justify="center"
@@ -1302,6 +1316,9 @@ class BoardComponent extends Component {
     );
   }
 
+  ////////////////////////
+  // DATES
+  ////////////////////////
   onFocus = () => {
     if (!this.focusInput) {
       this.setState({ active: true });
@@ -1384,6 +1401,9 @@ class BoardComponent extends Component {
     this.focusInputTo = true;
   };
 
+  ////////////////////////
+  ////// ATTRIBUTES
+  ////////////////////////
   setAttribute = value => {
     const {
       rootStore: { UiStore, BoardStore }
@@ -1410,22 +1430,18 @@ class BoardComponent extends Component {
       attributeValues: newAttributeValues
     });
     BoardStore.update({
-      // value: value,
       options: allAttributes,
       attributeOptions: allAttributes,
       attributeValues: newAttributeValues,
       boardTitle: titleEdited ? boardTitle : newBoardTitle,
       isNew: "no"
     });
-    // console.groupEnd();
   };
   setFancy = value => {
     const {
       rootStore: { BoardStore }
     } = this.props;
     const { attributeValues, titleEdited, boardTitle } = BoardStore.data;
-    // const { allFancies } = this.props;
-    // const fancyOptions = this.props.allFancies.map(fancy => fancy.value) || [];
     const thisValue = [`${value}`];
     const newBoardTitle = this.generateName(attributeValues, thisValue);
     this.setState({
@@ -1435,7 +1451,6 @@ class BoardComponent extends Component {
       fancyValue: thisValue,
       boardTitle: titleEdited ? boardTitle : newBoardTitle
     });
-    // console.groupEnd();
   };
 
   removeAttribute = value => {
@@ -1444,9 +1459,10 @@ class BoardComponent extends Component {
     } = this.props;
     const { attributeValues } = this.state;
     const { allAttributes } = UiStore;
-    // const plainAttributes =
-    //   allAttributes.map(cattribute => cattribute.description) || [];
-    let newAttributeValues = [...attributeValues];
+    let newAttributeValues = [];
+    if (attributeValues) {
+      newAttributeValues = [...attributeValues];
+    }
     newAttributeValues = newAttributeValues.filter(
       attribute => attribute !== value
     );
@@ -1479,11 +1495,15 @@ class BoardComponent extends Component {
     this.setState({ pageCount: count });
   };
 
+  //////////////////////////////
+  ////// DATA
+  //////////////////////////////
+
   getKitties = () => {
     const {
       rootStore: { BoardStore }
     } = this.props;
-    const { pageCount = 50, searchMode, idFrom } = this.state;
+    const { pageCount = 50, searchMode, idFrom, idTo } = this.state;
     if (searchMode === "id" && !idFrom) {
       this.setState({ error: "No id set" });
       return;
@@ -1503,6 +1523,7 @@ class BoardComponent extends Component {
       const { idFrom = 1000 } = this.state;
       const kittyRange = pageCount;
       const idTo = idFrom + kittyRange;
+      this.setState({ idTo: idTo });
 
       API = `https://public.api.cryptokitties.co/v1/kitties?kittyId=${idFrom}-${idTo}?orderBy=created_at&orderDirection=${"asc"}&limit=${pageCount}`;
       console.log("api searchmode id: ", API);
@@ -1513,13 +1534,15 @@ class BoardComponent extends Component {
       .then(response => response.json())
       .then(data => {
         console.log("data", data);
-        this.setState({ kitties: data.kitties, editBoard: false });
-        this.setState({
-          isLoadingBoardData: false,
-          sourceCount: data.kitties.length
-        });
-        // console.log("hasdata");
 
+        this.setState({
+          kitties: data.kitties,
+          editBoard: false,
+          isLoadingBoardData: false,
+          sourceCount: data.kitties.length,
+          idFrom: idFrom,
+          idTo: idTo || ""
+        });
         this.handleCalc(data);
         return true;
       });
@@ -1538,7 +1561,7 @@ class BoardComponent extends Component {
       titleEdited,
       boardTitle
     } = BoardStore.data;
-
+    const { pageCount = 50, searchMode = "recent" } = this.state;
     // console.log("fancyValue", fancyValue);
     const tempFancyValue = fancyValue.length && fancyValue[0];
     // console.log("attributeValues", attributeValues);
@@ -1660,7 +1683,11 @@ class BoardComponent extends Component {
       attributeValues: attributeValues,
       fancyValue: fancyValue,
       dateModified: dateNow,
-      isNew: "no"
+      pageCount: pageCount,
+      searchMode: searchMode,
+      isNew: "no",
+      idFrom: this.state.idFrom || null,
+      idTo: this.state.idTo || null
     });
   };
 
@@ -1786,13 +1813,16 @@ class BoardComponent extends Component {
     );
     const fancyName = fancyArray && fancyArray.length > 0 && fancyArray[0];
     let upperCaseArray = [];
+
     if (fancyName) {
-      upperCaseArray.push(fancyName);
+      upperCaseArray.push(this.makeUpper(fancyName));
     }
-    array.map(item => {
-      this.makeUpper(item);
-      upperCaseArray.push(item);
-    });
+    if (array) {
+      array.map(item => {
+        // this.makeUpper(item);
+        upperCaseArray.push(this.makeUpper(item));
+      });
+    }
 
     const name = [
       upperCaseArray.slice(0, -1).join(", "),
@@ -1801,7 +1831,7 @@ class BoardComponent extends Component {
       // array.length < 2 ? "" : " & "
       upperCaseArray.length < 2 ? "" : " or  "
     );
-
+    console.log("name: ", name);
     return name;
   };
 

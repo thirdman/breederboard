@@ -1,4 +1,5 @@
 ### Version 0.2
+
 - fix: refine board ui
 - feat: points based on number of attributes
 - add: move board into board page, add query params for linking
