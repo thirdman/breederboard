@@ -135,7 +135,7 @@ class HomePageComponent extends Component {
                       }`}
                       key={doc.id}
                       onClick={() => this.appLink("board", doc.id)}
-                      direction="row"
+                      direction="column"
                       round="small"
                       // background="accent-1"
                       margin="xsmall"
@@ -149,112 +149,155 @@ class HomePageComponent extends Component {
                       border="bottom"
                       animation="slideUp"
                     >
+                      {/* TOP ROW */}
                       <Box
-                        pad="xsmall"
                         direction="row"
+                        margin="none"
+                        gap="small"
+                        pad="none"
                         align="stretch"
                         justify="stretch"
                         fill="horizontal"
-                        basis="75%"
                       >
                         <Box
-                          direction="row"
-                          align="start"
-                          justify="start"
-                          gap="xsmall"
+                          pad="xsmall"
+                          direction="column"
+                          align="stretch"
+                          justify="stretch"
+                          fill="horizontal"
+                          basis="75%"
                         >
-                          {doc.data.fancyValue && doc.data.fancyValue[0] && (
-                            <Box
-                              className={classNames("pill", "fancy")}
-                              round="small"
-                              background="secondary"
-                              key={`attributePill-${doc.data.fancyValue[0]}`}
-                              pad="xsmall"
-                              gap="xsmall"
-                              direction="row"
-                              animation="slideUp"
-                              align="center"
-                              justify="center"
-                            >
-                              <Text size="small" color="#fff">
-                                {doc.data.fancyValue[0]}
-                              </Text>
-                            </Box>
+                          {/* {doc.data.titleEdited && ( */}
+                          <Box>{doc.data.boardTitle}</Box>
+                          {/* )} */}
+                          <Box>
+                            {doc.data.leaderName && (
+                              <Box className="leaderInfo">
+                                <Text size="xsmall">
+                                  Current Leader: {doc.data.leaderName} (
+                                  {doc.data.leaderScore} Points)
+                                </Text>
+                              </Box>
+                            )}
+                          </Box>
+                        </Box>
+                        <Box basis="25%" pad="small">
+                          <Text size="small">
+                            {doc.data.dateModified &&
+                              doc.data.dateModified.seconds &&
+                              formatDistanceStrict(
+                                fromUnixTime(doc.data.dateModified.seconds),
+                                Date.now()
+                              )}{" "}
+                            ago
+                          </Text>
+                        </Box>
+                        <Box
+                          basis="5%"
+                          pad="small"
+                          align="center"
+                          justify="stretch"
+                        >
+                          {userBoards && userBoards.includes(doc.id) ? (
+                            <Edit className="viewIcon" />
+                          ) : (
+                            <View className="viewIcon" />
                           )}
-                          {doc.data.attributeValues.map(attribute => (
-                            <Box
-                              className={classNames("pill", "attribute")}
-                              round="medium"
-                              background="secondary"
-                              key={`attributePill-${attribute}`}
-                              pad="xsmall"
-                              gap="xsmall"
-                              direction="row"
-                              animation="slideUp"
-                              align="center"
-                              justify="center"
-                            >
-                              <Text size="small" color="#fff">
-                                {attribute}
-                              </Text>
-                            </Box>
-                          ))}
                         </Box>
                       </Box>
 
-                      <Box basis="25%" pad="small">
-                        {doc.data.titleEdited && (
-                          <Box>{doc.data.boardTitle}</Box>
-                        )}
-                        <Box className="boardSubtitle">
-                          {doc.data.searchMode &&
-                            doc.data.searchMode === "recent" && (
-                              <Text size="xsmall">
-                                From {doc.data.pageCount} {doc.data.searchMode}{" "}
-                                kitties
-                              </Text>
-                            )}
-                          {doc.data.searchMode && doc.data.searchMode === "id" && (
-                            <Text size="xsmall">
-                              From #{doc.data.idFrom} to #
-                              {doc.data.idTo
-                                ? doc.data.idTo
-                                : this.calcFom(
-                                    doc.data.idFrom,
-                                    doc.data.pageCount
-                                  )}
-                            </Text>
-                          )}
-                        </Box>
-                        <Text size="small">
-                          {doc.data.dateModified &&
-                            doc.data.dateModified.seconds &&
-                            formatDistanceStrict(
-                              fromUnixTime(doc.data.dateModified.seconds),
-                              Date.now()
-                            )}{" "}
-                          ago
-                        </Text>
-                        {doc.data.leaderName && (
-                          <Box className="leaderInfo">
-                            <Text size="small">
-                              Current Leader: {doc.data.leaderName} -{" "}
-                              {doc.data.leaderScore}
-                            </Text>
-                          </Box>
-                        )}
-                      </Box>
+                      {/* BOTTOM ROW */}
                       <Box
-                        basis="5%"
-                        pad="small"
-                        align="center"
+                        direction="row"
+                        margin="none"
+                        gap="small"
+                        pad="none"
+                        align="stretch"
                         justify="stretch"
+                        fill="horizontal"
                       >
-                        {userBoards && userBoards.includes(doc.id) ? (
-                          <Edit className="viewIcon" />
-                        ) : (
-                          <View className="viewIcon" />
-                        )}
+                        <Box
+                          pad="xsmall"
+                          direction="row"
+                          align="stretch"
+                          justify="stretch"
+                          fill="horizontal"
+                          basis="75%"
+                        >
+                          <Box
+                            direction="row"
+                            align="start"
+                            justify="start"
+                            gap="xsmall"
+                          >
+                            {doc.data.fancyValue && doc.data.fancyValue[0] && (
+                              <Box
+                                className={classNames("pill", "fancy")}
+                                round="small"
+                                background="secondary"
+                                key={`attributePill-${doc.data.fancyValue[0]}`}
+                                pad="xsmall"
+                                gap="xsmall"
+                                direction="row"
+                                animation="slideUp"
+                                align="center"
+                                justify="center"
+                              >
+                                <Text size="small" color="#fff">
+                                  {doc.data.fancyValue[0]}
+                                </Text>
+                              </Box>
+                            )}
+                            {doc.data.attributeValues.map(attribute => (
+                              <Box
+                                className={classNames("pill", "attribute")}
+                                round="medium"
+                                background="secondary"
+                                key={`attributePill-${attribute}`}
+                                pad="xsmall"
+                                gap="xsmall"
+                                direction="row"
+                                animation="slideUp"
+                                align="center"
+                                justify="center"
+                              >
+                                <Text size="small" color="#fff">
+                                  {attribute}
+                                </Text>
+                              </Box>
+                            ))}
+                          </Box>
+                        </Box>
+
+                        <Box basis="25%" pad="small">
+                          <Box className="boardSubtitle">
+                            {doc.data.searchMode &&
+                              doc.data.searchMode === "recent" && (
+                                <Text size="xsmall">
+                                  From {doc.data.pageCount}{" "}
+                                  {doc.data.searchMode} kitties
+                                </Text>
+                              )}
+                            {doc.data.searchMode &&
+                              doc.data.searchMode === "id" && (
+                                <Text size="xsmall">
+                                  From #{doc.data.idFrom} to #
+                                  {doc.data.idTo
+                                    ? doc.data.idTo
+                                    : this.calcFom(
+                                        doc.data.idFrom,
+                                        doc.data.pageCount
+                                      )}
+                                </Text>
+                              )}
+                          </Box>
+                        </Box>
+                        <Box
+                          basis="5%"
+                          pad="small"
+                          align="center"
+                          justify="stretch"
+                        />
                       </Box>
                     </Box>
                   )
