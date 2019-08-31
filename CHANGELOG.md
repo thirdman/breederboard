@@ -1,6 +1,13 @@
-### Version 0.2
+### Version 0.2.2
 - refactor: Refined home page list
 - add: track leader name  and points
+- refactor: Homepage board display now includes leader (origin/master, origin/HEAD)
+- Bumped version to 0.2
+
+### Version 0.2.1
+
+- refactor: Refined home page list
+- add: track leader name and points
 - refactor: Homepage board display now includes leader
 
 ### Version 0.2

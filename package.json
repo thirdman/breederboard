@@ -1,6 +1,6 @@
 {
   "name": "BreederBoard",
-  "version": "0.2",
+  "version": "0.2.2",
   "homepage": "https://breederboard.com",
   "private": true,
   "dependencies": {
