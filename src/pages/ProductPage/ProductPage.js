@@ -429,7 +429,7 @@ class ProductPageComponent extends Component {
   handleHasTitle = checked => {
     console.log("handle has title: ", checked);
     const {
-      rootStore: { ProductStore }
+      rootStore: { ProductStore, ItemStore }
     } = this.props;
 
     this.setState(prevState => ({
@@ -438,44 +438,56 @@ class ProductPageComponent extends Component {
     ProductStore.hasTitle = checked;
 
     console.log(ProductStore);
+    ItemStore.update({
+      hasTitle: checked
+    });
   };
   handleHasSubtitle = checked => {
     console.log("checked", checked);
     const {
-      rootStore: { ProductStore }
+      rootStore: { ProductStore, ItemStore }
     } = this.props;
     this.setState(prevState => ({
       previewHasSubtitle: checked
     }));
 
     ProductStore.hasSubtitle = checked;
+    ItemStore.update({
+      hasSubtitle: checked
+    });
   };
   handleTitle = value => {
     const {
-      rootStore: { ProductStore }
+      rootStore: { ProductStore, ItemStore }
     } = this.props;
     this.setState(prevState => ({
       previewTitle: value
     }));
     // ProductStore.hasTitle = true;
     ProductStore.title = value;
+    ItemStore.update({
+      title: value
+    });
   };
 
   handleSubtitle = value => {
     console.log(value);
     const {
-      rootStore: { ProductStore }
+      rootStore: { ProductStore, ItemStore }
     } = this.props;
     this.setState(prevState => ({
       previewSubtitle: value
     }));
 
     ProductStore.subtitle = value;
+    ItemStore.update({
+      subtitle: value
+    });
   };
 
   handleBackground = value => {
     const {
-      rootStore: { ProductStore, ColorsStore, UiStore }
+      rootStore: { ProductStore, ColorsStore, UiStore, ItemStore }
     } = this.props;
     const { colors } = ColorsStore;
     const thisColorObj = colors.filter(color => color.name === value);
@@ -493,14 +505,17 @@ class ProductPageComponent extends Component {
       thisColorObj && thisColorObj[0] && thisColorObj[0].contrast;
     UiStore.productColorObj = thisColorObj;
     console.log("ProductStore", ProductStore);
-    // ProductStore.update({
-    //   productBackground: value
-    // });
+    ItemStore.update({
+      backgroundId: value,
+      colorObj: thisColorObj,
+      contrast:
+        (thisColorObj && thisColorObj[0] && thisColorObj[0].contrast) || ""
+    });
   };
 
   handleTemplate = (value, aspect) => {
     const {
-      rootStore: { ProductStore, TemplatesStore, UiStore }
+      rootStore: { ProductStore, TemplatesStore, UiStore, ItemStore }
     } = this.props;
     console.log("handle template value: ", value);
     const { templates } = TemplatesStore;
@@ -517,6 +532,12 @@ class ProductPageComponent extends Component {
     ProductStore.templateObject = thisTemplateObj[0];
     ProductStore.aspect = aspect;
     ProductStore.hasBorder = false;
+    ItemStore.update({
+      templateId: value,
+      templateObj: thisTemplateObj[0],
+      aspect: aspect
+    });
+
     // ProductStore.contrast =
     //   thisColorObj && thisColorObj[0] && thisColorObj[0].contrast;
     // UiStore.productTheme = value;
@@ -529,7 +550,13 @@ class ProductPageComponent extends Component {
   handleSelectAsset = id => {
     console.log("select", id);
     const {
-      rootStore: { routerStore, AssetStore, AssetsStore, ProductStore }
+      rootStore: {
+        routerStore,
+        AssetStore,
+        AssetsStore,
+        ProductStore,
+        ItemStore
+      }
     } = this.props;
 
     const { assets } = AssetsStore;
@@ -543,6 +570,7 @@ class ProductPageComponent extends Component {
     console.log("thisAsset", thisAsset);
     if (thisAsset) {
       AssetStore.asset = thisAsset;
+      ItemStore.update({ asset: thisAsset });
     }
   };
 

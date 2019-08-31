@@ -235,6 +235,14 @@ class HomePageComponent extends Component {
                             )}{" "}
                           ago
                         </Text>
+                        {doc.data.leaderName && (
+                          <Box className="leaderInfo">
+                            <Text size="small">
+                              Current Leader: {doc.data.leaderName} -{" "}
+                              {doc.data.leaderScore}
+                            </Text>
+                          </Box>
+                        )}
                       </Box>
                       <Box
                         basis="5%"

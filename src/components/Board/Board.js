@@ -202,7 +202,7 @@ class BoardComponent extends Component {
     const dateNow = new Date();
     // const canEdit = boardId && userBoards && userBoards.includes(boardId);
     const canEdit = true;
-    const pageCounts = ["20", "50", "100", "200"];
+    const pageCounts = ["50", "100", "200",  "1000"];
     return (
       <Box
         direction="column"
@@ -1661,6 +1661,9 @@ class BoardComponent extends Component {
     breederArray.sort(this.comparePoints);
     const theTotalPoints = this.sumValues(breederArray, "breederPoints");
     console.log("breederArray", breederArray);
+    const leaderObj = breederArray.length > -1 && breederArray[0];
+    const leaderName = leaderObj.nickname;
+    const leaderScore = leaderObj.breederPoints;
     // console.log("will generate NAME FROM", attributeValues, fancyValue);
     const newBoardTitle = this.generateName(attributeValues, fancyValue);
     this.setState({
@@ -1687,7 +1690,9 @@ class BoardComponent extends Component {
       searchMode: searchMode,
       isNew: "no",
       idFrom: this.state.idFrom || null,
-      idTo: this.state.idTo || null
+      idTo: this.state.idTo || null,
+      leaderScore: leaderScore, 
+      leaderName: leaderName,
     });
   };
 
