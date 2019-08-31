@@ -1,4 +1,9 @@
 ### Version 0.2
+- refactor: Refined home page list
+- add: track leader name  and points
+- refactor: Homepage board display now includes leader
+
+### Version 0.2
 
 - fix: refine board ui
 - feat: points based on number of attributes

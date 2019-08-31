@@ -1,6 +1,7 @@
 {
   "name": "BreederBoard",
   "version": "0.2",
+  "homepage": "https://breederboard.com",
   "private": true,
   "dependencies": {
     "@dapperlabs/dappauth": "^2.0.1",
