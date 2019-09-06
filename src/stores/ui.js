@@ -49,6 +49,7 @@ UiStore.allFancies = [
   { value: "Mistletoe", label: "Mistletoe" },
   { value: "Momo-chan", label: "Momo-chan" },
   { value: "Negato", label: "Negato" },
+  { value: "Robin", label: "Robin" },
   { value: "Page", label: "Page" },
   { value: "Pawrula", label: "Pawrula" },
   { value: "Pawzilla", label: "Pawzilla" },
@@ -353,7 +354,8 @@ UiStore.allAttributes = [
   "atlantis",
   "summerbonnet",
   "bloodred",
-  "candyshoppe"
+  "candyshoppe",
+  "robin"
 ];
 
 export { UiStore };

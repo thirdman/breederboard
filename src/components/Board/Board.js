@@ -200,8 +200,8 @@ class BoardComponent extends Component {
       console.log("BoardStore.data", BoardStore.data);
     }
     const dateNow = new Date();
-    // const canEdit = boardId && userBoards && userBoards.includes(boardId);
-    const canEdit = true;
+    const canEdit = boardId && userBoards && userBoards.includes(boardId);
+    // const canEdit = true;
     const pageCounts = ["50", "100", "200",  "1000"];
     return (
       <Box

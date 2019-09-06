@@ -281,13 +281,14 @@ class HomePageComponent extends Component {
                             {doc.data.searchMode &&
                               doc.data.searchMode === "id" && (
                                 <Text size="xsmall">
-                                  From #{doc.data.idFrom} to #
+                                  From ID#{doc.data.idFrom}
+                                  {/* to #
                                   {doc.data.idTo
                                     ? doc.data.idTo
                                     : this.calcFom(
                                         doc.data.idFrom,
                                         doc.data.pageCount
-                                      )}
+                                      )} */}
                                 </Text>
                               )}
                           </Box>
@@ -322,6 +323,7 @@ class HomePageComponent extends Component {
     // await this.getAttributes();
     // await this.getCollections();
     this.setState({ isLoadingAttributes: false });
+    // this.getAttributes();
   };
 
   getAttributes = address => {
@@ -350,8 +352,10 @@ class HomePageComponent extends Component {
           isLoadingAttributes: false
         });
         UiStore.allAttributes = data;
-
-        console.log("UiStore");
+        const simplifiedAttributes = data.map(attr => attr.description);
+        console.log("=======");
+        console.log("ALL ATTRIBUTES: ", simplifiedAttributes);
+        console.log("=======");
         return true;
       });
   };
