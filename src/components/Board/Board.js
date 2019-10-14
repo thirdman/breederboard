@@ -4,7 +4,7 @@ import { Document } from "firestorter";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { parseISO, formatDistanceStrict, formatDistanceToNow } from "date-fns";
+import { parseISO, formatDistanceStrict,} from "date-fns";
 import "./Board.scss";
 import apiConfig from "./../../apiConfig";
 import Loading from "../Loading/Loading";
@@ -18,7 +18,8 @@ import {
   Share,
   Checkmark,
   Close,
-  Trash
+  Trash,
+  FormView
 } from "grommet-icons";
 import {
   Box,
@@ -34,7 +35,7 @@ import {
   Text,
   Select
 } from "grommet";
-import { BoardsStore } from "../../stores/boards";
+// import { BoardsStore } from "../../stores/boards";
 const MONTHS = ["[2-9]", "0[1-9]", "1[0-2]"];
 const DAYS = ["[4-9]", "0[1-9]", "[1-2][0-9]", "3[0-1]"];
 const MONTH_REGEXP = new RegExp(MONTHS.map(m => `^${m}$`).join("|"));
@@ -66,13 +67,16 @@ class BoardComponent extends Component {
       }
     }
     const {
-      rootStore: { routerStore, UiStore, BoardStore }
+      rootStore: { 
+        // routerStore, 
+        // UiStore, 
+        BoardStore }
     } = this.props;
     const userBoardsString = localStorage.getItem("breederboards");
     const userBoards = JSON.parse(userBoardsString);
     this.setState({ userBoards: userBoards });
     BoardStore.ready().then(() => {
-      console.log("BoardStore, did mount, ready: ", BoardStore);
+      // console.log("BoardStore, did mount, ready: ", BoardStore);
       const {
         attributeValues,
         searchMode,
@@ -90,11 +94,11 @@ class BoardComponent extends Component {
         title,
         titleEdited
       });
-      console.log(
-        "attributeValues",
-        attributeValues,
-        BoardStore.data.attributeValues
-      );
+      // console.log(
+      //   "attributeValues",
+      //   attributeValues,
+      //   BoardStore.data.attributeValues
+      // );
       if (attributeValues && attributeValues.length > 0) {
         this.getKitties();
       }
@@ -113,11 +117,14 @@ class BoardComponent extends Component {
 
   render() {
     const {
-      rootStore: { routerStore, UiStore, BoardStore },
+      rootStore: { 
+        // routerStore, 
+        UiStore, 
+        BoardStore },
       // allAttributes,
-      allFancies,
-      initialAttributes,
-      queryParams,
+      // allFancies,
+      // initialAttributes,
+      // queryParams,
       boardId
     } = this.props;
 
@@ -197,12 +204,12 @@ class BoardComponent extends Component {
     if (boardId) {
       console.log("boardId is", boardId);
       // BoardStore.path = `boards/${boardId}`;
-      console.log("BoardStore.data", BoardStore.data);
+      // console.log("BoardStore.data", BoardStore.data);
     }
     const dateNow = new Date();
     const canEdit = boardId && userBoards && userBoards.includes(boardId);
     // const canEdit = true;
-    const pageCounts = ["50", "100", "200",  "1000"];
+    const pageCounts = ["50", "100", "200", "1000"];
     return (
       <Box
         direction="column"
@@ -475,7 +482,7 @@ class BoardComponent extends Component {
                       // console.log("seatch text", searchText);
                       // console.log("OPTIONS", OPTIONS);
                       const regexp = new RegExp(searchText, "i");
-                      console.log("OPTIONS", OPTIONS);
+                      // console.log("OPTIONS", OPTIONS);
                       this.setState({
                         attributeOptions: OPTIONS.filter(o => o.match(regexp))
                       });
@@ -576,7 +583,7 @@ class BoardComponent extends Component {
             direction="row"
             align="stretch"
             justify="stretch"
-            border="bottom"
+            border="all"
             fill="horizontal"
             background="#f3f3f3"
           >
@@ -782,7 +789,11 @@ class BoardComponent extends Component {
           {showKitties && (
             <Box direction="row" wrap align="start" gap="small">
               {kitties &&
-                kitties.map(kitty => (
+                kitties.map(kitty => {
+                  
+                    
+                  
+                  return(
                   <Box
                     key={kitty.id}
                     style={{ width: "200px" }}
@@ -802,16 +813,14 @@ class BoardComponent extends Component {
                     </Heading>
                     <Text margin="none" size="xsmall">
                       Created:{" "}
-                      {formatDistanceToNow(parseISO(kitty.created_at), {
-                        addSuffix: true
-                      })}
+                      {formatDistanceStrict(parseISO(kitty.created_at), dateNow)} ago
                     </Text>
                     <Text margin="none" size="small">
                       by: {kitty.hatcher && kitty.hatcher.nickname}
                     </Text>
                     {/* {kitty.id} */}
                   </Box>
-                ))}
+                )})}
             </Box>
           )}
           {/* BOARD CONTENT */}
@@ -1120,90 +1129,126 @@ class BoardComponent extends Component {
                             >
                               Kitty
                             </Box>
-                            <Box basis="10%">Attr count</Box>
+                            <Box basis="5%">count</Box>
 
                             <Box basis="50%" direction="row" gap="xsmall">
                               attributes
                             </Box>
                             <Box basis="10%">points</Box>
+                            <Box basis="10%">View</Box>
                           </Box>
 
-                          {breeder.kitties.map(kittyItem => (
-                            <Box
-                              pad="xsmall"
-                              direction="row"
-                              justify="stretch"
-                              align="center"
-                              gap="small"
-                              border={{
-                                color: "#cccccc",
-                                size: "xsmall",
-                                style: "dashed",
-                                side: "bottom"
-                              }}
-                              className="kittyRow"
-                              key={`kittyItem${kittyItem.kittyId}`}
-                            >
+                          {breeder.kitties.map(kittyItem => {
+                            // console.log("kittyItem", kittyItem);
+                          //   console.log('kitty.created_at', kittyItem.created_at)
+                          //   console.log('kitty. parse iso', parseISO(kittyItem.created_at))
+                          //   console.log('kitty. parse iso distance', formatDistanceStrict(
+                          //     parseISO(kittyItem.created_at), Date.now()
+                          // ))
+                      
+                            return (
                               <Box
-                                basis="30%"
+                                pad="xsmall"
                                 direction="row"
+                                justify="stretch"
                                 align="center"
-                                //justify="stretch"
+                                gap="small"
+                                border={{
+                                  color: "#cccccc",
+                                  size: "xsmall",
+                                  style: "dashed",
+                                  side: "bottom"
+                                }}
+                                className="kittyRow"
+                                key={`kittyItem${kittyItem.kittyId}`}
                               >
-                                <img
-                                  src={kittyItem.kittyImg}
-                                  style={{ width: "2rem" }}
-                                  alt=""
-                                />
-                                {kittyItem.kittyName}
-                              </Box>
-                              <Box basis="10%">
-                                {kittyItem.isFancy ? (
-                                  <Text>Fancy!</Text>
-                                ) : (
-                                  <Text>
-                                    {kittyItem.kittyAttributes.length}
-                                  </Text>
-                                )}
-                              </Box>
-
-                              <Box basis="50%" direction="row" gap="xsmall">
-                                {kittyItem.kittyAttributes.map(atr => (
-                                  <Box
-                                    className="pill"
-                                    round="medium"
-                                    pad="xsmall"
-                                    background="secondary"
-                                    key={`kittycattribute-${kittyItem.kittyId}${
-                                      atr.description
-                                    }`}
-                                  >
-                                    <Text size="small">{atr.description}</Text>
-                                  </Box>
-                                ))}
-                                {kittyItem.isFancy && (
-                                  <Box
-                                    className="pill fancy"
-                                    round="small"
-                                    pad="xsmall"
-                                    background="secondary"
-                                  >
-                                    <Text size="small">
-                                      {kittyItem.kittyName}
-                                      {" #"}
-                                      {kittyItem.fancyRanking}
-                                      {kittyItem.fancyRanking === 1 &&
-                                        " First!"}
-                                      {kittyItem.fancyRanking > 1 &&
-                                        kittyItem.fancyRanking < 11 &&
-                                        " Top Ten!"}
+                                <Box
+                                  basis="5%"
+                                  direction="row"
+                                  align="center"
+                                  //justify="stretch"
+                                >
+                                  <img
+                                    src={kittyItem.kittyImg}
+                                    style={{ width: "2rem" }}
+                                    alt=""
+                                  />
+                                </Box>
+                                <Box
+                                  basis="25%"
+                                  direction="column"
+                                  align="start"
+                                  justify="start"
+                                >
+                                  <Text size="small">{kittyItem.kittyName}</Text>
+                                  <Text size="xsmall">{formatDistanceStrict(parseISO(kittyItem.created_at), dateNow)} ago</Text>
+                                </Box>
+                                <Box basis="10%">
+                                  {kittyItem.isFancy ? (
+                                    <Text>Fancy!</Text>
+                                  ) : (
+                                    <Text>
+                                      {kittyItem.kittyAttributes.length}
                                     </Text>
-                                  </Box>
-                                )}
+                                  )}
+                                </Box>
+
+                                <Box basis="50%" direction="row" gap="xsmall">
+                                  {kittyItem.kittyAttributes.map(atr => (
+                                    <Box
+                                      className="pill"
+                                      round="medium"
+                                      pad="xsmall"
+                                      background="secondary"
+                                      key={`kittycattribute-${kittyItem.kittyId}${atr.description}`}
+                                    >
+                                      <Text size="small">
+                                        {atr.description}
+                                      </Text>
+                                    </Box>
+                                  ))}
+                                  {kittyItem.isFancy && (
+                                    <Box
+                                      className="pill fancy"
+                                      round="small"
+                                      pad="xsmall"
+                                      background="secondary"
+                                    >
+                                      <Text size="small">
+                                        {kittyItem.kittyName}
+                                        {" #"}
+                                        {kittyItem.fancyRanking}
+                                        {kittyItem.fancyRanking === 1 &&
+                                          " First!"}
+                                        {kittyItem.fancyRanking > 1 &&
+                                          kittyItem.fancyRanking < 11 &&
+                                          " Top Ten!"}
+                                      </Text>
+                                    </Box>
+                                  )}
+                                </Box>
+                                <Box basis="5%">{kittyItem.points}</Box>
+                                <Box basis="5%" align="center">
+                                  <Button
+                                    onClick={e => {
+                                      this.openLink(e, kittyItem.kittyId);
+                                    }}
+                                    className="viewLink"
+                                  >
+                                    <Box
+                                      align="center"
+                                      justify="center"
+                                      gap="none"
+                                      direction="row"
+                                    >
+                                      <FormView />
+                                      <Text size="xsmall">View</Text>
+                                    </Box>
+                                  </Button>
+                                </Box>
                               </Box>
-                              <Box basis="10%">{kittyItem.points}</Box>
-                            </Box>
-                          ))}
+                            );
+                          })}
                         </Box>
                       )}
                     </Box>
@@ -1592,6 +1637,7 @@ class BoardComponent extends Component {
               kittyImg: kitty.image_url,
               kittyAttributes: [],
               isFancy: true,
+              created_at: kitty.created_at,
               fancyRanking: kitty.fancy_ranking,
               generation: kitty.generation
             };
@@ -1616,6 +1662,7 @@ class BoardComponent extends Component {
             kittyName: kitty.name,
             kittyImg: kitty.image_url,
             kittyAttributes: attrs,
+            created_at: kitty.created_at,
             isFancy: false
           };
           if (attrs.length > 0) {
@@ -1648,10 +1695,12 @@ class BoardComponent extends Component {
       const breederPoints = this.sumValues(thisUserKitties, "points");
 
       thisUserKitties.reduce((sum, x) => sum + x);
-
+      // console.log('breeder kitties', thisUserKitties);
+      const sortedByDate = thisUserKitties.sort(this.compareDates);
+      const sortedByAttrCount = thisUserKitties.sort(this.compareCount);
       const breederObj = {
         nickname: row.nickname,
-        kitties: thisUserKitties,
+        kitties: sortedByAttrCount,
         numberOfCats: numberOfCats,
         breederPoints: breederPoints,
         fancyArray: thisUserFancyKitties
@@ -1660,7 +1709,7 @@ class BoardComponent extends Component {
     });
     breederArray.sort(this.comparePoints);
     const theTotalPoints = this.sumValues(breederArray, "breederPoints");
-    console.log("breederArray", breederArray);
+    // console.log("breederArray", breederArray);
     const leaderObj = breederArray.length > -1 && breederArray[0];
     const leaderName = leaderObj.nickname;
     const leaderScore = leaderObj.breederPoints;
@@ -1691,8 +1740,8 @@ class BoardComponent extends Component {
       isNew: "no",
       idFrom: this.state.idFrom || null,
       idTo: this.state.idTo || null,
-      leaderScore: leaderScore, 
-      leaderName: leaderName,
+      leaderScore: leaderScore,
+      leaderName: leaderName
     });
   };
 
@@ -1802,6 +1851,24 @@ class BoardComponent extends Component {
     }
     return 0;
   }
+  compareDates(a, b) {
+    if (a.created_at < b.created_at) {
+      return 1;
+    }
+    if (a.created_at > b.created_at) {
+      return -1;
+    }
+    return 0;
+  }
+  compareCount(a, b) {
+    if (a.kittyAttributes.length < b.kittyAttributes.length) {
+      return 1;
+    }
+    if (a.kittyAttributes.length > b.kittyAttributes.length) {
+      return -1;
+    }
+    return 0;
+  }
 
   setFocus = nickname => {
     this.setState({ focus: nickname });
@@ -1846,6 +1913,11 @@ class BoardComponent extends Component {
 
   sumValues = (array, key) => {
     return array.reduce((a, b) => a + (b[key] || 0), 0);
+  };
+  openLink = (e, id) => {
+    e.stopPropagation();
+    const link = `https://www.cryptokitties.co/kitty/${id}`;
+    window.open(link, "_blank");
   };
 }
 

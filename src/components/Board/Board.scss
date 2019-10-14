@@ -141,7 +141,13 @@
         }
       }
     }
-
+    .viewLink {
+      &:hover {
+        svg path {
+          stroke: #e520af;
+        }
+      }
+    }
     &:before {
       content: "";
       position: absolute;

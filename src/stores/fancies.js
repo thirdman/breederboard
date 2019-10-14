@@ -7,7 +7,7 @@ import config from "../firebase-config";
 // initFirestorter({ firebase: firebase });
 
 // let assetId;
-let pathId = "site/breederboard";
-const SiteStore = new Document(pathId, { mode: "on" });
+// let pathId = "site";
+const FancyStore = new Collection("fancisdsdes", { mode: "auto" });
 
-export { SiteStore };
+export { FancyStore };

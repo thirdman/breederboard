@@ -31,7 +31,11 @@ export const routes = [
     pattern: "/board/:id/:attributes"
     // beforeEnter: checkForUserSignedIn
   },
-
+  {
+    name: "admin",
+    pattern: "/admin",
+    beforeEnter: checkForUserSignedIn
+  },
   {
     name: "login",
     pattern: "/login",

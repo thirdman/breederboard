@@ -1,0 +1,42 @@
+@import "../../App.scss";
+.HomePage {
+  transition: opacity 0.2s linear;
+  &.isTransitioning {
+    opacity: 0;
+  }
+  .BoardList {
+  }
+  .BoardRow {
+    transition: box-shadow 0.3s ease-in-out;
+    .boardSubtitle {
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        &:not(.header) {
+          cursor: pointer;
+          background: #fff;
+          box-shadow: 0 2px 1rem -0.25rem rgba(0, 0, 0, 0.2);
+          svg.viewIcon {
+            // border: 10px solid red;
+            path {
+              stroke: $primary;
+            }
+          }
+        }
+      }
+    }
+    &.header {
+      background: transparent;
+    }
+    &.isOwner {
+      border-left: 4px solid violet;
+      border-right: 4px solid violet;
+    }
+    svg.viewIcon {
+      // path {
+      //   stroke: violet;
+      // }
+    }
+  }
+}

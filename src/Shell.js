@@ -5,11 +5,13 @@ import { RouterView } from "mobx-state-router";
 import { HomePage } from "./pages/HomePage/HomePage.js";
 import { BoardPage } from "./pages/BoardPage/BoardPage.js";
 import { AboutPage } from "./pages/AboutPage/AboutPage";
+import { AdminPage } from "./pages/AdminPage/AdminPage";
 
 const viewMap = {
   home: <HomePage />,
   about: <AboutPage />,
-  board: <BoardPage />
+  board: <BoardPage />,
+  admin: <AdminPage />
 };
 
 class Shell extends Component {
