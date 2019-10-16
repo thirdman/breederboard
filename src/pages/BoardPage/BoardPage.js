@@ -26,7 +26,9 @@ class BoardPageComponent extends Component {
 
     const {
       allAttributes = UiStore.allAttributes,
-      isLoadingStore = true
+      isLoadingStore = true,
+      fanciesLoaded,
+      storeFancies
     } = this.state;
     const { allFancies } = UiStore;
     if (params.attributes) {
@@ -67,7 +69,7 @@ class BoardPageComponent extends Component {
           {!isLoadingStore && (
             <Board
               allAttributes={allAttributes}
-              allFancies={allFancies}
+              allFancies={storeFancies}
               initialAttributes={UiStore.allAttributes}
               boardId={id}
               queryParams={
@@ -86,7 +88,7 @@ class BoardPageComponent extends Component {
   handleLoad = async () => {
     // console.log("handling load");
     const {
-      rootStore: { routerStore, UiStore, BoardStore }
+      rootStore: { routerStore, UiStore, BoardStore, SiteStore }
     } = this.props;
     const {
       routerState: { params, queryParams }
@@ -119,12 +121,25 @@ class BoardPageComponent extends Component {
           ? queryParams.attributes.split(",")
           : []
     });
-    this.setState({ isLoadingStore: false });
-    // await this.getAttributes();
-
     this.setState({
+      isLoadingStore: false,
       isLoadingAttributes: false,
       isLoadingStore: false
+    });
+    this.loadFancies();
+  };
+
+  loadFancies = async () => {
+    const {
+      rootStore: { SiteStore }
+    } = this.props;
+    console.log("loading fancies");
+    await SiteStore.ready().then(() => {
+      console.log("site ready", SiteStore);
+      this.setState({
+        storeFancies: SiteStore.data.allFancies,
+        fanciesLoaded: true
+      });
     });
   };
 

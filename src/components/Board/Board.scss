@@ -71,14 +71,20 @@
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
     .kittyRow {
       font-size: 0.875rem;
+      order: 5;
       &:last-child {
         border-bottom: none !important;
       }
       &.header {
+        order: 1;
         text-transform: uppercase;
         font-size: 0.75rem;
         font-weight: bold;
         color: hsl(286, 90%, 41%);
+      }
+      &.fancy {
+        // border: 1px solid red;
+        order: 2;
       }
     }
   }

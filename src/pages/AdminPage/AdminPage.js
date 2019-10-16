@@ -21,7 +21,7 @@ class AdminPageComponent extends Component {
   }
   render() {
     const {
-      rootStore: { routerStore, UiStore, FancyStore, BoardsStore, SiteStore }
+      rootStore: { routerStore, UiStore, BoardsStore, SiteStore }
     } = this.props;
     const {
       routerState: { params }
@@ -34,7 +34,6 @@ class AdminPageComponent extends Component {
     } = this.state;
     const { allAttributes } = UiStore;
     const { allFancies } = SiteStore.data;
-    console.log("FancyStore", FancyStore);
 
     // const dateNow = new Date();
     return (
@@ -101,10 +100,15 @@ class AdminPageComponent extends Component {
           </Button>
           <Button
             onClick={() =>
-              this.setState({ showAddFancy: false, showFancyList: true })
+              this.setState({
+                showAddFancy: false,
+                showFancyList: !showFancyList
+              })
             }
           >
-            <Box pad="small">Show Fancy List</Box>
+            <Box pad="small">
+              {showFancyList ? "Hide Fancy List" : "Show Fancy List"}
+            </Box>
           </Button>
           {showFancyList && (
             <Box border="all" margin="large" round="small" pad="large">
@@ -114,7 +118,9 @@ class AdminPageComponent extends Component {
               ) : (
                 <Box>
                   {allFancies &&
-                    allFancies.map(fancy => <Box>{fancy.label}</Box>)}
+                    allFancies.map(fancy => (
+                      <Box key={`fancy_${fancy.label}`}>{fancy.label}</Box>
+                    ))}
                 </Box>
               )}
             </Box>

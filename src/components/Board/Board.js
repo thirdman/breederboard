@@ -4,7 +4,7 @@ import { Document } from "firestorter";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { parseISO, formatDistanceStrict,} from "date-fns";
+import { parseISO, formatDistanceStrict } from "date-fns";
 import "./Board.scss";
 import apiConfig from "./../../apiConfig";
 import Loading from "../Loading/Loading";
@@ -67,10 +67,11 @@ class BoardComponent extends Component {
       }
     }
     const {
-      rootStore: { 
-        // routerStore, 
-        // UiStore, 
-        BoardStore }
+      rootStore: {
+        // routerStore,
+        // UiStore,
+        BoardStore
+      }
     } = this.props;
     const userBoardsString = localStorage.getItem("breederboards");
     const userBoards = JSON.parse(userBoardsString);
@@ -117,12 +118,13 @@ class BoardComponent extends Component {
 
   render() {
     const {
-      rootStore: { 
-        // routerStore, 
-        UiStore, 
-        BoardStore },
+      rootStore: {
+        // routerStore,
+        UiStore,
+        BoardStore
+      },
       // allAttributes,
-      // allFancies,
+      allFancies,
       // initialAttributes,
       // queryParams,
       boardId
@@ -138,9 +140,8 @@ class BoardComponent extends Component {
 
       // attributeValues = this.props.queryParams || [],
       attributeOptions = [],
-      fancyOptionsFiltered = this.props.allFancies.map(fancy => fancy.value) ||
+      fancyOptionsFiltered = allFancies && allFancies.map(fancy => fancy.value) ||
         [],
-      // fancyOptions = this.props.allFancies || [],
 
       isLoadingBoardData,
       kitties,
@@ -189,23 +190,26 @@ class BoardComponent extends Component {
     //   // console.log("OPTIONS 2: ", OPTIONS);
     // }
     let OPTIONS = allAttributes;
-    const fancyOptions = this.props.allFancies.map(fancy => fancy.value) || [];
+    const fancyOptions =
+      (this.props.allFancies &&
+        this.props.allFancies.map(fancy => fancy.value)) ||
+      [];
     let canGenerate = false;
-    console.log("does it have fancy: ", fancyValue.length);
+    // console.log("does it have fancy: ", fancyValue.length);
     if (fancyValue && fancyValue[0]) {
       canGenerate = true;
     }
-    console.log("does it have attr: ", attributeValues.length);
+    // console.log("does it have attr: ", attributeValues.length);
     if (attributeValues.length) {
       canGenerate = true;
     }
-    console.log("therefore cangenerate is", canGenerate);
+    // console.log("therefore cangenerate is", canGenerate);
 
-    if (boardId) {
-      console.log("boardId is", boardId);
-      // BoardStore.path = `boards/${boardId}`;
-      // console.log("BoardStore.data", BoardStore.data);
-    }
+    // if (boardId) {
+    //   console.log("boardId is", boardId);
+    //   // BoardStore.path = `boards/${boardId}`;
+    //   // console.log("BoardStore.data", BoardStore.data);
+    // }
     const dateNow = new Date();
     const canEdit = boardId && userBoards && userBoards.includes(boardId);
     // const canEdit = true;
@@ -786,43 +790,52 @@ class BoardComponent extends Component {
               <Loading text="getting data..." />
             </Box>
           )}
+
+
+          {/** NOTE: this is the dev mode pain listing of kitties
+          and should not be edited
+          TODO: refactor out
+           */}
           {showKitties && (
             <Box direction="row" wrap align="start" gap="small">
               {kitties &&
                 kitties.map(kitty => {
-                  
-                    
-                  
-                  return(
-                  <Box
-                    key={kitty.id}
-                    style={{ width: "200px" }}
-                    pad="small"
-                    border="all"
-                    direction="column"
-                    align="start"
-                    className="kitty"
-                  >
-                    {kitty.image_url ? (
-                      <img src={kitty.image_url} style={{ width: "100%" }} />
-                    ) : (
-                      <div>no pic yet</div>
-                    )}
-                    <Heading level={6} margin="none">
-                      {kitty.name}
-                    </Heading>
-                    <Text margin="none" size="xsmall">
-                      Created:{" "}
-                      {formatDistanceStrict(parseISO(kitty.created_at), dateNow)} ago
-                    </Text>
-                    <Text margin="none" size="small">
-                      by: {kitty.hatcher && kitty.hatcher.nickname}
-                    </Text>
-                    {/* {kitty.id} */}
-                  </Box>
-                )})}
+                  return (
+                    <Box
+                      key={kitty.id}
+                      style={{ width: "200px" }}
+                      pad="small"
+                      border="all"
+                      direction="column"
+                      align="start"
+                      className="kitty"
+                    >
+                      {kitty.image_url ? (
+                        <img src={kitty.image_url} style={{ width: "100%" }} />
+                      ) : (
+                        <div>no pic yet</div>
+                      )}
+                      <Heading level={6} margin="none">
+                        {kitty.name}
+                      </Heading>
+                      <Text margin="none" size="xsmall">
+                        Created:{" "}
+                        {formatDistanceStrict(
+                          parseISO(kitty.created_at),
+                          dateNow
+                        )}{" "}
+                        ago
+                      </Text>
+                      <Text margin="none" size="small">
+                        by: {kitty.hatcher && kitty.hatcher.nickname}
+                      </Text>
+                      {/* {kitty.id} */}
+                    </Box>
+                  );
+                })}
             </Box>
           )}
+
           {/* BOARD CONTENT */}
           {//attributeValues.length && !editBoard ? (
           canGenerate && !editBoard ? (
@@ -869,10 +882,7 @@ class BoardComponent extends Component {
                         <span>{boardTitle}</span>
                       ) : (
                         <TextInput
-                          // border="none"
                           margin="xsmall"
-                          // id="date-input"
-                          // placeholder="DD/MM/YYYY"
                           defaultValue={boardTitle || this.state.boardTitle}
                           onChange={event => this.setTitle(event.target.value)}
                           className="textInput"
@@ -949,11 +959,6 @@ class BoardComponent extends Component {
                         gap="xsmall"
                         margin="small"
                         label={editBoard ? "Cancel" : "Edit"}
-                        // border={{
-                        //   side: "all",
-                        //   color: "secondaryLight",
-                        //   size: "xsmall"
-                        // }}
                         plain
                       />
                       <Button
@@ -1097,6 +1102,10 @@ class BoardComponent extends Component {
                           </Button>
                         </Box>
                       </Box>
+
+                      {/** THIS IS THE LIST OF BREDER KITTIES IN WINDOW
+                      TODO: refactor into seperate component
+                       */}
                       {focus === breeder.nickname && (
                         <Box
                           direction="column"
@@ -1140,12 +1149,12 @@ class BoardComponent extends Component {
 
                           {breeder.kitties.map(kittyItem => {
                             // console.log("kittyItem", kittyItem);
-                          //   console.log('kitty.created_at', kittyItem.created_at)
-                          //   console.log('kitty. parse iso', parseISO(kittyItem.created_at))
-                          //   console.log('kitty. parse iso distance', formatDistanceStrict(
-                          //     parseISO(kittyItem.created_at), Date.now()
-                          // ))
-                      
+                            //   console.log('kitty.created_at', kittyItem.created_at)
+                            //   console.log('kitty. parse iso', parseISO(kittyItem.created_at))
+                            //   console.log('kitty. parse iso distance', formatDistanceStrict(
+                            //     parseISO(kittyItem.created_at), Date.now()
+                            // ))
+
                             return (
                               <Box
                                 pad="xsmall"
@@ -1159,7 +1168,7 @@ class BoardComponent extends Component {
                                   style: "dashed",
                                   side: "bottom"
                                 }}
-                                className="kittyRow"
+                                className={classNames("kittyRow", kittyItem.isFancy ? "fancy" : "")}
                                 key={`kittyItem${kittyItem.kittyId}`}
                               >
                                 <Box
@@ -1180,8 +1189,16 @@ class BoardComponent extends Component {
                                   align="start"
                                   justify="start"
                                 >
-                                  <Text size="small">{kittyItem.kittyName}</Text>
-                                  <Text size="xsmall">{formatDistanceStrict(parseISO(kittyItem.created_at), dateNow)} ago</Text>
+                                  <Text size="small">
+                                    {kittyItem.kittyName}
+                                  </Text>
+                                  <Text size="xsmall">
+                                    {formatDistanceStrict(
+                                      parseISO(kittyItem.created_at),
+                                      dateNow
+                                    )}{" "}
+                                    ago
+                                  </Text>
                                 </Box>
                                 <Box basis="10%">
                                   {kittyItem.isFancy ? (

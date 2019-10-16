@@ -6,7 +6,7 @@ import { UiStore } from "./ui";
 import { BoardStore } from "./board";
 import { BoardsStore } from "./boards";
 import { SiteStore } from "./site";
-import { FancyStore } from "./fancies";
+// import { FancyStore } from "./fancies";
 
 const notFound = new RouterState("notFound");
 
@@ -16,5 +16,4 @@ export class RootStore {
   BoardStore = BoardStore;
   BoardsStore = BoardsStore;
   SiteStore = SiteStore;
-  FancyStore = FancyStore;
 }
