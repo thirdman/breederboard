@@ -1,0 +1,65 @@
+.GlobalPage {
+  transition: opacity 0.2s linear;
+  &.isTransitioning {
+    opacity: 0;
+  }
+  .circleWrap > .circle {
+    opacity: 0.75;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  }
+  .Preview {
+    transition: transform 0.6s ease-in-out;
+    transform: translateY(0);
+    z-index: 10;
+  }
+  .sectionHeading {
+    position: relative;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2rem;
+      height: 3px;
+      background: #ccc;
+    }
+  }
+
+  .testy {
+    cursor: pointer;
+    @media (hover: hover) {
+      &:hover {
+        .circleWrap > .circle {
+          transform: scale(1.1);
+          opacity: 1;
+        }
+        .Preview {
+          // transform: translateY(-1rem) translateX(-1rem);
+        }
+        .primaryPreview {
+          z-index: 10;
+          transform: translateY(-1rem) translateX(-1rem);
+        }
+        .secondaryPreview {
+          z-index: 11;
+          transform: translateY(-0.5rem) translateX(1rem);
+        }
+        .tertiaryPreview {
+          z-index: 10;
+          transform: translateY(1.5rem) translateX(0.5rem);
+        }
+      }
+    }
+  }
+  .generationItem {
+    flex-direction: column-reverse;
+    .amountText {
+      overflow: hidden;
+      color: #222;
+    }
+    .percentText {
+      color: #999;
+    }
+  }
+}

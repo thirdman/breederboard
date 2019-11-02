@@ -6,11 +6,13 @@ import { HomePage } from "./pages/HomePage/HomePage.js";
 import { BoardPage } from "./pages/BoardPage/BoardPage.js";
 import { AboutPage } from "./pages/AboutPage/AboutPage";
 import { AdminPage } from "./pages/AdminPage/AdminPage";
+import { GlobalPage } from "./pages/GlobalPage/GlobalPage";
 
 const viewMap = {
   home: <HomePage />,
   about: <AboutPage />,
   board: <BoardPage />,
+  global: <GlobalPage />,
   admin: <AdminPage />
 };
 

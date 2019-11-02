@@ -34,7 +34,7 @@ class AdminPageComponent extends Component {
     } = this.state;
     const { allAttributes } = UiStore;
     const { allFancies } = SiteStore.data;
-
+    console.log("allFancies", allFancies);
     // const dateNow = new Date();
     return (
       <div
@@ -62,7 +62,7 @@ class AdminPageComponent extends Component {
           justifyContent="center"
         >
           <Heading level={2} margin="large">
-            Attribute Leaderboards for Kitty Breeders
+            Admin
           </Heading>
         </Box>
 
@@ -96,7 +96,9 @@ class AdminPageComponent extends Component {
             // label="Add Fancy"
             onClick={() => this.setState({ showAddFancy: true })}
           >
-            <Box pad="small">Add Fancy</Box>
+            <Box pad="small">
+              <FormAdd /> Add Fancy
+            </Box>
           </Button>
           <Button
             onClick={() =>
@@ -170,9 +172,16 @@ class AdminPageComponent extends Component {
   }
 
   handleLoad = async () => {
-    console.log("handling load");
-
+    const {
+      rootStore: { routerStore, UiStore, BoardsStore, SiteStore }
+    } = this.props;
+    const { allFancies } = SiteStore.data;
+    console.log("allFancies", allFancies);
     this.setState({ isLoadingAttributes: true });
+    await SiteStore.ready().then(() => {
+      console.log("sitestore.ready");
+      console.log("sitestore.data", SiteStore.data);
+    });
 
     const userBoardsString = localStorage.getItem("breederboards");
     const userBoards = JSON.parse(userBoardsString);

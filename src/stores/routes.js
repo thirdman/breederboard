@@ -37,43 +37,51 @@ export const routes = [
     beforeEnter: checkForUserSignedIn
   },
   {
-    name: "login",
-    pattern: "/login",
+    name: "global",
+    pattern: "/global",
     beforeEnter: checkForUserSignedIn
   },
-  {
-    name: "loginId",
-    pattern: "/login/:id",
-    beforeEnter: checkForUserSignedIn
-  },
-  {
-    name: "profile",
-    pattern: "/profile/:id",
-    beforeEnter: checkForUserSignedIn
-  },
-  {
-    name: "assets",
-    pattern: "/assets",
-    beforeEnter: checkForUserSignedIn
-  },
-  {
-    name: "user",
-    pattern: "/user",
-    beforeEnter: checkForUserSignedIn
-  },
+
   {
     name: "about",
     pattern: "/about",
     beforeEnter: checkForUserSignedIn
   },
-  {
-    name: "changelog",
-    pattern: "/changelog",
-    beforeEnter: checkForUserSignedIn
-  },
+
   {
     name: "notFound",
     pattern: "/not-found",
     beforeEnter: checkForUserSignedIn
   }
 ];
+
+// {
+//   name: "profile",
+//   pattern: "/profile/:id",
+//   beforeEnter: checkForUserSignedIn
+// },
+// {
+//   name: "assets",
+//   pattern: "/assets",
+//   beforeEnter: checkForUserSignedIn
+// },
+// {
+//   name: "user",
+//   pattern: "/user",
+//   beforeEnter: checkForUserSignedIn
+// },
+// {
+//   name: "changelog",
+//   pattern: "/changelog",
+//   beforeEnter: checkForUserSignedIn
+// },
+// {
+//   name: "login",
+//   pattern: "/login",
+//   beforeEnter: checkForUserSignedIn
+// },
+// {
+//   name: "loginId",
+//   pattern: "/login/:id",
+//   beforeEnter: checkForUserSignedIn
+// },

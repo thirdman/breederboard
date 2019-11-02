@@ -69,7 +69,8 @@ class BoardPageComponent extends Component {
           {!isLoadingStore && (
             <Board
               allAttributes={allAttributes}
-              allFancies={storeFancies}
+              // allFancies={storeFancies}
+              allFancies={allFancies}
               initialAttributes={UiStore.allAttributes}
               boardId={id}
               queryParams={

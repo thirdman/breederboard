@@ -11,6 +11,7 @@ initFirestorter({ firebase: firebase });
 const UiStore = new Document({ mode: "on" });
 UiStore.hasMenu = false;
 UiStore.allFancies = [
+  { value: "Skeletonne", label: "Skeletonne" },
   { value: "Furmione", label: "Furmione" },
   { value: "Jack", label: "Jack" },
   { value: "Pawderick", label: "Pawderick" },

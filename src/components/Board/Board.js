@@ -140,7 +140,8 @@ class BoardComponent extends Component {
 
       // attributeValues = this.props.queryParams || [],
       attributeOptions = [],
-      fancyOptionsFiltered = allFancies && allFancies.map(fancy => fancy.value) ||
+      fancyOptionsFiltered = (allFancies &&
+        allFancies.map(fancy => fancy.value)) ||
         [],
 
       isLoadingBoardData,
@@ -791,7 +792,6 @@ class BoardComponent extends Component {
             </Box>
           )}
 
-
           {/** NOTE: this is the dev mode pain listing of kitties
           and should not be edited
           TODO: refactor out
@@ -811,7 +811,7 @@ class BoardComponent extends Component {
                       className="kitty"
                     >
                       {kitty.image_url ? (
-                        <img src={kitty.image_url} style={{ width: "100%" }} />
+                        <img src={kitty.image_url} style={{ width: "100%" }} alt="" />
                       ) : (
                         <div>no pic yet</div>
                       )}
@@ -1084,8 +1084,9 @@ class BoardComponent extends Component {
                         </Box>
                         <Box basis="20%">{breeder.numberOfCats} Kitties</Box>
                         <Box basis="10%">{breeder.breederPoints}</Box>
-                        <Box basis="5%">
+                        <Box basis="5%" align="center" justify="center">
                           <Button
+                          className="toggleButton"
                             onClick={() =>
                               this.setFocus(
                                 focus === breeder.nickname
@@ -1131,20 +1132,23 @@ class BoardComponent extends Component {
                             className="kittyRow header"
                           >
                             <Box
-                              basis="30%"
+                              basis="5%"
                               direction="row"
                               align="center"
-                              //justify="stretch"
-                            >
+                            ></Box>
+                            <Box basis="25%" direction="row" align="center">
                               Kitty
                             </Box>
-                            <Box basis="5%">count</Box>
+
+                            <Box basis="10%">count</Box>
 
                             <Box basis="50%" direction="row" gap="xsmall">
                               attributes
                             </Box>
-                            <Box basis="10%">points</Box>
-                            <Box basis="10%">View</Box>
+                            <Box basis="5%">points</Box>
+                            <Box basis="5%" justify="end">
+                              View
+                            </Box>
                           </Box>
 
                           {breeder.kitties.map(kittyItem => {
@@ -1168,8 +1172,14 @@ class BoardComponent extends Component {
                                   style: "dashed",
                                   side: "bottom"
                                 }}
-                                className={classNames("kittyRow", kittyItem.isFancy ? "fancy" : "")}
+                                className={classNames(
+                                  "kittyRow",
+                                  kittyItem.isFancy ? "fancy" : ""
+                                )}
                                 key={`kittyItem${kittyItem.kittyId}`}
+                                onClick={e =>
+                                  this.openLink(e, kittyItem.kittyId)
+                                }
                               >
                                 <Box
                                   basis="5%"
@@ -1190,9 +1200,15 @@ class BoardComponent extends Component {
                                   justify="start"
                                 >
                                   <Text size="small">
-                                    {kittyItem.kittyName}
+                                    <Button
+                                      onClick={e =>
+                                        this.openLink(e, kittyItem.kittyId)
+                                      }
+                                    >
+                                      {kittyItem.kittyName}
+                                    </Button>
                                   </Text>
-                                  <Text size="xsmall">
+                                  <Text size="xsmall" className="subtitle">
                                     {formatDistanceStrict(
                                       parseISO(kittyItem.created_at),
                                       dateNow
