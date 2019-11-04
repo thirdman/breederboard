@@ -11,7 +11,7 @@ import "./App.scss";
 import { Box, Button, Grommet, Text, Collapsible } from "grommet";
 import { Close } from "grommet-icons";
 import themeFile from "./theme.json";
-import AppBar from "./components/AppBar/AppBar";
+import { AppBar } from "./components/AppBar/AppBar";
 import "./App.scss";
 
 const rootStore = new RootStore();
@@ -25,6 +25,7 @@ class App extends Component {
   };
   render() {
     const { showSidebar, showInfo } = this.state;
+    const { UiStore } = rootStore;
 
     return (
       <Grommet
@@ -41,6 +42,11 @@ class App extends Component {
               this.setState({ showSidebar: !this.state.showSidebar })
             }
             handleInfo={this.handleInfo}
+            // fancyPercent={45}
+            // notFancyPercent={55}
+            // speed={24.56}
+            rootStore={rootStore}
+            // UiStore={UiStore}
           />
           <Box direction="row" flex full overflow={{ horizontal: "hidden" }}>
             {/* {showSidebar && (

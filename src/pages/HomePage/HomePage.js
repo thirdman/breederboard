@@ -5,7 +5,6 @@ import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { Box, Button, Text, Collapsible, Heading } from "grommet";
 import { FormAdd, View, Edit } from "grommet-icons";
-import Board from "../../components/Board/Board";
 import "./HomePage.scss";
 import apiConfig from "./../../apiConfig";
 import Loading from "./../../components/Loading/Loading";
@@ -19,22 +18,16 @@ class HomePageComponent extends Component {
   }
   render() {
     const {
-      rootStore: { routerStore, UiStore, BoardStore, BoardsStore }
+      rootStore: { routerStore, UiStore, BoardsStore }
     } = this.props;
-    const {
-      routerState: { params }
-    } = routerStore;
+    // const {
+    //   routerState: { params }
+    // } = routerStore;
     const { isCreating, userBoards } = this.state;
-    const { id } = params;
-    const { allAttributes } = UiStore;
-    // console.log("UiStore", UiStore);
-    // console.log("UiStore.productTheme", UiStore.productTheme);
-    // if (params.id) {
-    //   BoardStore.path = `baords/${params.id}`;
-    // }
+
     const { docs } = BoardsStore;
 
-    const dateNow = new Date();
+    // const dateNow = new Date();
     return (
       <div
         className={classNames("HomePage", {
@@ -328,14 +321,14 @@ class HomePageComponent extends Component {
 
   getAttributes = address => {
     const {
-      rootStore: { UiStore, SiteStore }
+      rootStore: { UiStore }
     } = this.props;
 
     console.log("address", address);
-    const {
-      rootStore: { AssetsStore }
-    } = this.props;
-    console.log("AssetsStore");
+    // const {
+    //   rootStore: { AssetsStore }
+    // } = this.props;
+
     let theHeaders = new Headers();
     this.setState({
       isLoadingAssets: true

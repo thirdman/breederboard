@@ -1,4 +1,5 @@
 .SpeedChart {
+  position: relative;
   .chartWrap {
     position: relative;
     width: 100%;
@@ -106,6 +107,32 @@
         //   fill: rgb(224, 149, 224);
         // }
       }
+    }
+  }
+  .chartFooter {
+    position: relative;
+    top: 0;
+    border: 1px solid red;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 2rem;
+    z-index: 3;
+  }
+  .chartDetail {
+    background: orange;
+    width: 100%;
+    z-index: 3;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    display: none;
+  }
+  // MODIFIERS
+  &.hasSelected {
+    .chartDetail {
+      display: block;
     }
   }
 }

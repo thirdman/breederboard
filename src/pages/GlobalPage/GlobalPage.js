@@ -4,9 +4,8 @@ import { inject, observer } from "mobx-react";
 import firebase from "firebase/app";
 import "firebase/functions";
 import classNames from "classnames";
-import { Box, Meter, Button, Heading, Stack, Text } from "grommet";
-import { Fireball, View } from "grommet-icons";
-// import { Board } from "../../components/Board/Board";
+import { Box, Meter, Button, Heading, Text } from "grommet";
+import { CaretDown, CaretUp } from "grommet-icons";
 import Loading from "../../components/Loading/Loading";
 import SpeedChart from "../../components/SpeedChart/SpeedChart";
 import "./GlobalPage.scss";
@@ -19,26 +18,29 @@ class GlobalPageComponent extends Component {
     loadingStatus: "Loading...",
     limit: 500,
     showRest: false,
-    saveToFirebase: true
+    saveToFirebase: false
   };
   componentDidMount() {
     this.handleLoad();
   }
   render() {
     const {
-      rootStore: { routerStore, UiStore, BoardStore, BoardsStore }
+      rootStore: { routerStore, BoardStore, UiStore }
     } = this.props;
 
     const {
-      routerState: { params, queryParams }
+      routerState: {
+        params
+        //, queryParams
+      }
     } = routerStore;
     const { id } = params;
-
+    const { devMode } = UiStore;
     const {
-      allAttributes = UiStore.allAttributes,
-      isLoadingStore = true,
-      fanciesLoaded,
-      storeFancies,
+      // allAttributes = UiStore.allAttributes,
+      // isLoadingStore = true,
+      // fanciesLoaded,
+      // storeFancies,
       loadingStatus,
       breederArray,
       fancyCount,
@@ -50,7 +52,7 @@ class GlobalPageComponent extends Component {
       saveToFirebase,
       speedData
     } = this.state;
-    const { allFancies } = UiStore;
+
     if (params.attributes) {
       // console.log("params.attributes", params.attributes);
     }
@@ -71,12 +73,17 @@ class GlobalPageComponent extends Component {
         padding="large"
       >
         <Box justify="center" margin="small" fill="horizontal" align="center">
-          <Heading level={3} margin="small">
-            Global Stats (most recent {limit} kitties)
+          <Heading level={3} margin={{ top: "medium", bottom: "none" }}>
+            Global Stats
           </Heading>
-          <Button primary onClick={() => this.testFirebase()}>
-            test firebase
-          </Button>
+          <Box>
+            <Text size="small">Latest {limit} Kitties</Text>
+            {devMode && (
+              <Button primary onClick={() => this.testFirebase()}>
+                test firebase
+              </Button>
+            )}
+          </Box>
         </Box>
         {loadingStatus !== "done" && (
           <Box
@@ -92,142 +99,153 @@ class GlobalPageComponent extends Component {
 
         {loadingStatus === "done" && (
           <Box
-            // border="all"
             direction="column"
-            // justify="center"
             align="stretch"
             fill="horizontal"
             alignSelf="center"
             basis="100%"
             pad="small"
-            // alignItems="center"
-            // justifyContent="center"
             round="none"
-            margin={{ vertical: "small", horizontal: "large" }}
-            // fill="horizontal"
+            margin={{ top: "none", bottom: "large", horizontal: "large" }}
             style={{ maxWidth: "1024px" }}
           >
-            <Box className="sectionHeading" pad={{ vertical: "small" }}>
-              <Heading level={3} margin="none">
-                Top Breeders
-              </Heading>
-            </Box>
-            <Box fill="horizontal">
-              <Box
-                direction="row"
-                fill="horizontal"
-                gap="small"
-                justify="stretch"
-                pad={{ vertical: "xsmall" }}
-              >
-                <Box basis="50%">
-                  <Heading level={6} margin="none">
-                    Name
-                  </Heading>
-                </Box>
-                <Box basis="30%"> </Box>
-                <Box basis="10%" align="end">
-                  <Heading level={6} margin="none">
-                    Kitties
-                  </Heading>
-                </Box>
-                <Box basis="10%" align="end">
-                  <Heading level={6} margin="none">
-                    Fancies
-                  </Heading>
-                </Box>
-                <Box basis="10%" align="end">
-                  <Heading level={6} margin="none">
-                    Total
-                  </Heading>
-                </Box>
-              </Box>
-              {breederArray &&
-                breederArray
-                  .slice(0, showRest ? breederArray.length : 10)
-                  .map(breeder => (
-                    <Box
-                      direction="row"
-                      key={breeder.nickname}
-                      fill="horizontal"
-                      gap="small"
-                      justify="stretch"
-                      margin={{ bottom: "xxsmall" }}
-                    >
-                      <Box basis="50%">
-                        <Text size="small">{breeder.nickname}</Text>
-                      </Box>
-                      <Box
-                        basis="30%"
-                        direction="row"
-                        justify="stretch"
-                        background="#eee"
-                        round="xsmall"
-                        overflow="hidden"
-                      >
-                        <Box
-                          basis={`${((breeder.kitties.length -
-                            breeder.fancyArray.length) /
-                            limit) *
-                            100 *
-                            4}%`}
-                          background="violet"
-                        />
-                        <Box
-                          basis={`${(breeder.fancyArray.length / limit) *
-                            100 *
-                            4}%`}
-                          background="#dd4ddd"
-                        />
-                        <Box
-                          // basis={`${(limit - breeder.kitties.length / limit) *100}%`}
-                          background="#ddd"
-                        />
-                      </Box>
-                      <Box basis="10%" align="end">
-                        <Text size="small">
-                          {breeder.kitties.length - breeder.fancyArray.length}
-                        </Text>
-                      </Box>
-                      <Box align="end" basis="10%">
-                        <Text size="small">
-                          {breeder.fancyArray.length || 0}
-                        </Text>
-                      </Box>
-                      <Box align="end" basis="10%">
-                        <strong>{breeder.kitties.length}</strong>
-                      </Box>
-                    </Box>
-                  ))}
-              <Box>
-                <Text size="small">
-                  Top 10 of {breederArray && breederArray.length - 10} breeders
-                  <Button onClick={() => this.toggleShowRest(!showRest)}>
-                    {showRest ? "Hide All" : "Show All"}
-                  </Button>
-                </Text>
-              </Box>
-            </Box>
-            {/* {!isLoadingStore && (
-            <Board
-              allAttributes={allAttributes}
-              allFancies={storeFancies}
-              initialAttributes={UiStore.allAttributes}
-              boardId={id}
-              queryParams={
-                queryParams && queryParams.attributes
-                  ? queryParams.attributes.split(",")
-                  : []
-              }
-              appLink={this.appLink}
-            />
-          )} */}
             <Box
+              className="contentSection"
+              fill="horizontal"
+              margin={{ vertical: "small" }}
+            >
+              <Box className="sectionHeading" pad={{ vertical: "small" }}>
+                <Heading level={3} margin="none">
+                  Top Breeders
+                </Heading>
+              </Box>
+              <Box fill="horizontal">
+                <Box
+                  direction="row"
+                  fill="horizontal"
+                  gap="small"
+                  justify="stretch"
+                  pad={{ bottom: "small" }}
+                >
+                  <Box basis="50%">
+                    <Heading level={6} margin="none">
+                      Name
+                    </Heading>
+                  </Box>
+                  <Box basis="30%"> </Box>
+                  <Box basis="10%" align="end">
+                    <Heading level={6} margin="none">
+                      Kitties
+                    </Heading>
+                  </Box>
+                  <Box basis="10%" align="end">
+                    <Heading level={6} margin="none">
+                      Fancies
+                    </Heading>
+                  </Box>
+                  <Box basis="10%" align="end">
+                    <Heading level={6} margin="none">
+                      Total
+                    </Heading>
+                  </Box>
+                </Box>
+                {breederArray &&
+                  breederArray
+                    .slice(0, showRest ? breederArray.length : 10)
+                    .map(breeder => (
+                      <Box
+                        direction="row"
+                        key={breeder.nickname}
+                        fill="horizontal"
+                        gap="small"
+                        justify="stretch"
+                        margin={{ bottom: "xxsmall" }}
+                      >
+                        <Box basis="50%">
+                          <Text size="small">{breeder.nickname}</Text>
+                        </Box>
+                        <Box
+                          basis="30%"
+                          direction="row"
+                          justify="stretch"
+                          background="#eee"
+                          round="xsmall"
+                          overflow="hidden"
+                        >
+                          <Box
+                            basis={`${((breeder.kitties.length -
+                              breeder.fancyArray.length) /
+                              limit) *
+                              100 *
+                              4}%`}
+                            background="violet"
+                          />
+                          <Box
+                            basis={`${(breeder.fancyArray.length / limit) *
+                              100 *
+                              4}%`}
+                            background="#dd4ddd"
+                          />
+                          <Box
+                            // basis={`${(limit - breeder.kitties.length / limit) *100}%`}
+                            background="#ddd"
+                          />
+                        </Box>
+                        <Box basis="10%" align="end">
+                          <Text size="small">
+                            {breeder.kitties.length - breeder.fancyArray.length}
+                          </Text>
+                        </Box>
+                        <Box align="end" basis="10%">
+                          <Text size="small">
+                            {breeder.fancyArray.length || 0}
+                          </Text>
+                        </Box>
+                        <Box align="end" basis="10%">
+                          <strong>{breeder.kitties.length}</strong>
+                        </Box>
+                      </Box>
+                    ))}
+                <Box margin={{ top: "small" }}>
+                  <Text size="small">
+                    {/* Top 10 of {breederArray && breederArray.length - 10}{" "}
+                    breeders */}
+                    <Button
+                      plain
+                      onClick={() => this.toggleShowRest(!showRest)}
+                    >
+                      <Box
+                        pad={{ vertical: "xxsmall", horizontal: "small" }}
+                        border="all"
+                        round="medium"
+                        direction="row"
+                        gap="xxsmall"
+                        align="center"
+                      >
+                        {showRest ? (
+                          <CaretUp size="small" color="secondary" />
+                        ) : (
+                          <CaretDown size="small" color="secondary" />
+                        )}
+                        {showRest
+                          ? "Show Top 10"
+                          : `Show ${breederArray &&
+                              breederArray.length - 10} More`}
+                      </Box>
+                    </Button>
+                  </Text>
+                </Box>
+              </Box>
+            </Box>
+
+            <Box
+              className="contentSection"
               direction="row"
               justify="stretch"
-              margin={{ top: "medium" }}
-              height="180px"
+              margin={{ vertical: "small" }}
+              // height="180px"
               gap="small"
+              style={{ minHeight: "180px" }}
             >
               {breederArray && dateData && (
                 <Box
@@ -238,7 +256,7 @@ class GlobalPageComponent extends Component {
                   pad="none"
                 >
                   <Box
-                    basis="30%"
+                    // basis="35%"
                     pad={{ vertical: "small" }}
                     className="sectionHeading"
                   >
@@ -252,9 +270,9 @@ class GlobalPageComponent extends Component {
                     background="#f3f3f3"
                     round="xsmall"
                     pad="xsmall"
-                    elevation="xsmall"
+                    // elevation="xsmall"
                     // margin="xsmall"
-                    basis="70%"
+                    basis="65%"
                     justify="stretch"
                   >
                     <Box direction="column" basis="50%">
@@ -279,7 +297,7 @@ class GlobalPageComponent extends Component {
                   justify="stretch"
                 >
                   <Box
-                    basis="30%"
+                    // basis="35%"
                     pad={{ vertical: "small" }}
                     className="sectionHeading"
                   >
@@ -288,13 +306,13 @@ class GlobalPageComponent extends Component {
                     </Heading>
                   </Box>
                   <Box
-                    basis="70%"
+                    // basis="70%"
                     direction="row"
                     gap="small"
                     background="#f3f3f3"
                     round="xsmall"
                     pad="small"
-                    elevation="xsmall"
+                    // elevation="xsmall"
                     justify="stretch"
                     min-height="5rem"
                   >
@@ -379,8 +397,8 @@ class GlobalPageComponent extends Component {
               )}
             </Box>
             {kittyGenArray && (
-              <Box>
-                <Box className="secitonHeading" pad={{ vertical: "small" }}>
+              <Box className="contentSection" margin={{ vertical: "small" }}>
+                <Box className="sectionHeading" pad={{ vertical: "small" }}>
                   <Heading level={3} margin="none">
                     Generation
                   </Heading>
@@ -449,9 +467,9 @@ class GlobalPageComponent extends Component {
                 </Box>
               </Box>
             )}
-            {speedData && (
-              <Box>
-                <Box className="secitonHeading" pad={{ vertical: "small" }}>
+            {devMode && speedData && (
+              <Box className="contentSection" margin={{ vertical: "small" }}>
+                <Box className="sectionHeading" pad={{ vertical: "small" }}>
                   <Heading level={3} margin="none">
                     Rate
                   </Heading>
@@ -468,12 +486,19 @@ class GlobalPageComponent extends Component {
   handleLoad = async () => {
     // console.log("handling load");
     const {
-      rootStore: { routerStore, UiStore, BoardStore, SiteStore, KittehStore }
+      rootStore: {
+        routerStore,
+        UiStore,
+        BoardStore
+        // SiteStore,
+        // KittehStore,
+      }
     } = this.props;
     const { limit = 500, saveToFirebase } = this.state;
     const {
       routerState: { params, queryParams }
     } = routerStore;
+    const { devMode } = UiStore;
     this.setState({ loadingStatus: "Loading Global Data" });
     const getKittiesParameters = {
       pageSize: 1,
@@ -487,7 +512,9 @@ class GlobalPageComponent extends Component {
         if (saveToFirebase) {
           this.saveKittehData(data);
         }
-        this.getSpeedData();
+        if (devMode) {
+          this.getSpeedData();
+        }
         this.setState({ loadingStatus: "Doing Calculations" });
         this.setState({
           // kitties: data.kitties,
@@ -511,6 +538,7 @@ class GlobalPageComponent extends Component {
         console.log("kittyTypeObj", kittyTypeObj);
         console.log("kittyGenArray", kittyGenArray);
         console.log("dateData", dateData);
+
         this.setState({
           fancyCount: kittyTypeObj.fancyCount,
           notFancyCount: kittyTypeObj.notFancyCount,
@@ -518,22 +546,20 @@ class GlobalPageComponent extends Component {
           dateData: dateData,
           loadingStatus: "done"
         });
+        UiStore.speed = dateData && dateData.perHour;
+        UiStore.fancyPercent =
+          kittyTypeObj && (kittyTypeObj.fancyCount / limit) * 100;
+        UiStore.notFancyPercent =
+          kittyTypeObj && (kittyTypeObj.notFancyCount / limit) * 100;
         if (saveToFirebase) {
           this.saveSpeedData(dateData);
         }
       });
-    // const { id } = params;
-    // if (id) {
-    //   BoardStore.path = `boards/${id}`;
-    // }
-    // if (queryParams.attributes) {
-    //   BoardStore.boardAttributes = queryParams.attributes;
-    // }
-    // console.log("before ready");
+
     await BoardStore.ready();
     console.log(BoardStore.data.allAttributes);
     // console.log("ready");
-    await UiStore.ready();
+    await UiStore && UiStore.UiData.ready();
     // console.log(UiStore.allAttributes);
     // console.log("ready");
     this.setState({
@@ -631,9 +657,10 @@ class GlobalPageComponent extends Component {
   };
   saveSpeedData = dateData => {
     console.log("savespeedData", dateData);
-
+    let dateNow = firebase.firestore.Timestamp.fromDate(new Date());
     const storeSpeed = firebase.functions().httpsCallable("storeSpeed");
-    storeSpeed({ dateData: dateData }).then(result => {
+    const saveData = { ...dateData, dateCreated: dateNow };
+    storeSpeed({ dateData: saveData }).then(result => {
       console.log("savespped result : ", result);
       // Read result of the Cloud Function.
       // var sanitizedMessage = result.data.text;

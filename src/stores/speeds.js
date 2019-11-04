@@ -9,9 +9,13 @@ import config from "../firebase-config";
 // let assetId;
 
 const SpeedsStore = new Collection("speeds", {
-  query: ref => ref.limit(24),
+  query: ref => ref.orderBy("dateCreated", "desc").limit(124),
   mode: "on"
 });
+
+// myArray.sort(function(a, b) {
+//   return (a.date < b.date) ? -1 : ((a.date > b.date) ? 1 : 0);
+// });
 // BoardsStore.query = ref => ref.where("status", ">=", "a");
 // BoardsStore.query = ref => ref.where("isPublic", "==", true);
 // BoardsStore.query = ref =>

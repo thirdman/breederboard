@@ -112,7 +112,7 @@ class BoardPageComponent extends Component {
     await BoardStore.ready();
     console.log(BoardStore.data.allAttributes);
     console.log("ready");
-    await UiStore.ready();
+    await UiStore.UiData.ready();
     // console.log(UiStore.allAttributes);
     console.log("ready");
     this.setState({

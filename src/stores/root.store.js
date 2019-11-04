@@ -8,7 +8,7 @@ import { BoardsStore } from "./boards";
 import { SiteStore } from "./site";
 import { SpeedsStore } from "./speeds";
 import { KittehStore } from "./kitteh";
-// import { FancyStore } from "./fancies";
+// import { SnapshotStore } from "./snapshot";
 
 const notFound = new RouterState("notFound");
 
@@ -20,4 +20,5 @@ export class RootStore {
   SiteStore = SiteStore;
   SpeedsStore = SpeedsStore;
   KittehStore = KittehStore;
+  // SnapshotStore = SnapshotStore;
 }
