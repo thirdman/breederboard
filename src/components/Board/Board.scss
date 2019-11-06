@@ -16,6 +16,12 @@
     // background: linear-gradient(90deg, #e520af, hsl(276, 90%, 41%));
     border: none;
   }
+  .errorBorder {
+    border: 1px solid red;
+  }
+  .errorWarning{
+    color: #ff0000;
+  }
   .buttonGroupWrap {
     .ButtonGroup {
       white-space: nowrap;

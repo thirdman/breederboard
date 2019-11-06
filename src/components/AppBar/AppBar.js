@@ -6,14 +6,12 @@ import "./AppBar.scss";
 import logo from "../../assets/icons/logo.svg";
 import MiniStats from "./../MiniStats/MiniStats";
 const AppBarComponent = props => {
-  console.log("appbar props", props);
   const {
     rootStore: { routerStore, UiStore }
   } = props;
   const {
     routerState: { routeName }
   } = routerStore;
-  console.log("routeName", routeName);
 
   return (
     <Box

@@ -38,7 +38,7 @@ function MiniStats(props) {
             <Box basis={`${fancyPercent}%`} background="#dd4ddd" />
           </Box>
           <Text size="xsmall">
-            {parseFloat(fancyPercent).toFixed(1)}% Fancy
+            {parseFloat(fancyPercent).toFixed(0)}% Fancy
           </Text>
         </React.Fragment>
       )}

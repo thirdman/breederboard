@@ -303,16 +303,8 @@ function calcGen(props) {
 }
 function calcDates(props) {
   const { data, limit } = props;
-  // console.log("calcdates props", props);
-  // console.log("calcDates first datapoint: ", data.kitties[0]);
-  // console.log(
-  //   "calcDates last datapoint: ",
-  //   data.kitties[data.kitties.length - 1]
-  // );
   const firstDate = data.kitties[0].created_at;
   const lastDate = data.kitties[data.kitties.length - 1].created_at;
-  // console.log("firstDate", firstDate, new Date(firstDate));
-  // console.log("lastDate", lastDate, new Date(lastDate));
   var hours = differenceInHours(parseISO(firstDate), parseISO(lastDate));
   var minutes = differenceInMinutes(parseISO(firstDate), parseISO(lastDate));
   const perMinute = (limit / minutes).toFixed(2);
@@ -341,6 +333,87 @@ function calcDates(props) {
   };
 }
 
+function calcAttributes(props) {
+  const { data, limit } = props;
+  if (!data.kitties) {
+    return;
+  }
+  const notFancyArray =
+    data.kitties && data.kitties.filter(cat => !cat.is_fancy);
+  let attributeArray = [];
+  // let attributeDescriptionArray = [];
+  // let attributeTypeArray = [
+  //   "eyes",
+  //   "body",
+  //   "mouth",
+  //   "pattern",
+  //   "colorprimary",
+  //   "colorsecondary",
+  //   "colortertiary",
+  //   "coloreyes",
+  //   "environment",
+  //   "wild"
+  // ];
+  let compiledArray = [];
+  let tempAttributeArray = [];
+  let compiledArray2 = [];
+
+  notFancyArray.map(cat => {
+    // const attributes = cat.enhanced_cattributes;
+    tempAttributeArray[cat.id] = cat.enhanced_cattributes;
+    // 1. gettypes...
+    // attributes.map(attrObj => {
+    //   console.log(attrObj.type);
+    //   if (attributeTypeArray.filter(i => i === attrObj.type).length > 0) {
+    //     return;
+    //   }
+    //   attributeTypeArray.push(attrObj.type);
+    // });
+    // console.log("attributetypearray", attributeTypeArray);
+    // 2. getdescpriotiosn...
+    // attributes.map(attrObj => {
+    //   if (
+    //     attributeDescriptionArray.filter(i => i === attrObj.description)
+    //       .length > 0
+    //   ) {
+    //     return;
+    //   }
+    //   attributeDescriptionArray.push(attrObj.description);
+    //   // attributeArray.push({
+    //   //   description: attrObj.description,
+    //   //   type: attrObj.type,
+    //   //   id: attrObj.kittyId
+    //   // });
+    // });
+    // console.log("attributeDescriptionArray", attributeDescriptionArray);
+  });
+  // console.log("tempAttributeArray", tempAttributeArray);
+  tempAttributeArray.map(cat => {
+    cat.map(item => {
+      const desc = item.description;
+      compiledArray2.push(desc);
+    });
+  });
+
+  compiledArray2.map(attr => {
+    if (compiledArray.filter(i => i.description === attr).length > 0) {
+      return;
+    }
+    const filter = compiledArray2.filter(i => i === attr);
+    // console.log("filter", filter);
+    return compiledArray.push({
+      description: attr,
+      count: filter.length
+    });
+  });
+  // console.log("attributeArray", attributeArray);
+  compiledArray.sort(compareAttrCount);
+  // console.log("compiledArray", compiledArray);
+  // console.log("compiledArray2", compiledArray2);
+
+  return compiledArray;
+}
+
 function sumValues(array, key) {
   return array.reduce((a, b) => a + (b[key] || 0), 0);
 }
@@ -353,6 +426,16 @@ function compareKittyCount(a, b) {
   }
   return 0;
 }
+function compareAttrCount(a, b) {
+  if (a.count < b.count) {
+    return 1;
+  }
+  if (a.count > b.count) {
+    return -1;
+  }
+  return 0;
+}
+
 function compareGeneration(a, b) {
   if (a.generation > b.generation) {
     return 1;
@@ -363,4 +446,11 @@ function compareGeneration(a, b) {
   return 0;
 }
 
-export default { getKitties, handleCalc, calcType, calcGen, calcDates };
+export default {
+  getKitties,
+  handleCalc,
+  calcType,
+  calcGen,
+  calcDates,
+  calcAttributes
+};

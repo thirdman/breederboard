@@ -60,18 +60,15 @@ class BoardComponent extends Component {
   };
   componentDidMount() {
     if (this.props.queryParams) {
+      console.log('queryprams: ', this.props.queryParams)
       if (this.props.queryParams && this.props.queryParams.length > 0) {
-        this.getKitties();
+                this.getKitties();
       } else {
-        this.setState({ editBoard: true });
+        // this.setState({ editBoard: true });
       }
     }
     const {
-      rootStore: {
-        // routerStore,
-        // UiStore,
-        BoardStore
-      }
+      rootStore: { BoardStore }
     } = this.props;
     const userBoardsString = localStorage.getItem("breederboards");
     const userBoards = JSON.parse(userBoardsString);
@@ -87,6 +84,7 @@ class BoardComponent extends Component {
         title,
         titleEdited
       } = BoardStore.data;
+
       this.setState({
         searchMode,
         idFrom,
@@ -146,6 +144,8 @@ class BoardComponent extends Component {
 
       isLoadingBoardData,
       kitties,
+      latestKitty,
+      earliestKitty,
       boardData,
       breederArray,
       showKitties,
@@ -163,7 +163,6 @@ class BoardComponent extends Component {
       error
       // canEdit
     } = this.state;
-    // const isPublic = false;
 
     const {
       isPublic = false,
@@ -172,7 +171,7 @@ class BoardComponent extends Component {
       fancyValue = []
       // allAttributes
     } = BoardStore.data;
-    const { allAttributes } = UiStore;
+    const { allAttributes, devMode } = UiStore;
     // console.log("Board queryParams", queryParams);
     // console.log("attributeOptions", attributeOptions);
     // console.log("allAttributes", allAttributes);
@@ -204,17 +203,36 @@ class BoardComponent extends Component {
     if (attributeValues.length) {
       canGenerate = true;
     }
-    // console.log("therefore cangenerate is", canGenerate);
-
-    // if (boardId) {
-    //   console.log("boardId is", boardId);
-    //   // BoardStore.path = `boards/${boardId}`;
-    //   // console.log("BoardStore.data", BoardStore.data);
-    // }
+    const isLoadingCattributes = UiStore.isLoading || !UiStore.isLoading && !UiStore.allAttributes;
     const dateNow = new Date();
     const canEdit = boardId && userBoards && userBoards.includes(boardId);
     // const canEdit = true;
     const pageCounts = ["50", "100", "200", "1000"];
+    const BoardLoader = (props) => {
+      const {isLoadingBoard = false, isLoadingUi = false, isLoadingMeta = false, isLoadingData = false, isLoadingCattributes = false} = props
+      return (
+        <Box border="all" pad="medium" fill="horizontal" elevation="small" round="small" align="center" justify="start">
+          <Box direction="row" align="center" justify="start">
+          <Heading level={5} margin="none">Board:</Heading>
+          
+          {isLoadingBoard ? <Loading text="" /> : <Box><Checkmark color="lime"/> Done</Box>}
+          </Box>
+
+          <Box direction="row" align="center" justify="start">
+          <Heading level={5} margin="none">Ui:</Heading> 
+          {isLoadingUi ? <Loading text="" /> : "done"}
+          </Box>
+          <Box direction="row" align="center" justify="start">
+            <Heading level={5} margin="none">Data:</Heading> 
+            {isLoadingData ? <Loading text="" /> : "done"}
+          </Box>
+
+          <Box>Meta: {isLoadingMeta ? "loading" : "-"}</Box>
+          <Box>Cattributes: {isLoadingCattributes ? "loading" : "-"}</Box>
+          
+          </Box>
+      )
+    }
     return (
       <Box
         direction="column"
@@ -227,277 +245,285 @@ class BoardComponent extends Component {
         justify="start"
         // gap="small"
       >
-        <Box
-          direction="row"
-          align="stretch"
-          justify="between"
-          gap="small"
-          className="test"
-          fill="horizontal"
-          border="bottom"
-          pad={{
-            top: "small",
-            bottom: "small"
-          }}
-        >
+        {!BoardStore.isLoading && !isLoadingBoardData &&  (
           <Box
-            pad="xsmall"
-            direction="column"
+            direction="row"
             align="stretch"
-            justify="start"
-            basis="20%"
-            className="buttonGroupWrap"
+            justify="between"
+            gap="small"
+            className="test headerRow"
+            fill="horizontal"
+            // border="bottom"
+            pad={{
+              top: "small",
+              bottom: "small"
+            }}
           >
-            <Heading margin="none" level={6}>
-              Search:
-            </Heading>
-            <Box align="start" justify="center" basis="75%">
-              {editBoard ? (
-                <ButtonGroup>
-                  <Button onClick={() => this.handleSearchMode("recent")}>
-                    <Box
-                      pad="xsmall"
-                      //border="all"
-                      round="medium"
-                      background={
-                        searchMode === "recent" ? "brand" : "transparent"
-                      }
-                      border={
-                        searchMode === "recent" ? { style: "hidden" } : "all"
-                      }
-                    >
-                      <Text size="small">Recent</Text>
-                    </Box>
-                  </Button>
-                  <Button onClick={() => this.handleSearchMode("dates")}>
-                    <Box
-                      pad="xsmall"
-                      round="medium"
-                      background={
-                        searchMode === "dates" ? "brand" : "transparent"
-                      }
-                      border={
-                        searchMode === "dates" ? { style: "hidden" } : "all"
-                      }
-                    >
-                      <Text size="small">Dates</Text>
-                    </Box>
-                  </Button>
-                  <Button onClick={() => this.handleSearchMode("id")}>
-                    <Box
-                      pad="xsmall"
-                      round="medium"
-                      background={searchMode === "id" ? "brand" : "transparent"}
-                      border={searchMode === "id" ? { style: "hidden" } : "all"}
-                    >
-                      <Text size="small">ID</Text>
-                    </Box>
-                  </Button>
-                </ButtonGroup>
-              ) : (
-                <Text>{searchMode}</Text>
-              )}
-            </Box>
-          </Box>
-          {(searchMode === "recent" || searchMode === "id") && (
-            <Box
-              pad="xsmall"
-              direction="column"
-              align="stretch"
-              justify="start"
-            >
-              <Heading margin="none" level={6}>
-                Number:
-              </Heading>
-
-              <Box basis="75%">
-                {editBoard ? (
-                  <Menu
-                    label={pageCount || "Select"}
-                    items={
-                      pageCounts &&
-                      pageCounts.map(count => {
-                        const obj = {
-                          label: count,
-                          onClick: () => this.handleSetPageCount(count)
-                        };
-                        return obj;
-                      })
-                    }
-                  />
-                ) : (
-                  <Text>{pageCount || "50"}</Text>
-                )}
-              </Box>
-            </Box>
-          )}
-          {searchMode === "id" && (
             <Box
               pad="xsmall"
               direction="column"
               align="stretch"
               justify="start"
               basis="20%"
+              className="buttonGroupWrap"
             >
               <Heading margin="none" level={6}>
-                From:
+                Search:
               </Heading>
-              <Box>
+              <Box align="start" justify="center" basis="75%" className={attributeValues && attributeValues.length > 0 && !searchMode ? "errorBorder" :""}>
+              
                 {editBoard ? (
-                  <TextInput
-                    placeholder="kitty Id"
-                    margin="xsmall"
-                    // id="date-input"
-                    // placeholder="DD/MM/YYYY"
-                    defaultValue={idFrom}
-                    onChange={event => this.setIdFrom(event.target.value)}
-                    className="textInput"
-                  />
+                  <ButtonGroup>
+                    
+                    <Button onClick={() => this.handleSearchMode("recent")}>
+                      <Box
+                        pad="xsmall"
+                        //border="all"
+                        round="medium"
+                        background={
+                          searchMode === "recent" ? "brand" : "transparent"
+                        }
+                        border={
+                          searchMode === "recent" ? { style: "hidden" } : "all"
+                        }
+                      >
+                        <Text size="small">Recent</Text>
+                      </Box>
+                    </Button>
+                    {/* <Button onClick={() => this.handleSearchMode("dates")}>
+                      <Box
+                        pad="xsmall"
+                        round="medium"
+                        background={
+                          searchMode === "dates" ? "brand" : "transparent"
+                        }
+                        border={
+                          searchMode === "dates" ? { style: "hidden" } : "all"
+                        }
+                      >
+                        <Text size="small">Dates</Text>
+                      </Box>
+                    </Button> */}
+                    <Button onClick={() => this.handleSearchMode("id")}>
+                      <Box
+                        pad="xsmall"
+                        round="medium"
+                        background={
+                          searchMode === "id" ? "brand" : "transparent"
+                        }
+                        border={
+                          searchMode === "id" ? { style: "hidden" } : "all"
+                        }
+                      >
+                        <Text size="small">ID</Text>
+                      </Box>
+                    </Button>
+                  </ButtonGroup>
                 ) : (
-                  <Text>{idFrom || "any"}</Text>
+                  <Text>{searchMode}</Text>
                 )}
+                {attributeValues && attributeValues.length > 0 && !searchMode && <Box className="errorWarning" fill="horizontal" align="center" justify="center"><Text size="small">Set Search Mode</Text></Box>}
               </Box>
             </Box>
-          )}
+            {(searchMode === "recent" || searchMode === "id") && (
+              <Box
+                pad="xsmall"
+                direction="column"
+                align="stretch"
+                justify="start"
+              >
+                <Heading margin="none" level={6}>
+                  Number:
+                </Heading>
 
-          {searchMode === "dates" && (
-            <Box
-              pad="xsmall"
-              direction="column"
-              align="stretch"
-              justify="start"
-            >
-              <Heading margin="none" level={6}>
-                From:
-              </Heading>
-              <Box>
-                {editBoard ? (
-                  <Keyboard onDown={() => this.setState({ active: true })}>
+                <Box basis="75%">
+                  {editBoard ? (
+                    <Menu
+                      label={pageCount || "Select"}
+                      items={
+                        pageCounts &&
+                        pageCounts.map(count => {
+                          const obj = {
+                            label: count,
+                            onClick: () => this.handleSetPageCount(count)
+                          };
+                          return obj;
+                        })
+                      }
+                    />
+                  ) : (
+                    <Text>{pageCount || "50"}</Text>
+                  )}
+                </Box>
+              </Box>
+            )}
+            {searchMode === "id" && (
+              <Box
+                pad="xsmall"
+                direction="column"
+                align="stretch"
+                justify="start"
+                basis="20%"
+              >
+                <Heading margin="none" level={6}>
+                  From:
+                </Heading>
+                <Box>
+                  {editBoard ? (
                     <TextInput
-                      ref={ref => {
-                        this.ref = ref;
-                      }}
-                      border="none"
+                      placeholder="kitty Id"
                       margin="xsmall"
-                      id="date-input"
-                      placeholder="DD/MM/YYYY"
-                      value={text}
-                      onInput={this.onInput}
-                      onFocus={this.onFocus}
-                      onBlur={this.onBlur}
+                      // id="date-input"
+                      // placeholder="DD/MM/YYYY"
+                      defaultValue={idFrom}
+                      onChange={event => this.setIdFrom(event.target.value)}
                       className="textInput"
                     />
-                  </Keyboard>
-                ) : (
-                  <Text>{text || "any"}</Text>
-                )}
+                  ) : (
+                    <Text>{idFrom || "any"}</Text>
+                  )}
+                </Box>
               </Box>
-              {active ? (
-                <Drop
-                  target={this.ref}
-                  align={{ top: "bottom", left: "left" }}
-                  onClose={() => this.setState({ active: false })}
-                >
-                  <Box pad="small">
-                    <Calendar
-                      size="small"
-                      date={date}
-                      onSelect={this.onSelect}
-                    />
-                  </Box>
-                </Drop>
-              ) : null}
-              <Text color="red" size="xsmall">
-                (*Not currently working)
-              </Text>
-            </Box>
-          )}
-          {searchMode === "dates" && (
-            <Box
-              pad="xsmall"
-              direction="column"
-              align="stretch"
-              justify="stretch"
-              fiull="horizontal"
-            >
-              <Heading margin="none" level={6}>
-                To:
-              </Heading>
-              <Box>
-                {editBoard ? (
-                  <Keyboard onDown={() => this.setState({ active: true })}>
-                    <TextInput
-                      ref={refTo => {
-                        this.refTo = refTo;
-                      }}
-                      border="none"
-                      margin="xsmall"
-                      id="date-input-to"
-                      placeholder="DD/MM/YYYY"
-                      value={textTo}
-                      onInput={this.onInputTo}
-                      onFocus={this.onFocusTo}
-                      onBlur={this.onBlurTo}
-                      className="textInput"
-                    />
-                  </Keyboard>
-                ) : (
-                  <Text>{text || "any"}</Text>
-                )}
-              </Box>
-              {activeTo ? (
-                <Drop
-                  target={this.refTo}
-                  align={{ top: "bottom", left: "left" }}
-                  onClose={() => this.setState({ activeTo: false })}
-                >
-                  <Box pad="small">
-                    <Calendar
-                      size="small"
-                      date={dateTo}
-                      onSelect={this.onSelectTo}
-                    />
-                  </Box>
-                </Drop>
-              ) : null}
-            </Box>
-          )}
-          {/* {allAttributes.length > 0 ? ( */}
+            )}
 
-          {OPTIONS && OPTIONS.length > 0 ? (
-            <Box
-              pad="xsmall"
-              direction="column"
-              align="start"
-              justify="stretch"
-              basis="50%"
-            >
-              <Heading margin="none" level={6}>
-                Attributes:
-              </Heading>
-              <Box fill="horizontal">
-                {editBoard ? (
-                  <Select
-                    // options={OPTIONS}
-                    options={attributeOptions}
-                    multiple={true}
-                    value={attributeValues}
-                    onChange={({ option }) => this.setAttribute(option)}
-                    onSearch={searchText => {
-                      // console.log("seatch text", searchText);
-                      // console.log("OPTIONS", OPTIONS);
-                      const regexp = new RegExp(searchText, "i");
-                      // console.log("OPTIONS", OPTIONS);
-                      this.setState({
-                        attributeOptions: OPTIONS.filter(o => o.match(regexp))
-                      });
-                    }}
-                  />
-                ) : (
-                  <Box className="titleString">{boardTitle}</Box>
-                )}
+            {searchMode === "dates" && (
+              <Box
+                pad="xsmall"
+                direction="column"
+                align="stretch"
+                justify="start"
+              >
+                <Heading margin="none" level={6}>
+                  From:
+                </Heading>
+                <Box>
+                  {editBoard ? (
+                    <Keyboard onDown={() => this.setState({ active: true })}>
+                      <TextInput
+                        ref={ref => {
+                          this.ref = ref;
+                        }}
+                        border="none"
+                        margin="xsmall"
+                        id="date-input"
+                        placeholder="DD/MM/YYYY"
+                        value={text}
+                        onInput={this.onInput}
+                        onFocus={this.onFocus}
+                        onBlur={this.onBlur}
+                        className="textInput"
+                      />
+                    </Keyboard>
+                  ) : (
+                    <Text>{text || "any"}</Text>
+                  )}
+                </Box>
+                {active ? (
+                  <Drop
+                    target={this.ref}
+                    align={{ top: "bottom", left: "left" }}
+                    onClose={() => this.setState({ active: false })}
+                  >
+                    <Box pad="small">
+                      <Calendar
+                        size="small"
+                        date={date}
+                        onSelect={this.onSelect}
+                      />
+                    </Box>
+                  </Drop>
+                ) : null}
+                <Text color="red" size="xsmall">
+                  (*Not currently working)
+                </Text>
               </Box>
-              {/* {activeTo ? (
+            )}
+            {searchMode === "dates" && (
+              <Box
+                pad="xsmall"
+                direction="column"
+                align="stretch"
+                justify="stretch"
+                fiull="horizontal"
+              >
+                <Heading margin="none" level={6}>
+                  To:
+                </Heading>
+                <Box>
+                  {editBoard ? (
+                    <Keyboard onDown={() => this.setState({ active: true })}>
+                      <TextInput
+                        ref={refTo => {
+                          this.refTo = refTo;
+                        }}
+                        border="none"
+                        margin="xsmall"
+                        id="date-input-to"
+                        placeholder="DD/MM/YYYY"
+                        value={textTo}
+                        onInput={this.onInputTo}
+                        onFocus={this.onFocusTo}
+                        onBlur={this.onBlurTo}
+                        className="textInput"
+                      />
+                    </Keyboard>
+                  ) : (
+                    <Text>{text || "any"}</Text>
+                  )}
+                </Box>
+                {activeTo ? (
+                  <Drop
+                    target={this.refTo}
+                    align={{ top: "bottom", left: "left" }}
+                    onClose={() => this.setState({ activeTo: false })}
+                  >
+                    <Box pad="small">
+                      <Calendar
+                        size="small"
+                        date={dateTo}
+                        onSelect={this.onSelectTo}
+                      />
+                    </Box>
+                  </Drop>
+                ) : null}
+              </Box>
+            )}
+            {/* {allAttributes.length > 0 ? ( */}
+
+            {OPTIONS && OPTIONS.length > 0 ? (
+              <Box
+                pad="xsmall"
+                direction="column"
+                align="start"
+                justify="stretch"
+                basis="50%"
+              >
+                <Heading margin="none" level={6}>
+                  Attributes:
+                </Heading>
+                <Box fill="horizontal">
+                  {editBoard ? (
+                    <Select
+                      // options={OPTIONS}
+                      options={attributeOptions}
+                      multiple={true}
+                      value={attributeValues}
+                      onChange={({ option }) => this.setAttribute(option)}
+                      onSearch={searchText => {
+                        // console.log("seatch text", searchText);
+                        // console.log("OPTIONS", OPTIONS);
+                        const regexp = new RegExp(searchText, "i");
+                        // console.log("OPTIONS", OPTIONS);
+                        this.setState({
+                          attributeOptions: OPTIONS.filter(o => o.match(regexp))
+                        });
+                      }}
+                    />
+                  ) : (
+                    <Box className="titleString">{boardTitle}</Box>
+                  )}
+                </Box>
+                {/* {activeTo ? (
                 <Drop
                   target={this.refTo}
                   align={{ top: "bottom", left: "left" }}
@@ -512,82 +538,82 @@ class BoardComponent extends Component {
                   </Box>
                 </Drop>
               ) : null} */}
-            </Box>
-          ) : (
+              </Box>
+            ) : (
+              <Box
+                pad="xsmall"
+                direction="column"
+                align="stretch"
+                justify="stretch"
+                basis="50%"
+              >
+                <Heading margin="none" level={6}>
+                  Cattributes:
+                </Heading>
+                <Box basis="90%" align="start" justify="center">
+                  <Loading text="Loading Cattributes..." />
+                </Box>
+              </Box>
+            )}
             <Box
               pad="xsmall"
               direction="column"
               align="stretch"
               justify="stretch"
-              basis="50%"
+              basis="20%"
             >
               <Heading margin="none" level={6}>
-                Cattributes:
+                Include Fancy
               </Heading>
+
               <Box basis="90%" align="start" justify="center">
-                <Loading text="Loading Cattributes..." />
+                {editBoard && (
+                  <Select
+                    options={fancyOptionsFiltered}
+                    multiple={false}
+                    value={fancyValue}
+                    onChange={({ option }) => this.setFancy(option)}
+                    onSearch={searchText => {
+                      // console.log("seatch text", searchText);
+                      // console.log("OPTIONS", OPTIONS);
+                      const regexp = new RegExp(searchText, "i");
+                      this.setState({
+                        fancyOptionsFiltered:
+                          fancyOptions &&
+                          fancyOptions.filter(o => o.match(regexp))
+                      });
+                    }}
+                  />
+                )}
               </Box>
             </Box>
-          )}
-          <Box
-            pad="xsmall"
-            direction="column"
-            align="stretch"
-            justify="stretch"
-            basis="20%"
-          >
-            <Heading margin="none" level={6}>
-              Include Fancy
-            </Heading>
 
-            <Box basis="90%" align="start" justify="center">
-              {editBoard && (
-                <Select
-                  options={fancyOptionsFiltered}
-                  multiple={false}
-                  value={fancyValue}
-                  onChange={({ option }) => this.setFancy(option)}
-                  onSearch={searchText => {
-                    // console.log("seatch text", searchText);
-                    // console.log("OPTIONS", OPTIONS);
-                    const regexp = new RegExp(searchText, "i");
-                    this.setState({
-                      fancyOptionsFiltered:
-                        fancyOptions &&
-                        fancyOptions.filter(o => o.match(regexp))
-                    });
-                  }}
-                />
-              )}
-            </Box>
+            {editBoard && breederArray ? (
+              <Box justify="stretch" align="start">
+                <Box
+                  basis="90%"
+                  align="start"
+                  justify="center"
+                  margin={{ top: "small" }}
+                >
+                  <Button
+                    onClick={() => this.handleEditBoard()}
+                    border="secondary"
+                    pad="small"
+                    round="small"
+                    label="Cancel"
+                  />
+                </Box>
+              </Box>
+            ) : null}
           </Box>
-
-          {editBoard && breederArray ? (
-            <Box justify="stretch" align="start">
-              <Box
-                basis="90%"
-                align="start"
-                justify="center"
-                margin={{ top: "small" }}
-              >
-                <Button
-                  onClick={() => this.handleEditBoard()}
-                  border="secondary"
-                  pad="small"
-                  round="small"
-                  label="Cancel"
-                />
-              </Box>
-            </Box>
-          ) : null}
-        </Box>
-
+        )}
         {BoardStore.isLoading ? (
           <Box
             pad="xsmall"
             direction="row"
-            align="stretch"
-            justify="stretch"
+            align="center"
+            justify="center"
             border="all"
             fill="horizontal"
             background="#f3f3f3"
@@ -600,7 +626,7 @@ class BoardComponent extends Component {
             direction="row"
             align="stretch"
             justify="stretch"
-            border="bottom"
+            border="all"
             fill="horizontal"
             background="#f3f3f3"
           >
@@ -723,6 +749,7 @@ class BoardComponent extends Component {
               justify="center"
               // border="all"
             >
+              {attributeValues && attributeValues.length > 0 && !searchMode && <Box className="errorWarning" align="center" justify="center"><Text size="small">No Search Mode Set</Text></Box>}
               <Button
                 onClick={() => this.getKitties()}
                 fill="horizontal"
@@ -791,6 +818,58 @@ class BoardComponent extends Component {
               <Loading text="getting data..." />
             </Box>
           )}
+          {devMode && latestKitty && (
+            <Box
+              key={latestKitty.id}
+              style={{ width: "200px" }}
+              pad="small"
+              border="all"
+              direction="column"
+              align="start"
+              className="kitty"
+            >
+              <Heading level={6} margin="none">
+                Latest Kitty: {latestKitty.name} - {latestKitty.id}
+              </Heading>
+              <Text margin="none" size="xsmall">
+                Created:{" "}
+                {formatDistanceStrict(
+                  parseISO(latestKitty.created_at),
+                  dateNow
+                )}{" "}
+                ago
+              </Text>
+              <Text margin="none" size="small">
+                by: {latestKitty.hatcher && latestKitty.hatcher.nickname}
+              </Text>
+            </Box>
+          )}
+          {devMode && earliestKitty && (
+            <Box
+              key={earliestKitty.id}
+              style={{ width: "200px" }}
+              pad="small"
+              border="all"
+              direction="column"
+              align="start"
+              className="kitty"
+            >
+              <Heading level={6} margin="none">
+                earliest Kitty: {earliestKitty.name} - {earliestKitty.id}
+              </Heading>
+              <Text margin="none" size="xsmall">
+                Created:{" "}
+                {formatDistanceStrict(
+                  parseISO(earliestKitty.created_at),
+                  dateNow
+                )}{" "}
+                ago
+              </Text>
+              <Text margin="none" size="small">
+                by: {earliestKitty.hatcher && earliestKitty.hatcher.nickname}
+              </Text>
+            </Box>
+          )}
 
           {/** NOTE: this is the dev mode pain listing of kitties
           and should not be edited
@@ -811,7 +890,11 @@ class BoardComponent extends Component {
                       className="kitty"
                     >
                       {kitty.image_url ? (
-                        <img src={kitty.image_url} style={{ width: "100%" }} alt="" />
+                        <img
+                          src={kitty.image_url}
+                          style={{ width: "100%" }}
+                          alt=""
+                        />
                       ) : (
                         <div>no pic yet</div>
                       )}
@@ -1086,7 +1169,7 @@ class BoardComponent extends Component {
                         <Box basis="10%">{breeder.breederPoints}</Box>
                         <Box basis="5%" align="center" justify="center">
                           <Button
-                          className="toggleButton"
+                            className="toggleButton"
                             onClick={() =>
                               this.setFocus(
                                 focus === breeder.nickname
@@ -1290,35 +1373,7 @@ class BoardComponent extends Component {
             </Box>
           ) : null}
         </Box>
-        {/* <Box
-          direction="row"
-          pad="small"
-          align="center"
-          fill="horizontal"
-          justify="center"
-          className="pointsDescription"
-          gap="small"
-        >
-          <Box direction="row">
-            1 cattribute: <strong>1pt</strong>
-          </Box>
 
-          <Box direction="row">
-            2 cattributes: <strong>4pt</strong>
-          </Box>
-          <Box direction="row">
-            3 cattributes: <strong>9pt</strong>
-          </Box>
-          <Box direction="row">
-            Fancy: <strong>10pt</strong>
-          </Box>
-          <Box direction="row">
-            Fancy (top 10): <strong>20pt</strong>
-          </Box>
-          <Box direction="row">
-            Fancy (First): <strong>100pt</strong>
-          </Box>
-        </Box> */}
         {showShareModal && (
           <Layer
             onEsc={() => this.setShowShare(false)}
@@ -1390,6 +1445,12 @@ class BoardComponent extends Component {
             </Box>
           </Layer>
         )}
+        {devMode && <BoardLoader
+        isLoadingBoard={BoardStore.isLoading}
+        isLoadingUi={UiStore.isLoading}
+        isLoadingData={isLoadingBoardData}
+        isLoadingCattributes={isLoadingCattributes}
+        />}
       </Box>
     );
   }
@@ -1578,9 +1639,9 @@ class BoardComponent extends Component {
   //////////////////////////////
 
   getKitties = () => {
-    const {
-      rootStore: { BoardStore }
-    } = this.props;
+    // const {
+    //   rootStore: { BoardStore }
+    // } = this.props;
     const { pageCount = 50, searchMode, idFrom, idTo } = this.state;
     if (searchMode === "id" && !idFrom) {
       this.setState({ error: "No id set" });
@@ -1615,6 +1676,8 @@ class BoardComponent extends Component {
 
         this.setState({
           kitties: data.kitties,
+          earliestKitty: data.kitties[data.kitties.length - 1],
+          latestKitty: data.kitties[0],
           editBoard: false,
           isLoadingBoardData: false,
           sourceCount: data.kitties.length,

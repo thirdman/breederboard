@@ -18,6 +18,7 @@ class GlobalPageComponent extends Component {
     loadingStatus: "Loading...",
     limit: 500,
     showRest: false,
+    showRestAttributes: false,
     saveToFirebase: false
   };
   componentDidMount() {
@@ -47,8 +48,10 @@ class GlobalPageComponent extends Component {
       notFancyCount,
       kittyGenArray,
       dateData,
+      attributeData,
       limit,
       showRest,
+      showRestAttributes,
       saveToFirebase,
       speedData
     } = this.state;
@@ -467,6 +470,131 @@ class GlobalPageComponent extends Component {
                 </Box>
               </Box>
             )}
+            {attributeData && (
+              <Box
+                className="contentSection"
+                fill="horizontal"
+                margin={{ vertical: "small" }}
+              >
+                <Box className="sectionHeading" pad={{ vertical: "small" }}>
+                  <Heading level={3} margin="none">
+                    Common Attributes
+                  </Heading>
+                </Box>
+                <Box fill="horizontal">
+                  <Box
+                    direction="row"
+                    fill="horizontal"
+                    gap="small"
+                    justify="stretch"
+                    pad={{ bottom: "small" }}
+                  >
+                    <Box basis="10%">
+                      <Heading level={6} margin="none">
+                        Attribute
+                      </Heading>
+                    </Box>
+                    <Box basis="80%">-</Box>
+                    <Box basis="10%" align="end">
+                      <Heading level={6} margin="none">
+                        Count
+                      </Heading>
+                    </Box>
+                  </Box>
+                  {attributeData &&
+                    attributeData
+                      .slice(0, showRestAttributes ? attributeData.length : 10)
+                      // .slice(0, 10)
+                      .map((attr, index) => (
+                        <Box
+                          direction="row"
+                          key={`attrlist${index}`}
+                          fill="horizontal"
+                          gap="small"
+                          justify="stretch"
+                          margin={{ bottom: "xxsmall" }}
+                          className="attributeRow"
+                        >
+                          <Box basis="10%" className="barName">
+                            <Text size="small">{attr.description}</Text>
+                          </Box>
+                          <Box
+                            basis="80%"
+                            direction="row"
+                            justify="stretch"
+                            background="#eee"
+                            round="xsmall"
+                            overflow="hidden"
+                            className="bar"
+                          >
+                            <Box
+                              basis={`${(attr.count / attributeData.length) *
+                                100}%`}
+                              background="violet"
+                              className="highlighted"
+                              round="xsmall"
+                            />
+                            <Box
+                              // basis={`${(limit - breeder.kitties.length / limit) *100}%`}
+                              background="#ddd"
+                            />
+                          </Box>
+
+                          <Box align="end" basis="10%">
+                            <strong>{attr.count}</strong>
+                          </Box>
+                          <Box
+                            className="barInfo"
+                            round="small"
+                            elevation="small"
+                            align="center"
+                            justify="center"
+                            pad={{ vertical: "xsmall", horizontal: "medium" }}
+                            animation="appear"
+                          >
+                            <Text size="small">
+                              {attr.description} appears in{" "}
+                              {((attr.count / limit) * 100).toFixed(1)}% of{" "}
+                              {limit} kitties
+                            </Text>
+                          </Box>
+                        </Box>
+                      ))}
+                  <Box margin={{ top: "small" }}>
+                    <Text size="small">
+                      {/* Top 10 of {breederArray && breederArray.length - 10}{" "}
+        breeders */}
+                      <Button
+                        plain
+                        onClick={() =>
+                          this.toggleShowRestAttributes(!showRestAttributes)
+                        }
+                      >
+                        <Box
+                          pad={{ vertical: "xxsmall", horizontal: "small" }}
+                          border="all"
+                          round="medium"
+                          direction="row"
+                          gap="xxsmall"
+                          align="center"
+                        >
+                          {showRestAttributes ? (
+                            <CaretUp size="small" color="secondary" />
+                          ) : (
+                            <CaretDown size="small" color="secondary" />
+                          )}
+                          {showRestAttributes
+                            ? "Show Top 10"
+                            : `Show ${attributeData &&
+                                attributeData.length - 10} More`}
+                        </Box>
+                      </Button>
+                    </Text>
+                  </Box>
+                </Box>
+              </Box>
+            )}
+
             {devMode && speedData && (
               <Box className="contentSection" margin={{ vertical: "small" }}>
                 <Box className="sectionHeading" pad={{ vertical: "small" }}>
@@ -535,15 +663,21 @@ class GlobalPageComponent extends Component {
         const kittyTypeObj = ckUtils.calcType({ data: data, limit: limit });
         const kittyGenArray = ckUtils.calcGen({ data: data, limit: limit });
         const dateData = ckUtils.calcDates({ data: data, limit: limit });
+        const attributeData = ckUtils.calcAttributes({
+          data: data,
+          limit: limit
+        });
         console.log("kittyTypeObj", kittyTypeObj);
         console.log("kittyGenArray", kittyGenArray);
         console.log("dateData", dateData);
+        console.log("attributeData", attributeData);
 
         this.setState({
           fancyCount: kittyTypeObj.fancyCount,
           notFancyCount: kittyTypeObj.notFancyCount,
           kittyGenArray: kittyGenArray,
           dateData: dateData,
+          attributeData: attributeData,
           loadingStatus: "done"
         });
         UiStore.speed = dateData && dateData.perHour;
@@ -559,7 +693,7 @@ class GlobalPageComponent extends Component {
     await BoardStore.ready();
     console.log(BoardStore.data.allAttributes);
     // console.log("ready");
-    await UiStore && UiStore.UiData.ready();
+    (await UiStore) && UiStore.UiData.ready();
     // console.log(UiStore.allAttributes);
     // console.log("ready");
     this.setState({
@@ -673,7 +807,6 @@ class GlobalPageComponent extends Component {
       rootStore: { KittehStore }
     } = this.props;
     console.log("KittehStore", KittehStore);
-    console.log("massaging data");
     const earliestKittyId = data.kitties[0].id;
     const latestKittyId = data.kitties[data.kitties.length - 1].id;
     console.log("earliestKitty", earliestKittyId);
@@ -689,6 +822,7 @@ class GlobalPageComponent extends Component {
         breederNickname,
         breederId,
         image_url,
+        generation,
         enhanced_cattributes
       } = kitty;
       const cattributes = enhanced_cattributes.map(cattr => {
@@ -707,6 +841,7 @@ class GlobalPageComponent extends Component {
         breederNickname,
         breederId,
         image_url,
+        generation,
         cattributes
       };
       massagedKitties.push(tempObj);
@@ -719,6 +854,7 @@ class GlobalPageComponent extends Component {
     const toReturn = { kitteh: sliced, earliestKittyId, latestKittyId };
     return toReturn;
   };
+
   testFirebase = () => {
     console.log("test");
     // const functions = firebase.functions();
@@ -737,6 +873,10 @@ class GlobalPageComponent extends Component {
   toggleShowRest = newValue => {
     this.setState({ showRest: newValue });
   };
+  toggleShowRestAttributes = newValue => {
+    this.setState({ showRestAttributes: newValue });
+  };
+
   handleMenu = value => {
     const {
       rootStore: { UiStore }
