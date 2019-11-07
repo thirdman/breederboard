@@ -13,7 +13,6 @@ initFirestorter({ firebase: firebase });
 const UiStore = new observable({
   UiData: new Document({ mode: "auto" }),
   isLive: true,
-
   hasMenu: false,
   devMode: false,
   allFancies: [
@@ -369,6 +368,194 @@ const UiStore = new observable({
     "bloodred",
     "candyshoppe",
     "robin"
+  ],
+  allColors: [
+    {
+      name: "olive",
+      colorHex: "#729100",
+      backgroundColorHex: "#ecf4e0",
+      shadowColorHex: "#c8d6b4"
+    },
+    {
+      name: "pinefresh",
+      colorHex: "#177a25",
+      backgroundColorHex: "#dbf0d0",
+      shadowColorHex: "#adcf9b"
+    },
+    {
+      name: "oasis",
+      colorHex: "#ccffef",
+      backgroundColorHex: "#e6faf3",
+      shadowColorHex: "#bee1d4"
+    },
+    {
+      name: "dioscuri",
+      colorHex: "#0ba09c",
+      backgroundColorHex: "#d1eeeb",
+      shadowColorHex: "#a8d5d1"
+    },
+    {
+      name: "isotope",
+      colorHex: "#e4ff73",
+      backgroundColorHex: "#effdca",
+      shadowColorHex: "#cde793"
+    },
+    {
+      name: "bridesmaid",
+      colorHex: "#ffc2df",
+      backgroundColorHex: "#ffd5e5",
+      shadowColorHex: "#eba3bc"
+    },
+    {
+      name: "downbythebay",
+      colorHex: "#83b293",
+      backgroundColorHex: "#cde5d1",
+      shadowColorHex: "#97bc9c"
+    },
+    {
+      name: "gemini",
+      colorHex: "#ffd150",
+      backgroundColorHex: "#faf4cf",
+      shadowColorHex: "#e3daa1"
+    },
+    {
+      name: "kaleidoscope",
+      colorHex: "#bcba5e",
+      backgroundColorHex: "#eff1e0",
+      shadowColorHex: "#cfd4b0"
+    },
+    {
+      name: "thundergrey",
+      colorHex: "#828282",
+      backgroundColorHex: "#eee9e8",
+      shadowColorHex: "#dbccc7"
+    },
+    {
+      name: "gold",
+      colorHex: "#fcdf35",
+      backgroundColorHex: "#faf4cf",
+      shadowColorHex: "#e3daa1"
+    },
+    {
+      name: "topaz",
+      colorHex: "#0ba09c",
+      backgroundColorHex: "#d1eeeb",
+      shadowColorHex: "#a8d5d1"
+    },
+    {
+      name: "mintgreen",
+      colorHex: "#43edac",
+      backgroundColorHex: "#cdf5d4",
+      shadowColorHex: "#9ad7a5"
+    },
+    {
+      name: "sizzurp",
+      colorHex: "#7c40ff",
+      backgroundColorHex: "#dfdffa",
+      shadowColorHex: "#c1c1ea"
+    },
+    {
+      name: "chestnut",
+      colorHex: "#a56429",
+      backgroundColorHex: "#efe1da",
+      shadowColorHex: "#d4beb3"
+    },
+    {
+      name: "strawberry",
+      colorHex: "#ef4b62",
+      backgroundColorHex: "#ffe0e5",
+      shadowColorHex: "#efbaba"
+    },
+    {
+      name: "sapphire",
+      colorHex: "#4c7aef",
+      backgroundColorHex: "#d3e8ff",
+      shadowColorHex: "#a2c2eb"
+    },
+    {
+      name: "forgetmenot",
+      colorHex: "#4eb4f9",
+      backgroundColorHex: "#dcebfc",
+      shadowColorHex: "#a7caea"
+    },
+    {
+      name: "dahlia",
+      colorHex: "#b8bdff",
+      backgroundColorHex: "#e6eafd",
+      shadowColorHex: "#bec5e7"
+    },
+    {
+      name: "coralsunrise",
+      colorHex: "#Ff9088",
+      backgroundColorHex: "#fde9e4",
+      shadowColorHex: "#e7c3bb"
+    },
+    {
+      name: "doridnudibranch",
+      colorHex: "#Fa9fff",
+      backgroundColorHex: "#faeefa",
+      shadowColorHex: "#e1cce1"
+    },
+    {
+      name: "parakeet",
+      colorHex: "#49b749",
+      backgroundColorHex: "#e5f3e2",
+      shadowColorHex: "#bcd4b8"
+    },
+    {
+      name: "cyan",
+      colorHex: "#45f0f4",
+      backgroundColorHex: "#c5eefa",
+      shadowColorHex: "#83cbe0"
+    },
+    {
+      name: "pumpkin",
+      colorHex: "#ffa039",
+      backgroundColorHex: "#fae1ca",
+      shadowColorHex: "#efc8a4"
+    },
+    {
+      name: "limegreen",
+      colorHex: "#aef72f",
+      backgroundColorHex: "#d9f5cb",
+      shadowColorHex: "#b4d9a2"
+    },
+    {
+      name: "bubblegum",
+      colorHex: "#ef52d1",
+      backgroundColorHex: "#fadff4",
+      shadowColorHex: "#eebce3"
+    },
+    {
+      name: "twilightsparkle",
+      colorHex: "#Ba8aff",
+      backgroundColorHex: "#ede2f5",
+      shadowColorHex: "#dcc7ec"
+    },
+    {
+      name: "palejade",
+      colorHex: "#c3d8cf",
+      backgroundColorHex: "#e7f1ed",
+      shadowColorHex: "#c0d1ca"
+    },
+    {
+      name: "eclipse",
+      colorHex: "#484c5b",
+      backgroundColorHex: "#e5e7ef",
+      shadowColorHex: "#cdd1e0"
+    },
+    {
+      name: "babypuke",
+      colorHex: "#bcba5e",
+      backgroundColorHex: "#eff1e0",
+      shadowColorHex: "#cfd4b0"
+    },
+    {
+      name: "autumnmoon",
+      colorHex: "#ffe8bb",
+      backgroundColorHex: "#fdf3e0",
+      shadowColorHex: "#e7d4b4"
+    }
   ]
 });
 export { UiStore };

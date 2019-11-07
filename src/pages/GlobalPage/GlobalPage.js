@@ -82,9 +82,14 @@ class GlobalPageComponent extends Component {
           <Box>
             <Text size="small">Latest {limit} Kitties</Text>
             {devMode && (
-              <Button primary onClick={() => this.testFirebase()}>
-                test firebase
-              </Button>
+              <React.Fragment>
+                <Button primary onClick={() => this.testFirebase()}>
+                  test firebase
+                </Button>
+                <Button primary onClick={() => this.testByType()}>
+                  test fancy get
+                </Button>
+              </React.Fragment>
             )}
           </Box>
         </Box>
@@ -866,6 +871,22 @@ class GlobalPageComponent extends Component {
       // var sanitizedMessage = result.data.text;
       // ...
     });
+  };
+
+  testByType = () => {
+    console.log("getst byt type");
+    const options = {
+      limit: 74,
+      kittyType: "ducat",
+      orderBy: "created_at",
+      direction: "asc"
+    };
+    const getFancy = ckUtils.getKitties(options);
+    getFancy
+      .then(data => {
+        console.log("data result by type: ", data);
+      })
+      .catch(error => console.error(error));
   };
   ////////////////
   // MISC

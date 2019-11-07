@@ -1,0 +1,170 @@
+// @import "../../styles/_global.scss";
+// @import "../../styles/_variables.scss";
+$colorDarkest: #444;
+$colorDark: #555;
+$colorHighlight: violet;
+$colorBackground: #eee;
+$colorMidLighter: #ccc;
+$colorMidDarker: #ddd;
+$colorText: #f3f3f3;
+
+.Banner {
+  position: relative;
+  height: 4rem;
+  margin-top: 1rem;
+  .bannerBody {
+    box-sizing: border-box;
+    position: absolute;
+    width: calc(100% - 6rem);
+    left: 6rem;
+    top: 0;
+    margin-left: -3rem;
+    height: 4rem;
+
+    text-align: left;
+    border-radius: 0.15rem;
+    opacity: 1;
+    z-index: 99;
+    animation: slideUp 0.1s linear 1;
+    animation-fill-mode: both;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $colorDarkest;
+    color: $colorHighlight;
+    z-index: 999;
+
+    .bannerContent {
+      background: $colorDarkest;
+      color: $colorHighlight;
+      // border-radius: .25rem;
+      font-weight: bold;
+      padding: 0.5rem;
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.5rem;
+      z-index: 1000;
+    }
+
+    &:before,
+    &:after {
+      content: "";
+      top: 0;
+      margin-top: 0.5rem;
+      width: 5rem;
+      position: absolute;
+      z-index: -1;
+      animation-delay: 0.3s;
+      animation-fill-mode: both;
+      border: none;
+      border: 1.5rem solid $colorDark;
+      background: transparent;
+      height: 0;
+      // top: 1rem;
+      top: 36%;
+    }
+    &:before {
+      left: 0rem;
+      margin-left: -4rem;
+      transform: translateX(0);
+      border-right: 0 solid rgba(0, 0, 0, 1);
+      border-left: 1.5rem solid rgba(0, 0, 0, 0);
+    }
+    &:after {
+      left: 100%;
+      margin-left: -2.5rem;
+      transform: translateX(0);
+      border-left: 0 solid rgba(0, 0, 0, 1);
+      border-right: 1.5rem solid rgba(0, 0, 0, 0);
+    }
+  }
+
+  &.hasShadow {
+    box-shadow: 0 2px 14px -1px rgba(0, 0, 0, 0.3);
+  }
+  &.light {
+    .bannerBody {
+      background: transparent;
+      &:before,
+      &:after {
+        border: 1.5rem solid $colorMidDarker;
+      }
+      &:before {
+        border-right: 0 solid rgba(0, 0, 0, 1);
+        border-left: 1.5rem solid rgba(0, 0, 0, 0);
+      }
+      &:after {
+        border-left: 0 solid rgba(0, 0, 0, 1);
+        border-right: 1.5rem solid rgba(0, 0, 0, 0);
+      }
+    }
+    .bannerContent {
+      color: $colorDarkest;
+      background: $colorMidLighter;
+    }
+    &.hasShadow {
+      box-shadow: 0 2px 14px -1px rgba(0, 0, 0, 0.1);
+    }
+  }
+  &.dark {
+    .bannerBody {
+      background: transparent;
+
+      &:before,
+      &:after {
+        border: 1.5rem solid $colorDarkest;
+      }
+      &:before {
+        border-right: 0 solid rgba(0, 0, 0, 1);
+        border-left: 1.5rem solid rgba(0, 0, 0, 0);
+      }
+      &:after {
+        border-left: 0 solid rgba(0, 0, 0, 1);
+        border-right: 1.5rem solid rgba(0, 0, 0, 0);
+      }
+    }
+    .bannerContent {
+      color: $colorDarkest;
+      background: $colorText;
+      border: 3px solid $colorDarkest;
+    }
+    &.hasShadow {
+      box-shadow: 0 2px 14px -1px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // SIZES
+  &.small {
+    // .bannerBody {
+    //   height: 3rem;
+    //   .bannerContent {
+    //     // border-radius: 0.15rem;
+    //     // background: #ddd9d2;
+    //     background: $colorBackground;
+    //     overflow: hidden;
+    //   }
+    //   h2 {
+    //     font-size: 1rem;
+    //   }
+    //   &:before,
+    //   &:after {
+    //     border: 1rem solid $colorMidLighter;
+    //   }
+    //   &:before {
+    //     border-left: 1rem solid rgba(0, 0, 0, 0);
+    //     margin-left: -2rem;
+    //   }
+    //   &:after {
+    //     border-right: 1rem solid rgba(0, 0, 0, 0);
+    //     margin-left: -3rem;
+    //   }
+    // }
+  }
+}

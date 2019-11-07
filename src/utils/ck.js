@@ -5,7 +5,7 @@ import {
   formatDistanceStrict,
   differenceInHours,
   differenceInMinutes,
-  differenceInCalendarDays
+  // differenceInCalendarDays
 } from "date-fns";
 
 function getKitties(props) {
@@ -14,8 +14,8 @@ function getKitties(props) {
     limit = 50,
     searchMode = "default",
     idFrom,
-    idTo,
-    saveToFirebase = false
+    // idTo,
+    // saveToFirebase = false
   } = props;
   if (searchMode === "id" && !idFrom) {
     this.setState({ error: "No id set" });
@@ -28,17 +28,41 @@ function getKitties(props) {
   theHeaders.append("x-api-token", apiConfig.apiToken);
 
   let API = `https://public.api.cryptokitties.co/v1/kitties?orderBy=created_at&orderDirection=desc&limit=${limit}`;
-  // if (searchMode === "id") {
-  //   const { idFrom = 1000 } = this.state;
-  //   const kittyRange = pageCount;
-  //   const idTo = idFrom + kittyRange;
-  //   this.setState({ idTo: idTo });
+  
+  return fetch(API, { headers: theHeaders })
+    .then(response => response.json())
+    .then(data => {
+      return data;
+    })
+    .catch(error => {
+      return error;
+    });
+}
 
-  //   API = `https://public.api.cryptokitties.co/v1/kitties?kittyId=${idFrom}-${idTo}?orderBy=created_at&orderDirection=${"asc"}&limit=${pageCount}`;
-  //   console.log("api searchmode id: ", API);
-  // }
+function getKittiesByType(props) {
+  const {
+    limit = 50,
+    fancyType = "ducat",
+    orderBy = "created_at",
+    direction = "desc",
+    pageCount = 50,
+    searchMode = "default",
+    idFrom,
+    // idTo,
+    // saveToFirebase = false
+  } = props;
+  if (searchMode === "id" && !idFrom) {
+    this.setState({ error: "No id set" });
+    return;
+  }
 
-  // fetch(API + DEFAULT_QUERY)
+  console.log("props", props, pageCount);
+  let theHeaders = new Headers();
+  theHeaders.append("Content-Type", "application/json");
+  theHeaders.append("x-api-token", apiConfig.apiToken);
+
+  let API = `https://public.api.cryptokitties.co/v1/kitties?orderBy=${orderBy}&orderDirection=${direction}&limit=${limit}&fancy=${fancyType}`;
+
   return fetch(API, { headers: theHeaders })
     .then(response => response.json())
     .then(data => {
@@ -448,6 +472,7 @@ function compareGeneration(a, b) {
 
 export default {
   getKitties,
+  getKittiesByType,
   handleCalc,
   calcType,
   calcGen,

@@ -1,0 +1,42 @@
+.FancyPage {
+  transition: opacity 0.2s linear;
+  &.isTransitioning {
+    opacity: 0;
+  }
+  .mainHeader {
+    min-height: 10rem;
+    position: relative;
+    .bannerWrap {
+      z-index: 3;
+      position: absolute;
+      // top: 50%;
+      //width: 100%;
+      left: 2%;
+      right: 2%;
+      width: auto;
+      margin-top: 0rem;
+      bottom: 1rem;
+      h1 {
+        text-transform: capitalize;
+      }
+    }
+    .fancyMeta {
+      .heroImageWrap {
+        // background: red;
+        max-width: 300px;
+        // position: relative;
+        // top: -10rem;
+      }
+      .fancyImage {
+        max-width: 100%;
+        z-index: 2;
+        border-radius: 100%;
+        background: rgba(0, 0, 0, 0.05);
+      }
+      .metaSide {
+        // margin-top: 20%;
+        border: none;
+      }
+    }
+  }
+}

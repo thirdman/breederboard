@@ -41,6 +41,16 @@ export const routes = [
     pattern: "/global",
     beforeEnter: checkForUserSignedIn
   },
+  {
+    name: "fancies",
+    pattern: "/fancies",
+    beforeEnter: checkForUserSignedIn
+  },
+  {
+    name: "fancy",
+    pattern: "/fancy/:id",
+    beforeEnter: checkForUserSignedIn
+  },
 
   {
     name: "about",

@@ -12,7 +12,7 @@ const AppBarComponent = props => {
   const {
     routerState: { routeName }
   } = routerStore;
-
+  const { devMode } = UiStore;
   return (
     <Box
       className="AppBar"
@@ -56,6 +56,16 @@ const AppBarComponent = props => {
           className={`menuItem ${routeName === "global" ? "selected" : ""}`}
         >
           Global
+        </Button>
+
+        <Button
+          margin="none"
+          onClick={() => props.appLink("fancies")}
+          className={`menuItem ${
+            routeName === "fancies" || routeName === "fancy" ? "selected" : ""
+          }`}
+        >
+          Fancies
         </Button>
 
         {/* <Button margin="small" onClick={() => props.appLink("about")}>

@@ -8,6 +8,7 @@ import { FormAdd, View, Edit } from "grommet-icons";
 import Board from "../../components/Board/Board";
 import "./AdminPage.scss";
 import apiConfig from "./../../apiConfig";
+import ckUtils from "../../utils/ck";
 import Loading from "./../../components/Loading/Loading";
 class AdminPageComponent extends Component {
   state = {
@@ -34,7 +35,7 @@ class AdminPageComponent extends Component {
     } = this.state;
     const { allAttributes } = UiStore;
     const { allFancies } = SiteStore.data;
-    console.log("allFancies", allFancies);
+    // console.log("allFancies", allFancies);
     // const dateNow = new Date();
     return (
       <div
@@ -77,7 +78,13 @@ class AdminPageComponent extends Component {
           fill="horizontal"
           // style={{ maxWidth: "1000px" }}
         >
-          <Box pad="small" round="small" border="all">
+          <Box
+            pad="small"
+            round="small"
+            background="#eee"
+            fill="horizontal"
+            margin="large"
+          >
             <Heading level={5}>Unused?</Heading>
             <Button onClick={() => this.getAttributes()}>
               <Box pad="small">Get attr</Box>
@@ -92,26 +99,36 @@ class AdminPageComponent extends Component {
               <Box pad="small">get colors</Box>
             </Button>
           </Box>
-          <Button
-            // label="Add Fancy"
-            onClick={() => this.setState({ showAddFancy: true })}
-          >
-            <Box pad="small">
-              <FormAdd /> Add Fancy
-            </Box>
-          </Button>
-          <Button
-            onClick={() =>
-              this.setState({
-                showAddFancy: false,
-                showFancyList: !showFancyList
-              })
-            }
-          >
-            <Box pad="small">
-              {showFancyList ? "Hide Fancy List" : "Show Fancy List"}
-            </Box>
-          </Button>
+
+          <Box pad="small" round="small" background="#eee" fill="horizontal">
+            <Heading level={3}>Fancies</Heading>
+            <Button
+              // label="Add Fancy"
+              onClick={() => this.setState({ showAddFancy: true })}
+            >
+              <Box pad="small" direction="row" border="all">
+                <FormAdd /> Add Fancy
+              </Box>
+            </Button>
+            <Button
+              onClick={() =>
+                this.setState({
+                  showAddFancy: false,
+                  showFancyList: !showFancyList
+                })
+              }
+            >
+              <Box pad="small">
+                {showFancyList ? "Hide Fancy List" : "Show Fancy List"}
+              </Box>
+            </Button>
+            <Button onClick={() => this.handleUpdateFancies()}>
+              <Box pad="small" border="all">
+                update fancies (dates)
+              </Box>
+            </Button>
+          </Box>
+
           {showFancyList && (
             <Box border="all" margin="large" round="small" pad="large">
               <Heading level={3}>allFancies</Heading>
@@ -377,6 +394,99 @@ class AdminPageComponent extends Component {
       },
       { merge: true }
     );
+  };
+
+  handleUpdateFancies = () => {
+    const {
+      rootStore: { UiStore, SiteStore }
+    } = this.props;
+    const existingFancies = UiStore.allFancies.slice();
+    // const { newFancyLabel, newFancyValue } = this.state;
+    // const newObj = { value: newFancyValue, label: newFancyLabel };
+    const newFanciesArray = existingFancies.map(async (fancy, index) => {
+      const idString = fancy.value.toLowerCase();
+      let fancyObj = {};
+      if (index === 0) {
+        const optionsFirst = {
+          limit: 1,
+          fancyType: idString,
+          orderBy: "created_at",
+          direction: "asc"
+        };
+
+        const optionsLast = {
+          limit: 1,
+          fancyType: idString,
+          orderBy: "created_at",
+          direction: "desc"
+        };
+
+        const getFirstFancy = ckUtils.getKittiesByType(optionsFirst);
+        const getLastFancy = ckUtils.getKittiesByType(optionsLast);
+
+        Promise.all([getFirstFancy, getLastFancy])
+          .then(async values => {
+            const firstKittyData = values[0];
+            const lastKittyData = values[1];
+            console.log(
+              "firstKittyData, lastKittyData",
+              firstKittyData,
+              lastKittyData
+            );
+            let tempFancyOb = {};
+            if (firstKittyData.kitties) {
+              const fancyMeta1 = this.getFancyMeta(firstKittyData, "first");
+              const fancyMeta2 = this.getFancyMeta(lastKittyData, "last");
+              tempFancyOb = { ...fancyObj, ...fancyMeta1, ...fancyMeta2 };
+
+              console.log("fancy Obj now", fancyObj);
+            }
+            return fancyObj;
+          })
+          .catch(error => console.error(error));
+
+        console.log("fancy obj", fancyObj);
+        return fancyObj;
+      }
+    });
+    // await getResults.then(data => console.log("results data", data));
+
+    // console.log("getResults", getResults);
+    console.log("existingFancies", existingFancies);
+    console.log("newFanciesArray", newFanciesArray);
+
+    // const mergedArray = [...existingFancies, newObj];
+    // console.log("newobj will be", newObj);
+    // console.log("new merged will be", mergedArray);
+
+    // SiteStore.set(
+    //   {
+    //     testFancies: mergedArray
+    //   },
+    //   { merge: true }
+    // );
+  };
+
+  getFancyMeta = (data, direction) => {
+    console.log("getFancyMeta data", data);
+    const firstKitty = data.kitties && data.kitties[0];
+    console.log("firstKitty", firstKitty);
+    let fancyMetaObj = {};
+    if (direction === "first") {
+      fancyMetaObj = {
+        total: data.total,
+        image_url: firstKitty.image_url,
+        firstDate: firstKitty.created_at
+      };
+    }
+    if (direction === "last") {
+      fancyMetaObj = {
+        total: data.total,
+        image_url: firstKitty.image_url,
+        lastDate: firstKitty.created_at
+      };
+    }
+    return fancyMetaObj;
   };
   ////////////////
   // MISC
