@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import firebase from "firebase/app";
+import "firebase/functions";
 import { Document } from "firestorter";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
@@ -8,7 +9,9 @@ import { parseISO, formatDistanceStrict } from "date-fns";
 import "./Board.scss";
 import apiConfig from "./../../apiConfig";
 import Loading from "../Loading/Loading";
+import Pill from "../Pill/Pill";
 import ButtonGroup from "../ButtonGroup/ButtonGroup";
+import ckUtils from "../../utils/ck";
 
 import {
   FormClose,
@@ -55,14 +58,14 @@ class BoardComponent extends Component {
     editTitle: false,
     searchMode: "recent",
     showShareModal: false,
-    pageCount: 50,
+    pageCount: 250,
     idFrom: ""
   };
   componentDidMount() {
     if (this.props.queryParams) {
-      console.log('queryprams: ', this.props.queryParams)
+      console.log("queryprams: ", this.props.queryParams);
       if (this.props.queryParams && this.props.queryParams.length > 0) {
-                this.getKitties();
+        this.getKitties();
       } else {
         // this.setState({ editBoard: true });
       }
@@ -203,36 +206,62 @@ class BoardComponent extends Component {
     if (attributeValues.length) {
       canGenerate = true;
     }
-    const isLoadingCattributes = UiStore.isLoading || !UiStore.isLoading && !UiStore.allAttributes;
+    const isLoadingCattributes =
+      UiStore.isLoading || (!UiStore.isLoading && !UiStore.allAttributes);
     const dateNow = new Date();
     const canEdit = boardId && userBoards && userBoards.includes(boardId);
     // const canEdit = true;
-    const pageCounts = ["50", "100", "200", "1000"];
-    const BoardLoader = (props) => {
-      const {isLoadingBoard = false, isLoadingUi = false, isLoadingMeta = false, isLoadingData = false, isLoadingCattributes = false} = props
+    const pageCounts = ["50", "100", "250", "1000"];
+    const BoardLoader = props => {
+      const {
+        isLoadingBoard = false,
+        isLoadingUi = false,
+        isLoadingMeta = false,
+        isLoadingData = false,
+        isLoadingCattributes = false
+      } = props;
       return (
-        <Box border="all" pad="medium" fill="horizontal" elevation="small" round="small" align="center" justify="start">
+        <Box
+          border="all"
+          pad="medium"
+          fill="horizontal"
+          elevation="small"
+          round="small"
+          align="center"
+          justify="start"
+        >
           <Box direction="row" align="center" justify="start">
-          <Heading level={5} margin="none">Board:</Heading>
-          
-          {isLoadingBoard ? <Loading text="" /> : <Box><Checkmark color="lime"/> Done</Box>}
+            <Heading level={5} margin="none">
+              Board:
+            </Heading>
+
+            {isLoadingBoard ? (
+              <Loading text="" />
+            ) : (
+              <Box>
+                <Checkmark color="lime" /> Done
+              </Box>
+            )}
           </Box>
 
           <Box direction="row" align="center" justify="start">
-          <Heading level={5} margin="none">Ui:</Heading> 
-          {isLoadingUi ? <Loading text="" /> : "done"}
+            <Heading level={5} margin="none">
+              Ui:
+            </Heading>
+            {isLoadingUi ? <Loading text="" /> : "done"}
           </Box>
           <Box direction="row" align="center" justify="start">
-            <Heading level={5} margin="none">Data:</Heading> 
+            <Heading level={5} margin="none">
+              Data:
+            </Heading>
             {isLoadingData ? <Loading text="" /> : "done"}
           </Box>
 
           <Box>Meta: {isLoadingMeta ? "loading" : "-"}</Box>
           <Box>Cattributes: {isLoadingCattributes ? "loading" : "-"}</Box>
-          
-          </Box>
-      )
-    }
+        </Box>
+      );
+    };
     return (
       <Box
         direction="column"
@@ -245,7 +274,7 @@ class BoardComponent extends Component {
         justify="start"
         // gap="small"
       >
-        {!BoardStore.isLoading && !isLoadingBoardData &&  (
+        {!BoardStore.isLoading && !isLoadingBoardData && (
           <Box
             direction="row"
             align="stretch"
@@ -264,17 +293,24 @@ class BoardComponent extends Component {
               direction="column"
               align="stretch"
               justify="start"
-              basis="20%"
+              basis="10%"
               className="buttonGroupWrap"
             >
               <Heading margin="none" level={6}>
                 Search:
               </Heading>
-              <Box align="start" justify="center" basis="75%" className={attributeValues && attributeValues.length > 0 && !searchMode ? "errorBorder" :""}>
-              
+              <Box
+                align="start"
+                justify="center"
+                basis="75%"
+                className={
+                  attributeValues && attributeValues.length > 0 && !searchMode
+                    ? "errorBorder"
+                    : ""
+                }
+              >
                 {editBoard ? (
                   <ButtonGroup>
-                    
                     <Button onClick={() => this.handleSearchMode("recent")}>
                       <Box
                         pad="xsmall"
@@ -320,9 +356,20 @@ class BoardComponent extends Component {
                     </Button>
                   </ButtonGroup>
                 ) : (
-                  <Text>{searchMode}</Text>
+                  <Text className="searchModeString">
+                    <strong>{searchMode}</strong>
+                  </Text>
                 )}
-                {attributeValues && attributeValues.length > 0 && !searchMode && <Box className="errorWarning" fill="horizontal" align="center" justify="center"><Text size="small">Set Search Mode</Text></Box>}
+                {attributeValues && attributeValues.length > 0 && !searchMode && (
+                  <Box
+                    className="errorWarning"
+                    fill="horizontal"
+                    align="center"
+                    justify="center"
+                  >
+                    <Text size="small">Set Search Mode</Text>
+                  </Box>
+                )}
               </Box>
             </Box>
             {(searchMode === "recent" || searchMode === "id") && (
@@ -331,12 +378,14 @@ class BoardComponent extends Component {
                 direction="column"
                 align="stretch"
                 justify="start"
+                basis="15%"
+                className="countColumn"
               >
                 <Heading margin="none" level={6}>
                   Number:
                 </Heading>
 
-                <Box basis="75%">
+                <Box basis="65%">
                   {editBoard ? (
                     <Menu
                       label={pageCount || "Select"}
@@ -352,7 +401,9 @@ class BoardComponent extends Component {
                       }
                     />
                   ) : (
-                    <Text>{pageCount || "50"}</Text>
+                    <Text>
+                      <strong>{pageCount || "250"}</strong> Kitties
+                    </Text>
                   )}
                 </Box>
               </Box>
@@ -649,40 +700,9 @@ class BoardComponent extends Component {
                 {attributeValues &&
                   attributeValues.length > 0 &&
                   attributeValues.map(attribute => (
-                    <Box
-                      className={classNames(
-                        "pill",
-                        editBoard ? "hasClose" : ""
-                      )}
-                      round="medium"
-                      background="secondary"
-                      key={`attributePill-${attribute}`}
-                      pad="xsmall"
-                      gap="xsmall"
-                      direction="row"
-                      animation="slideUp"
-                      align="center"
-                      justify="center"
-                    >
-                      <Text size="small" color="#fff">
-                        {attribute}
-                      </Text>
-                      {editBoard && (
-                        <Box
-                          border={{
-                            color: "white",
-                            size: "xsmall",
-                            style: "solid",
-                            side: "left"
-                          }}
-                          onClick={() => {
-                            this.removeAttribute(attribute);
-                          }}
-                        >
-                          <FormClose color="#fff" />
-                        </Box>
-                      )}
-                    </Box>
+                    
+                    <Pill text={attribute} displayMode="featured" hasClose={editBoard} onClickRemove={() => this.removeAttribute(attribute)} />
+                    
                   ))}
               </Box>
             </Box>
@@ -704,40 +724,9 @@ class BoardComponent extends Component {
               )}
               <Box direction="row" align="start" justify="start" gap="xsmall">
                 {fancyValue && fancyValue[0] && (
-                  <Box
-                    className={classNames(
-                      "pill",
-                      "fancy",
-                      editBoard ? "hasClose" : ""
-                    )}
-                    round="small"
-                    background="secondary"
-                    pad="xsmall"
-                    gap="xsmall"
-                    direction="row"
-                    animation="slideUp"
-                    align="center"
-                    justify="center"
-                  >
-                    <Text size="small" color="#fff">
-                      {fancyValue[0]}
-                    </Text>
-                    {editBoard && (
-                      <Box
-                        border={{
-                          color: "white",
-                          size: "xsmall",
-                          style: "solid",
-                          side: "left"
-                        }}
-                        onClick={() => {
-                          this.removeFancy();
-                        }}
-                      >
-                        <FormClose color="#fff" />
-                      </Box>
-                    )}
-                  </Box>
+                  
+                    <Pill text={fancyValue[0]} displayMode="fancy" hasClose={editBoard} onClickRemove={() => this.removeFancy()} />
+                    
                 )}
               </Box>
             </Box>
@@ -749,20 +738,28 @@ class BoardComponent extends Component {
               justify="center"
               // border="all"
             >
-              {attributeValues && attributeValues.length > 0 && !searchMode && <Box className="errorWarning" align="center" justify="center"><Text size="small">No Search Mode Set</Text></Box>}
-              <Button
-                onClick={() => this.getKitties()}
-                fill="horizontal"
-                round="small"
-                // border="secondary"
-                margin={{ top: "small" }}
-                pad="large"
-                primary
-                disabled={!canGenerate}
-                size="large"
-                label={editBoard ? "Show Results!" : "Refresh"}
-                className="heroButton noWrap"
-              />
+              {attributeValues && attributeValues.length > 0 && !searchMode && (
+                <Box className="errorWarning" align="center" justify="center">
+                  <Text size="small">No Search Mode Set</Text>
+                </Box>
+              )}
+              {!isLoadingBoardData ? (
+                <Button
+                  onClick={() => this.getKitties()}
+                  fill="horizontal"
+                  round="small"
+                  // border="secondary"
+                  margin={{ top: "small" }}
+                  pad="large"
+                  primary
+                  disabled={!canGenerate}
+                  size="large"
+                  label={editBoard ? "Show Results!" : "Refresh"}
+                  className="heroButton noWrap"
+                />
+              ) : (
+                <Box>Waiting for data...</Box>
+              )}
             </Box>
           </Box>
         )}
@@ -1445,12 +1442,14 @@ class BoardComponent extends Component {
             </Box>
           </Layer>
         )}
-        {devMode && <BoardLoader
-        isLoadingBoard={BoardStore.isLoading}
-        isLoadingUi={UiStore.isLoading}
-        isLoadingData={isLoadingBoardData}
-        isLoadingCattributes={isLoadingCattributes}
-        />}
+        {devMode && (
+          <BoardLoader
+            isLoadingBoard={BoardStore.isLoading}
+            isLoadingUi={UiStore.isLoading}
+            isLoadingData={isLoadingBoardData}
+            isLoadingCattributes={isLoadingCattributes}
+          />
+        )}
       </Box>
     );
   }
@@ -1639,10 +1638,10 @@ class BoardComponent extends Component {
   //////////////////////////////
 
   getKitties = () => {
-    // const {
-    //   rootStore: { BoardStore }
-    // } = this.props;
-    const { pageCount = 50, searchMode, idFrom, idTo } = this.state;
+    const {
+      rootStore: { UiStore }
+    } = this.props;
+    const { pageCount = 250, searchMode, idFrom, idTo } = this.state;
     if (searchMode === "id" && !idFrom) {
       this.setState({ error: "No id set" });
       return;
@@ -1685,7 +1684,28 @@ class BoardComponent extends Component {
           idTo: idTo || ""
         });
         this.handleCalc(data);
+        return data;
+      })
+      .then(data => {
+        console.log("load data data", data);
+        if (searchMode !== "id") {
+          const dateData = ckUtils.calcDates({
+            data: data,
+            direction: searchMode === "id" ? "asc" : "desc",
+            limit: data.kitties.length
+          });
+          console.log("dateData", dateData);
+          // this.saveSpeedData(dateData);
+          UiStore.speed = dateData && dateData.perHour;
+          // UiStore.fancyPercent =
+          //   kittyTypeObj && (kittyTypeObj.fancyCount / limit) * 100;
+          // UiStore.notFancyPercent =
+          //   kittyTypeObj && (kittyTypeObj.notFancyCount / limit) * 100;
+        }
         return true;
+      })
+      .catch(error => {
+        console.error(error);
       });
   };
 
@@ -1702,7 +1722,7 @@ class BoardComponent extends Component {
       titleEdited,
       boardTitle
     } = BoardStore.data;
-    const { pageCount = 50, searchMode = "recent" } = this.state;
+    const { pageCount = 250, searchMode = "recent" } = this.state;
     // console.log("fancyValue", fancyValue);
     const tempFancyValue = fancyValue.length && fancyValue[0];
     // console.log("attributeValues", attributeValues);
@@ -1926,7 +1946,19 @@ class BoardComponent extends Component {
     this.setState({ isPublic: checked });
     BoardStore.update({ isPublic: checked });
   };
-
+  ////////SPEED DDATA
+  saveSpeedData = dateData => {
+    console.log("savespeedData", dateData);
+    let dateNow = firebase.firestore.Timestamp.fromDate(new Date());
+    const storeSpeed = firebase.functions().httpsCallable("storeSpeed");
+    const saveData = { ...dateData, dateCreated: dateNow };
+    storeSpeed({ dateData: saveData }).then(result => {
+      console.log("savespped result : ", result);
+      // Read result of the Cloud Function.
+      // var sanitizedMessage = result.data.text;
+      // ...
+    });
+  };
   //////MISC
 
   compareCats(a, b) {

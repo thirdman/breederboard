@@ -4,7 +4,7 @@ import {
   formatDistance,
   formatDistanceStrict,
   differenceInHours,
-  differenceInMinutes,
+  differenceInMinutes
   // differenceInCalendarDays
 } from "date-fns";
 
@@ -13,7 +13,7 @@ function getKitties(props) {
     pageCount = 50,
     limit = 50,
     searchMode = "default",
-    idFrom,
+    idFrom
     // idTo,
     // saveToFirebase = false
   } = props;
@@ -28,7 +28,7 @@ function getKitties(props) {
   theHeaders.append("x-api-token", apiConfig.apiToken);
 
   let API = `https://public.api.cryptokitties.co/v1/kitties?orderBy=created_at&orderDirection=desc&limit=${limit}`;
-  
+
   return fetch(API, { headers: theHeaders })
     .then(response => response.json())
     .then(data => {
@@ -47,7 +47,7 @@ function getKittiesByType(props) {
     direction = "desc",
     pageCount = 50,
     searchMode = "default",
-    idFrom,
+    idFrom
     // idTo,
     // saveToFirebase = false
   } = props;
@@ -73,22 +73,80 @@ function getKittiesByType(props) {
     });
 }
 
+function getKittiesByPrestige(props) {
+  const {
+    limit = 50,
+    isPrestige = true,
+    prestigeType = "ducat",
+    orderBy = "created_at",
+    direction = "desc",
+    // pageCount = 50,
+    searchMode = "default",
+    idFrom
+    // idTo,
+    // saveToFirebase = false
+  } = props;
+  if (searchMode === "id" && !idFrom) {
+    this.setState({ error: "No id set" });
+    return;
+  }
+  let theHeaders = new Headers();
+  theHeaders.append("Content-Type", "application/json");
+  theHeaders.append("x-api-token", apiConfig.apiToken);
+  let API = `https://public.api.cryptokitties.co/v1/kitties?orderBy=${orderBy}&orderDirection=${direction}&limit=${limit}${
+    isPrestige ? `&is_prestige=true` : ""
+  }&prestige=${prestigeType}`;
+
+  return fetch(API, { headers: theHeaders })
+    .then(response => response.json())
+    .then(data => {
+      return data;
+    })
+    .catch(error => {
+      return error;
+    });
+}
+
+function getActivePrestige(props) {
+  const {
+    limit = 100,
+    // isPrestige = true,
+    prestigeType = "",
+    orderBy = "prestige_time_limit",
+    direction = "desc",
+    // searchMode = "default",
+    // isActive = true
+  } = props;
+  const dateNow = new Date();
+  // console.log("datenow", dateNow);
+  let theHeaders = new Headers();
+  theHeaders.append("Content-Type", "application/json");
+  theHeaders.append("x-api-token", apiConfig.apiToken);
+  let API = `https://public.api.cryptokitties.co/v1/kitties?orderBy=${orderBy}&orderDirection=${direction}&limit=${limit}&is_prestige=true&prestige=${prestigeType}`;
+
+  return fetch(API, { headers: theHeaders })
+    .then(response => response.json())
+    .then(data => {
+      return data;
+    })
+    .catch(error => {
+      return error;
+    });
+}
+
 function getBoardData(props) {
-  const { attributeValues, data } = props;
+  const { data } = props;
   // if (attributeValues.length < 1 && !fancyValue) {
   //   console.error("no cattributesvalues or fancy value");
   //   return;
   // }
   let boardArray = [];
-  let tempBreederArray = [];
+  // let tempBreederArray = [];
   data &&
     data.kitties.map(kitty => {
-      // if (kitty.is_fancy && kitty.fancy_type === tempFancyValue) {
-
-      // }
       const nickname = kitty.hatcher && kitty.hatcher.nickname;
       const breederAddress = kitty.hatcher && kitty.hatcher.address;
-      let tempObj = {};
+      // let tempObj = {};
 
       // HANDLE FANCY
       // const thisPoints = this.calculateFancyPoints(kitty);
@@ -134,71 +192,22 @@ function getBoardData(props) {
       // boardArray[nickname].push(tempObj);
     });
   console.log("boardArray", boardArray);
-  // data &&
-  //   data.kitties.map(kitty => {
-  //     const nickname = kitty.hatcher && kitty.hatcher.nickname;
-  //     let tempObj = {};
-  //     // HANDLE FANCY
-  //     if (kitty.is_fancy && kitty.fancy_type === tempFancyValue) {
-  //       const thisPoints = this.calculateFancyPoints(kitty);
-  //       if (nickname) {
-  //         const itemObj = {
-  //           nickname: nickname,
-  //           points: thisPoints,
-  //           kittyId: kitty.id,
-  //           kittyName: kitty.name,
-  //           kittyImg: kitty.image_url,
-  //           kittyAttributes: [],
-  //           isFancy: true,
-  //           created_at: kitty.created_at,
-  //           fancyRanking: kitty.fancy_ranking,
-  //           generation: kitty.generation
-  //         };
-  //         boardArray.push(itemObj);
-  //       }
-  //     }
-  //     // HANDLE NORMAL
-  //     const attrs = kitty.enhanced_cattributes.filter(item => {
-  //       return attributeValues.includes(item.description);
-  //     });
-  //     const thisAtrrCount = attrs.length;
-  //     const thisPoints = this.calculatePoints(attrs);
-  //     if (nickname) {
-  //       const itemObj = {
-  //         nickname: nickname,
-  //         points: thisPoints,
-  //         kittyId: kitty.id,
-  //         kittyName: kitty.name,
-  //         kittyImg: kitty.image_url,
-  //         kittyAttributes: attrs,
-  //         created_at: kitty.created_at,
-  //         isFancy: false
-  //       };
-  //       if (attrs.length > 0) {
-  //         boardArray.push(itemObj);
-  //       }
-  //     }
-  //     // boardArray[nickname].push(tempObj);
-  //   });
   return boardArray;
 }
 
 function handleCalc(props) {
   const {
     data,
-    attributeValues,
-    fancyValue = [],
-    titleEdited,
-    boardTitle,
-    searchMode = "recent"
+    // attributeValues,
+    // fancyValue = [],
+    // titleEdited,
+    // boardTitle,
+    // searchMode = "recent"
   } = props;
-  // let boardArray = [];
-  // const tempFancyValue = fancyValue.length && fancyValue[0];
   console.log("data", data);
   if (!data.kitties) {
     return;
   }
-  // console.log("boardArray", boardArray);
   let breederArray = [];
   let fancyArray = [];
   const boardArray = getBoardData({ data: data });
@@ -217,13 +226,10 @@ function handleCalc(props) {
     const thisUserFancyKitties = thisUserKitties.filter(
       rowItem => rowItem.isFancy === true
     );
-    const numberOfCats = thisUserKitties.length;
-    // const breederPoints = this.sumValues(thisUserKitties, "points");
-
+    // const numberOfCats = thisUserKitties.length;
     thisUserKitties.reduce((sum, x) => sum + x);
-    // console.log('breeder kitties', thisUserKitties);
-    const sortedByDate = thisUserKitties.sort(this.compareDates);
-    const sortedByAttrCount = thisUserKitties.sort(this.compareCount);
+    // const sortedByDate = thisUserKitties.sort(this.compareDates);
+    // const sortedByAttrCount = thisUserKitties.sort(this.compareCount);
     const breederObj = {
       nickname: row.nickname,
       address: row.address,
@@ -325,14 +331,22 @@ function calcGen(props) {
   console.log("genArray: ", genArray);
   return genArray;
 }
+
 function calcDates(props) {
-  const { data, limit } = props;
-  const firstDate = data.kitties[0].created_at;
-  const lastDate = data.kitties[data.kitties.length - 1].created_at;
-  var hours = differenceInHours(parseISO(firstDate), parseISO(lastDate));
-  var minutes = differenceInMinutes(parseISO(firstDate), parseISO(lastDate));
+  const { data, limit, direction = "desc" } = props;
+  const firstDate =
+    direction === "asc"
+      ? data.kitties[data.kitties.length - 1].created_at
+      : data.kitties[0].created_at;
+  const lastDate =
+    direction === "asc"
+      ? data.kitties[0].created_at
+      : data.kitties[data.kitties.length - 1].created_at;
+
+  let hours = differenceInHours(parseISO(firstDate), parseISO(lastDate));
+  const minutes = differenceInMinutes(parseISO(firstDate), parseISO(lastDate));
   const perMinute = (limit / minutes).toFixed(2);
-  const perHour = (limit / hours).toFixed(2);
+  let perHour = (limit / hours).toFixed(2);
   const formattedDistance = formatDistance(
     parseISO(firstDate),
     parseISO(lastDate),
@@ -345,6 +359,10 @@ function calcDates(props) {
   );
   console.log("formattedDistance", formattedDistance);
   console.log("hours: ", hours);
+  if (perHour === "Infinity") {
+    perHour = (perMinute * 60).toFixed(1);
+    hours = (minutes / 60).toFixed(2);
+  }
   return {
     hours: hours,
     minutes: minutes,
@@ -473,9 +491,12 @@ function compareGeneration(a, b) {
 export default {
   getKitties,
   getKittiesByType,
+  getKittiesByPrestige,
+  getActivePrestige,
   handleCalc,
   calcType,
   calcGen,
   calcDates,
-  calcAttributes
+  calcAttributes,
+  compareKittyCount
 };

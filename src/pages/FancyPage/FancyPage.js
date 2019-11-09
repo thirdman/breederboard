@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
-import { parseISO, formatDistanceStrict, format } from "date-fns";
-import { Box, Buttons, Heading, Stack, Text } from "grommet";
-import { Fireball, View } from "grommet-icons";
+import { parseISO, format } from "date-fns";
+import { Box, Heading, Text } from "grommet";
+// import { Fireball, View } from "grommet-icons";
 import { Fancy } from "../../components/Fancy/Fancy";
 import Loading from "../../components/Loading/Loading";
 import Banner from "../../components/Banner/Banner";
 import "./FancyPage.scss";
-import apiConfig from "../../apiConfig";
+// import apiConfig from "../../apiConfig";
 import ckUtils from "../../utils/ck";
 
 class FancyPageComponent extends Component {
@@ -17,10 +17,12 @@ class FancyPageComponent extends Component {
   };
   componentDidMount() {
     this.handleLoad();
+    console.log("DID MOUNT");
+    this.getHighGenData();
   }
   render() {
     const {
-      rootStore: { routerStore, UiStore, BoardStore, BoardsStore }
+      rootStore: { routerStore, UiStore }
     } = this.props;
 
     const {
@@ -31,25 +33,63 @@ class FancyPageComponent extends Component {
     const {
       allAttributes = UiStore.allAttributes,
       isLoadingStore = true,
+      // isLoadingHighGenData,
       fancyMeta,
       fancyData,
-      isLoadingData
+      isLoadingData,
+      colorWinnersData,
+      highGenData,
+      dateData,
+      breederData
     } = this.state;
-    const { allFancies } = UiStore;
+    // const { allFancies } = UiStore;
     if (params.attributes) {
       // console.log("params.attributes", params.attributes);
     }
-    const dateNow = new Date();
-    // if (params.id) {
-    //   BoardStore.path = `boards/${params.id}`;
-    // }
-    // const isReady = BoardStore.ready();
+    // const dateNow = new Date();
+
+    const KittyItem = props => {
+      const { kitty, displayMode } = props;
+      return (
+        <Box
+          className={`KittyItem ${displayMode}`}
+          direction="row"
+          pad="xxsmall"
+          round="small"
+          gap={displayMode === "ranking" ? "none" : "small"}
+          justify={displayMode === "ranking" ? "center" : "stretch"}
+          fill="horizontal"
+          background="#fff"
+          elevation="xsmall"
+          align="center"
+        >
+          <Box
+            className="kittyItemImage"
+            basis={displayMode === "ranking" ? "20px" : "10%"}
+          >
+            <img src={kitty.image_url} alt="" />
+          </Box>
+          {displayMode !== "ranking" && (
+            <Box className="kittyBreeder" basis="80%">
+              <Text size="small">{kitty.hatcher.nickname}</Text>
+            </Box>
+          )}
+          <Box
+            className="kittyFancyRank"
+            justify="end"
+            basis={displayMode === "ranking" ? "20px" : "10%"}
+          >
+            <Text size="medium">#{kitty.fancy_ranking}</Text>
+          </Box>
+        </Box>
+      );
+    };
     return (
       <Box
         className={classNames("FancyPage", {
           isTransitioning: !!routerStore.isTransitioning
         })}
-        fill="vertical"
+        // fill="vertical"
         direction="column"
         align="stretch"
         justify="stretch"
@@ -62,13 +102,12 @@ class FancyPageComponent extends Component {
           align="stretch"
           fill="horizontal"
           alignSelf="center"
-          basis="100%"
+          // basis="100%"
           pad="small"
           // alignItems="center"
           // justifyContent="center"
           round="none"
           margin="large"
-          // fill="horizontal"
           style={{ maxWidth: "1024px" }}
         >
           <Box
@@ -166,6 +205,256 @@ class FancyPageComponent extends Component {
               appLink={this.appLink}
             />
           )}
+
+          <Box
+            className="contentRow"
+            direction="row"
+            justify="evenly"
+            gap="large"
+          >
+            {!isLoadingStore && (
+              <Box
+                fill="horizontal"
+                // pad="small"
+                margin={{ vertical: "medium" }}
+                direction="column"
+                className="contentSection"
+              >
+                <Box className="sectionHeading" pad={{ vertical: "small" }}>
+                  <Heading level={3} margin="none">
+                    Colors
+                  </Heading>
+                </Box>
+
+                <Box
+                  className="colorItem header"
+                  direction="row"
+                  fill="horizontal"
+                  align="center"
+                  justify="stretch"
+                  gap="xxsmall"
+                  margin={{ vertical: "xxsmall" }}
+                >
+                  <Box className="colorSwatchWrap" basis="20%">
+                    -
+                  </Box>
+                  <Box className="colorName" basis="50%">
+                    <Heading level={6} margin="none">
+                      Color
+                    </Heading>
+                  </Box>
+                  <Box
+                    className="colorCount"
+                    basis="30%"
+                    align="center"
+                    justify="center"
+                  >
+                    <Heading level={6} margin="none">
+                      Kitty Count
+                    </Heading>
+                  </Box>
+                  <Box className="colorKitty" basis="30%">
+                    <Heading level={6} margin="none">
+                      First Kitty
+                    </Heading>
+                  </Box>
+                </Box>
+                {colorWinnersData ? (
+                  colorWinnersData.map(color => {
+                    return (
+                      <Box
+                        key={color.name}
+                        className="colorItem"
+                        direction="row"
+                        fill="horizontal"
+                        align="center"
+                        justify="stretch"
+                        gap="xxsmall"
+                        margin={{ vertical: "xxsmall" }}
+                      >
+                        <Box className="colorSwatchWrap" basis="20%">
+                          <Box
+                            background={color.backgroundColorHex}
+                            pad="small"
+                            className="colorSwatch"
+                            round="xxsmall"
+                            width="20px"
+                          />
+                        </Box>
+                        <Box className="colorName" basis="50%">
+                          <Text size="small">{color.name}</Text>
+                        </Box>
+                        <Box
+                          className="colorCount"
+                          basis="30%"
+                          align="center"
+                          justify="center"
+                        >
+                          <Text size="small">{color.count}</Text>
+                        </Box>
+                        <Box className="colorKitty" basis="30%">
+                          {color.kitty ? (
+                            <Box className="filled">
+                              <KittyItem
+                                displayMode="ranking"
+                                kitty={color.kitty}
+                              />
+                            </Box>
+                          ) : (
+                            <Box
+                              className="vacant"
+                              border="all"
+                              round="small"
+                              pad="xsmall"
+                              align="center"
+                              justify="center"
+                            >
+                              <Text size="small">No Kitty</Text>
+                            </Box>
+                          )}
+                        </Box>
+                      </Box>
+                    );
+                  })
+                ) : (
+                  <Box
+                    pad={{ vertical: "large" }}
+                    fill="horizontal"
+                    justify="center"
+                  >
+                    <Loading text="Considering Color" />
+                  </Box>
+                )}
+              </Box>
+            )}
+            <Box
+              fill="horizontal"
+              // margin={{ vertical: "medium" }}
+              direction="column"
+              // className="contentSection"
+            >
+              {!isLoadingStore && highGenData && (
+                <Box
+                  fill="horizontal"
+                  margin={{ vertical: "medium" }}
+                  direction="column"
+                  className="contentSection"
+                >
+                  <Box className="sectionHeading" pad={{ vertical: "small" }}>
+                    <Heading level={3} margin="none">
+                      Highest Gen
+                    </Heading>
+                  </Box>
+
+                  {highGenData &&
+                    highGenData.map(kitty => {
+                      return (
+                        <Box
+                          key={kitty.id}
+                          className="colorItem"
+                          direction="row"
+                          fill="horizontal"
+                          align="center"
+                          justify="stretch"
+                          gap="xxsmall"
+                          margin={{ vertical: "xxsmall" }}
+                        >
+                          <Box basis="10%">
+                            <strong>{kitty.generation}</strong>
+                          </Box>
+                          <Box basis="90%">
+                            <KittyItem displayMode="condensed" kitty={kitty} />
+                          </Box>
+                        </Box>
+                      );
+                    })}
+                </Box>
+              )}
+
+              <Box
+                className="contentRow"
+                direction="row"
+                justify="evenly"
+                gap="xsmall"
+              >
+                <Box
+                  fill="horizontal"
+                  margin={{ vertical: "medium" }}
+                  direction="column"
+                  className="contentSection"
+                >
+                  <Box className="sectionHeading" pad={{ vertical: "small" }}>
+                    <Heading level={3} margin="none">
+                      Time {fancyData && ` to ${fancyData.kitties.length}`}
+                    </Heading>
+                  </Box>
+                  {dateData ? (
+                    <Box>
+                      <Text size="xlarge">{dateData.hours}</Text>
+                      <Text size="medium">Hours</Text>
+                    </Box>
+                  ) : (
+                    <Loading text="Calculating Rate" />
+                  )}
+                </Box>
+
+                <Box
+                  fill="horizontal"
+                  margin={{ vertical: "medium" }}
+                  direction="column"
+                  className="contentSection"
+                >
+                  <Box className="sectionHeading" pad={{ vertical: "small" }}>
+                    <Heading level={3} margin="none">
+                      Speed {fancyData && ` to ${fancyData.kitties.length}`}
+                    </Heading>
+                  </Box>
+                  {dateData ? (
+                    <Box>
+                      <Text size="xlarge">{dateData.perHour}</Text>
+                      <Text size="medium">Kph</Text>
+                    </Box>
+                  ) : (
+                    <Loading text="Calculating Speeds"></Loading>
+                  )}
+                </Box>
+              </Box>
+              <Box
+                fill="horizontal"
+                margin={{ vertical: "medium" }}
+                direction="column"
+                className="contentSection"
+              >
+                <Box className="sectionHeading" pad={{ vertical: "small" }}>
+                  <Heading level={3} margin="none">
+                    Breeders{" "}
+                    {fancyData &&
+                      ` (First ${fancyData.kitties.length} kitties)`}
+                  </Heading>
+                </Box>
+                {breederData ? (
+                  <Box>
+                    {breederData.map(breeder => (
+                      <Box
+                        key={breeder.nickname}
+                        direction="row"
+                        justify="stretch"
+                        align="center"
+                        margin={{ vertical: "xxsmall" }}
+                      >
+                        <Box basis="80%">{breeder.nickname}</Box>
+                        <Box basis="20%" direction="row" justify="end">
+                          {breeder.kitties.length}
+                        </Box>
+                      </Box>
+                    ))}
+                  </Box>
+                ) : (
+                  <Loading text="Thinking about breeders"></Loading>
+                )}
+              </Box>
+            </Box>
+          </Box>
         </Box>
       </Box>
     );
@@ -174,7 +463,7 @@ class FancyPageComponent extends Component {
   handleLoad = async () => {
     // console.log("handling load");
     const {
-      rootStore: { routerStore, UiStore, BoardStore, SiteStore }
+      rootStore: { routerStore, UiStore, BoardStore }
     } = this.props;
     const {
       routerState: { params, queryParams }
@@ -239,14 +528,58 @@ class FancyPageComponent extends Component {
           fancyData: data,
           fancyMeta: fancyMeta
         });
+        return data;
       })
+      .then(data => {
+        console.log("about to send calc:", data);
+        this.handleCalc({ data: data });
+        return data;
+      })
+      .then(data => {
+        this.getColors(data);
+        const dateData = ckUtils.calcDates({
+          data: data,
+          limit: 100,
+          direction: "asc"
+        });
+        console.log("dateData:", dateData);
+        this.setState({ dateData: dateData });
+        this.handleCalc(data);
+      })
+
+      .catch(error => console.error(error));
+  };
+
+  getHighGenData = (type = "pawderick") => {
+    this.setState({ isLoadingHighGenData: true });
+    const idString = type.toLowerCase();
+    const options = {
+      limit: 3,
+      fancyType: idString,
+      orderBy: "generation",
+      direction: "desc"
+    };
+
+    const getHighGen = ckUtils.getKittiesByType(options);
+    getHighGen
+      .then(data => {
+        console.log("high gen data result by type: ", data);
+        const sorted = data.kitties.sort(this.compareGen);
+        // const highGenData = this.getFancyMeta(data);
+        this.setState({
+          isLoadingHighGenData: false,
+          highGenData: sorted
+        });
+        return data;
+      })
+
       .catch(error => console.error(error));
   };
 
   getFancyMeta = data => {
-    console.log("getFancyMeta data", data);
+    // console.log("getFancyMeta data", data);
     const firstKitty = data.kitties && data.kitties[0];
-    console.log("firstKitty", firstKitty);
+    // console.log("firstKitty", firstKitty);
     const fancyMetaObj = {
       total: data.total,
       image_url: firstKitty.image_url,
@@ -256,58 +589,114 @@ class FancyPageComponent extends Component {
     return fancyMetaObj;
   };
 
+  handleCalc(props) {
+    const { data } = props;
+    console.log("handle calc data", data);
+    if (data && !data.kitties) {
+      return;
+    }
+    let breederArray = [];
+    data.kitties.map(row => {
+      if (
+        breederArray.filter(i => i.nickname === row.hatcher.nickname).length > 0
+      ) {
+        return null;
+      }
+
+      const thisUserKitties = data.kitties.filter(
+        rowItem => rowItem.hatcher.nickname === row.hatcher.nickname
+      );
+      // const numberOfCats = thisUserKitties.length;
+
+      thisUserKitties.reduce((sum, x) => sum + x);
+      const breederObj = {
+        nickname: row.hatcher.nickname,
+        address: row.hatcher.address,
+        kitties: thisUserKitties
+      };
+      return breederArray.push(breederObj);
+    });
+    breederArray.sort(ckUtils.compareKittyCount);
+    const returnObj = {
+      // totalPoints: theTotalPoints,
+      // breeders: boardArray
+      breederArray: breederArray
+    };
+    this.setState({ breederData: breederArray });
+    return returnObj;
+  }
   //////////////////////////////
-  ////// old
+  ////// COLORS
   //////////////////////////////
 
-  // loadFancies = async () => {
-  //   const {
-  //     rootStore: { SiteStore }
-  //   } = this.props;
-  //   console.log("loading fancies");
-  //   await SiteStore.ready().then(() => {
-  //     console.log("site ready", SiteStore);
-  //     this.setState({
-  //       storeFancies: SiteStore.data.allFancies,
-  //       fanciesLoaded: true
-  //     });
-  //   });
-  // };
-
-  getAttributes = address => {
+  getColors = data => {
+    // console.log("gettign color winners", data);
+    if (!data.kitties.length) {
+      return;
+    }
+    const colorWinnerArray = [];
     const {
       rootStore: { UiStore }
     } = this.props;
+    const { allColors } = UiStore;
+    // console.log("allColors", allColors);
 
-    // console.log("address", address);
-    const {
-      rootStore: { AssetsStore }
-    } = this.props;
-    // console.log("AssetsStore");
-    let theHeaders = new Headers();
-    this.setState({
-      isLoadingAssets: true
+    allColors.map(color => {
+      // console.log("color name", color.name);
+      if (colorWinnerArray.filter(i => i.name === color.name).length > 0) {
+        // console.log("bail out!");
+        return null;
+      }
+      const filtered = data.kitties.filter(kitty => kitty.color === color.name);
+      // console.log("filtered", filtered);
+      let tempObj = {};
+      if (filtered[0]) {
+        tempObj = {
+          ...color,
+          kitty: filtered[0],
+          count: filtered.length
+        };
+      } else {
+        tempObj = {
+          ...color
+        };
+      }
+      return colorWinnerArray.push(tempObj);
     });
-    // Add a few headers
-    theHeaders.append("Content-Type", "application/json");
-    theHeaders.append("x-api-token", apiConfig.apiToken);
-    const API = "https://public.api.cryptokitties.co/v1/cattributes";
-    fetch(API, { headers: theHeaders })
-      .then(response => response.json())
-      .then(data => {
-        this.setState({ allAttributes: data });
-        this.setState({
-          isLoadingAttributes: false
-        });
-        // UiStore.allAttributes = data;
-        // console.log("UiStore");
-        return true;
-      });
+    // console.log("colorWinnerArray", colorWinnerArray);
+    colorWinnerArray.sort(this.compareCount);
+    this.setState({
+      colorWinnersData: colorWinnerArray
+    });
+    return colorWinnerArray;
   };
 
   ////////////////
   // MISC
   ////////////////
+  compareCount(a, b) {
+    if (a.count < b.count) {
+      return 1;
+    }
+    if (a.count > b.count) {
+      return -1;
+    }
+    if (!b.count) {
+      return -2;
+    }
+    return 0;
+  }
+  compareGen(a, b) {
+    if (a.generation < b.generation) {
+      return 1;
+    }
+    if (a.generation > b.generation) {
+      return -1;
+    }
+
+    return 0;
+  }
+
   handleMenu = value => {
     const {
       rootStore: { UiStore }

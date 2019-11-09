@@ -4,13 +4,11 @@ import { Collection } from "firestorter";
 import config from "../firebase-config";
 
 !firebase.apps.length ? firebase.initializeApp(config) : firebase.app();
-// initFirestorter({ firebase: firebase });
 
-// let assetId;
-
-const KittehStore = new Collection("kitteh", {
-  // query: ref => ref.orderBy("dateCreated", "desc"),
-  mode: "auto"
+const FanciesStore = new Collection("fancies", {
+  query: ref => ref.orderBy("firstDate", "desc"),
+  mode: "on"
 });
 
-export { KittehStore };
+//.limit(124)
+export { FanciesStore };

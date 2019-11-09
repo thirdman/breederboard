@@ -7,6 +7,7 @@ import { Box, Button, Text, Collapsible, Heading } from "grommet";
 import { FormAdd, View, Edit } from "grommet-icons";
 import "./HomePage.scss";
 import apiConfig from "./../../apiConfig";
+import Pill from "../../components/Pill/Pill";
 import Loading from "./../../components/Loading/Loading";
 class HomePageComponent extends Component {
   state = {
@@ -224,40 +225,35 @@ class HomePageComponent extends Component {
                             gap="xsmall"
                           >
                             {doc.data.fancyValue && doc.data.fancyValue[0] && (
-                              <Box
-                                className={classNames("pill", "fancy")}
-                                round="small"
-                                background="secondary"
-                                key={`attributePill-${doc.data.fancyValue[0]}`}
-                                pad="xsmall"
-                                gap="xsmall"
-                                direction="row"
-                                animation="slideUp"
-                                align="center"
-                                justify="center"
-                              >
-                                <Text size="small" color="#fff">
-                                  {doc.data.fancyValue[0]}
-                                </Text>
-                              </Box>
+                              // <Box
+                              //   className={classNames("Pill", "fancy")}
+                              //   round="small"
+                              //   background="secondary"
+                              //   key={`attributePill-${doc.data.fancyValue[0]}`}
+                              //   pad="xsmall"
+                              //   gap="xsmall"
+                              //   direction="row"
+                              //   animation="slideUp"
+                              //   align="center"
+                              //   justify="center"
+                              // >
+                              //   <Text size="small" color="#fff">
+                              //     {doc.data.fancyValue[0]}
+                              //   </Text>
+                              // </Box>
+                              <Pill
+                                displayMode="fancy"
+                                text={doc.data.fancyValue[0]}
+                                key={`attributefancyPill-${
+                                  doc.data.fancyValue[0]
+                                }`}
+                              />
                             )}
                             {doc.data.attributeValues.map(attribute => (
-                              <Box
-                                className={classNames("pill", "attribute")}
-                                round="medium"
-                                background="secondary"
+                              <Pill
+                                text={attribute}
                                 key={`attributePill-${attribute}`}
-                                pad="xsmall"
-                                gap="xsmall"
-                                direction="row"
-                                animation="slideUp"
-                                align="center"
-                                justify="center"
-                              >
-                                <Text size="small" color="#fff">
-                                  {attribute}
-                                </Text>
-                              </Box>
+                              />
                             ))}
                           </Box>
                         </Box>

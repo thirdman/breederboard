@@ -1,21 +1,9 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
-//import Loading from "../../components/Loading/Loading";
-import AppBar from "../../components/AppBar/AppBar";
 
 import "./AboutPage.scss";
-import {
-  Box,
-  Button,
-  Collapsible,
-  Heading,
-  Grommet,
-  Menu,
-  Tabs,
-  Tab,
-  Text
-} from "grommet";
+import { Box, Heading, Text } from "grommet";
 
 class AboutPageComponent extends Component {
   render() {
@@ -23,9 +11,9 @@ class AboutPageComponent extends Component {
       rootStore: { routerStore }
     } = this.props;
 
-    const {
-      routerState: { params }
-    } = routerStore;
+    // const {
+    //   routerState: { params }
+    // } = routerStore;
 
     return (
       <div

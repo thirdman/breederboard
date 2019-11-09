@@ -19,7 +19,7 @@
   .errorBorder {
     border: 1px solid red;
   }
-  .errorWarning{
+  .errorWarning {
     color: #ff0000;
   }
   .buttonGroupWrap {
@@ -38,6 +38,9 @@
         opacity: 1;
       }
     }
+  }
+  .searchModeString {
+    text-transform: capitalize;
   }
   // .pill {
   //   // background: red;

@@ -3,4 +3,15 @@
   &.isTransitioning {
     opacity: 0;
   }
+  .fancyItem {
+    .fancyImage {
+      max-width: 200px;
+      background: rgba(0, 0, 0, 0.05);
+      img {
+        width: 100%;
+        height: auto;
+        // border-radius: 50%;
+      }
+    }
+  }
 }

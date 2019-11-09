@@ -1,0 +1,33 @@
+.PrestigesPage {
+  transition: opacity 0.2s linear;
+  &.isTransitioning {
+    opacity: 0;
+  }
+  .fancyItem {
+    .fancyImage {
+      max-width: 160px;
+      position: relative;
+      // background: rgba(0, 0, 0, 0.05);
+      padding-left: 10px;
+      img {
+        width: auto;
+        height: 100%;
+        z-index: 2;
+        transform: scale(1.25);
+      }
+      .shadow {
+        z-index: -1;
+        position: absolute;
+        top: 77%;
+        left: 0;
+        right: 0;
+        width: 66%;
+        height: 8.2%;
+        margin: auto;
+        // background-color: var(--shadowColor);
+        border-radius: 50%;
+        z-index: 1;
+      }
+    }
+  }
+}

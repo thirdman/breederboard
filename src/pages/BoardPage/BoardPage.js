@@ -103,10 +103,6 @@ class BoardPageComponent extends Component {
     if (queryParams.attributes) {
       // console.log("queryParams.attributes", queryParams.attributes);
       BoardStore.boardAttributes = queryParams.attributes;
-      // console.log(
-      //   "queryParams.attributes.split",
-      //   queryParams.attributes.split(" ")
-      // );
     }
     console.log("before ready");
     await BoardStore.ready();

@@ -58,6 +58,7 @@ class FancyComponent extends Component {
     showKitties: false,
     editBoard: true,
     editTitle: false,
+    showRest: false,
     searchMode: "recent",
     showShareModal: false,
     pageCount: 50,
@@ -122,6 +123,8 @@ class FancyComponent extends Component {
     } = this.props;
 
     const {
+      showRest,
+
       active,
       activeTo,
       date,
@@ -330,171 +333,223 @@ class FancyComponent extends Component {
                   </Heading>
                 </Box>
                 <Box basis="5%">
-                <Heading level={6} margin="none">
-                  Gen</Heading></Box>
+                  <Heading level={6} margin="none">
+                    Gen
+                  </Heading>
+                </Box>
                 <Box basis="15%">
-                  <Heading level={6} margin="none">Color</Heading>
-                  </Box>
-                <Box basis="15%"><Heading level={6} margin="none">Elapsed Time</Heading></Box>
-                <Box basis="10%"><Heading level={6} margin="none">Features</Heading></Box>
-                <Box basis="10%" justify="end"><Heading level={6} margin="none">View</Heading></Box>
+                  <Heading level={6} margin="none">
+                    Color
+                  </Heading>
+                </Box>
+                <Box basis="15%">
+                  <Heading level={6} margin="none">
+                    Elapsed Time
+                  </Heading>
+                </Box>
+                <Box basis="10%">
+                  <Heading level={6} margin="none">
+                    Features
+                  </Heading>
+                </Box>
+                <Box basis="10%" justify="end">
+                  <Heading level={6} margin="none">
+                    View
+                  </Heading>
+                </Box>
               </Box>
 
-              {fancyData.kitties.map((kitty, index) => {
-                let rankingLabel = "fancy";
-                if (kitty.fancy_ranking === 1) {
-                  rankingLabel = "first";
-                }
-                if (kitty.fancy_ranking > 1 && kitty.fancy_ranking < 11) {
-                  rankingLabel = "top10";
-                }
-                if (kitty.fancy_ranking > 10 && kitty.fancy_ranking < 21) {
-                  rankingLabel = "top20";
-                }
-                let labelBackground = "";
-                if (kitty.fancy_ranking < 11) {
-                  const initialSaturation = 76;
-                  const initialLightness = 65;
-                  const reducer = 7 * kitty.fancy_ranking;
-                  const adder = 2 * kitty.fancy_ranking;
-                  console.log("reducer", kitty.fancy_ranking, reducer, adder);
-                  console.log(
-                    "new color: ",
-                    `hsl(300, ${initialSaturation -
-                      reducer}%, ${initialLightness + adder}%)`
-                  );
-                  labelBackground =
-                    kitty.fancy_ranking < 11
-                      ? `hsl(300, ${initialSaturation -
-                          reducer}%, ${initialLightness + adder}%)`
-                      : "";
-                }
+              {fancyData.kitties
+                .slice(0, showRest ? fancyData.length : 20)
+                .map((kitty, index) => {
+                  let rankingLabel = "fancy";
+                  if (kitty.fancy_ranking === 1) {
+                    rankingLabel = "first";
+                  }
+                  if (kitty.fancy_ranking > 1 && kitty.fancy_ranking < 11) {
+                    rankingLabel = "top10";
+                  }
+                  if (kitty.fancy_ranking > 10 && kitty.fancy_ranking < 21) {
+                    rankingLabel = "top20";
+                  }
+                  let labelBackground = "";
+                  if (kitty.fancy_ranking < 11) {
+                    const initialSaturation = 76;
+                    const initialLightness = 65;
+                    const reducer = 7 * kitty.fancy_ranking;
+                    const adder = 2 * kitty.fancy_ranking;
+                    // console.log("reducer", kitty.fancy_ranking, reducer, adder);
+                    // console.log(
+                    //   "new color: ",
+                    //   `hsl(300, ${initialSaturation -
+                    //     reducer}%, ${initialLightness + adder}%)`
+                    // );
+                    labelBackground =
+                      kitty.fancy_ranking < 11
+                        ? `hsl(300, ${initialSaturation -
+                            reducer}%, ${initialLightness + adder}%)`
+                        : "";
+                  }
 
-                return (
-                  <Box
-                    key={kitty.id}
-                    pad="small"
-                    direction="row"
-                    align="center"
-                    justify="stretch"
-                    className="kittyRow"
-                    fill="horizontal"
-                    margin={{ vertical: "xxsmall" }}
-                    round="small"
-                    background="#fff"
-                    gap="xsmall"
-                  >
+                  return (
                     <Box
-                      className="kittyImage"
-                      basis="60px"
+                      key={kitty.id}
+                      pad="small"
+                      direction="row"
                       align="center"
-                      justify="center"
+                      justify="stretch"
+                      className="kittyRow"
+                      fill="horizontal"
+                      margin={{ vertical: "xxsmall" }}
+                      round="small"
+                      background="#fff"
+                      gap="xsmall"
                     >
                       <Box
-                        className="imgWrap"
+                        className="kittyImage"
+                        basis="60px"
                         align="center"
                         justify="center"
-                        background={kitty.color && this.getColor(kitty.color)}
-                      >
-                        {kitty.kitty_type === "shinyfancy" ? (
-                          <img
-                            src={kitty.image_url}
-                            // style={{ width: "100%" }}
-                            alt="shiny fancy"
-                          />
-                        ) : (
-                          <img
-                            src={fancyMeta.image_url}
-                            // style={{ width: "100%" }}
-                            alt="Fancy Illustration"
-                          />
-                        )}
-                      </Box>
-                    </Box>
-                    <Box
-                      className="kittyCount"
-                      basis="50px"
-                      align="center"
-                      justify="center"
-                    >
-                      <Box
-                        className={`numberWrap ${rankingLabel}`}
-                        align="center"
-                        justify="center"
-                        background={labelBackground}
-                      >
-                        {kitty.fancy_ranking}
-                      </Box>
-                    </Box>
-                    <Box basis="30%" className="kittyTime">
-                      <Heading level={5} margin="none">
-                        {kitty.hatcher && kitty.hatcher.nickname}
-                      </Heading>
-
-                      <Text margin="none" size="xsmall">
-                        Born:{" "}
-                        {format(parseISO(kitty.created_at), "do MMM, HH:mm:ss")}{" "}
-                        (
-                        {formatDistanceStrict(
-                          parseISO(kitty.created_at),
-                          dateNow
-                        )}{" "}
-                        ago)
-                      </Text>
-
-                      <Text margin="none" size="small">
-                        #{kitty.id}
-                        {/* {kitty.name} */}
-                      </Text>
-                    </Box>
-                    <Box basis="5%">{kitty.generation}</Box>
-                    <Box basis="15%" direction="row">
-                      <Box
-                        pad="xsmall"
-                        round="xsmall"
-                        width="20px"
-                        background={kitty.color && this.getColor(kitty.color)}
-                        margin={{ right: "xsmall" }}
-                      >
-                        {/* <Text size="xsmall">{kitty.color}</Text> */}
-                      </Box>
-                      <Text size="small">{kitty.color}</Text>
-                    </Box>
-
-                    <Box basis="15%">
-                      <Text size="xsmall">
-                        {kitty.fancy_ranking !== 1 &&
-                          formatDistance(
-                            parseISO(kitty.created_at),
-                            parseISO(fancyMeta.firstDate)
-                          )}
-                      </Text>
-                    </Box>
-                    <Box basis="10%">
-                      {kitty.kitty_type === "shinyfancy" && <Text>Shiny!</Text>}
-                    </Box>
-
-                    <Box basis="10%">
-                      <Button
-                        onClick={e => {
-                          this.openLink(e, kitty.id);
-                        }}
-                        className="viewLink"
                       >
                         <Box
+                          className="imgWrap"
                           align="center"
                           justify="center"
-                          gap="none"
-                          direction="row"
+                          background={kitty.color && this.getColor(kitty.color)}
                         >
-                          <FormView />
-                          <Text size="xsmall">View</Text>
+                          {kitty.kitty_type === "shinyfancy" ? (
+                            <img
+                              src={kitty.image_url}
+                              // style={{ width: "100%" }}
+                              alt="shiny fancy"
+                            />
+                          ) : (
+                            <img
+                              src={fancyMeta.image_url}
+                              // style={{ width: "100%" }}
+                              alt="Fancy Illustration"
+                            />
+                          )}
                         </Box>
-                      </Button>
+                      </Box>
+                      <Box
+                        className="kittyCount"
+                        basis="50px"
+                        align="center"
+                        justify="center"
+                      >
+                        <Box
+                          className={`numberWrap ${rankingLabel}`}
+                          align="center"
+                          justify="center"
+                          background={labelBackground}
+                        >
+                          {kitty.fancy_ranking}
+                        </Box>
+                      </Box>
+                      <Box basis="30%" className="kittyTime">
+                        <Heading level={5} margin="none">
+                          {kitty.hatcher && kitty.hatcher.nickname}
+                        </Heading>
+
+                        <Text margin="none" size="xsmall">
+                          Born:{" "}
+                          {format(
+                            parseISO(kitty.created_at),
+                            "do MMM, HH:mm:ss"
+                          )}{" "}
+                          (
+                          {formatDistanceStrict(
+                            parseISO(kitty.created_at),
+                            dateNow
+                          )}{" "}
+                          ago)
+                        </Text>
+
+                        <Text margin="none" size="small">
+                          #{kitty.id}
+                          {/* {kitty.name} */}
+                        </Text>
+                      </Box>
+                      <Box basis="5%">{kitty.generation}</Box>
+                      <Box basis="15%" direction="row">
+                        <Box
+                          pad="xsmall"
+                          round="xsmall"
+                          width="20px"
+                          background={kitty.color && this.getColor(kitty.color)}
+                          margin={{ right: "xsmall" }}
+                        >
+                          {/* <Text size="xsmall">{kitty.color}</Text> */}
+                        </Box>
+                        <Text size="small">{kitty.color}</Text>
+                      </Box>
+
+                      <Box basis="15%">
+                        <Text size="xsmall">
+                          {kitty.fancy_ranking !== 1 &&
+                            formatDistance(
+                              parseISO(kitty.created_at),
+                              parseISO(fancyMeta.firstDate)
+                            )}
+                        </Text>
+                      </Box>
+                      <Box basis="10%">
+                        {kitty.kitty_type === "shinyfancy" && (
+                          <Text>Shiny!</Text>
+                        )}
+                      </Box>
+
+                      <Box basis="10%">
+                        <Button
+                          onClick={e => {
+                            this.openLink(e, kitty.id);
+                          }}
+                          className="viewLink"
+                        >
+                          <Box
+                            align="center"
+                            justify="center"
+                            gap="none"
+                            direction="row"
+                          >
+                            <FormView />
+                            <Text size="xsmall">View</Text>
+                          </Box>
+                        </Button>
+                      </Box>
                     </Box>
-                  </Box>
-                );
-              })}
+                  );
+                })}
+              {fancyData.kitties && fancyData.kitties.length > 20 && (
+                <Box margin={{ top: "small" }}>
+                  <Text size="small">
+                    <Button
+                      plain
+                      onClick={() => this.toggleShowRest(!showRest)}
+                    >
+                      <Box
+                        pad={{ vertical: "xxsmall", horizontal: "small" }}
+                        border="all"
+                        round="medium"
+                        direction="row"
+                        gap="xxsmall"
+                        align="center"
+                      >
+                        {showRest ? (
+                          <CaretUp size="small" color="secondary" />
+                        ) : (
+                          <CaretDown size="small" color="secondary" />
+                        )}
+                        {showRest
+                          ? "Show Top 20"
+                          : `Show ${fancyData.kitties &&
+                              fancyData.kitties.length - 20} More`}
+                      </Box>
+                    </Button>
+                  </Text>
+                </Box>
+              )}
             </Box>
           )}
 
@@ -891,7 +946,7 @@ class FancyComponent extends Component {
                                 <Box basis="50%" direction="row" gap="xsmall">
                                   {kittyItem.kittyAttributes.map(atr => (
                                     <Box
-                                      className="pill"
+                                      className="Pill"
                                       round="medium"
                                       pad="xsmall"
                                       background="secondary"
@@ -904,7 +959,7 @@ class FancyComponent extends Component {
                                   ))}
                                   {kittyItem.isFancy && (
                                     <Box
-                                      className="pill fancy"
+                                      className="Pill fancy"
                                       round="small"
                                       pad="xsmall"
                                       background="secondary"
@@ -1044,8 +1099,17 @@ class FancyComponent extends Component {
     return filtered.length && filtered[0].backgroundColorHex;
   };
 
-  ///////OLD
+  ////////////////////////
+  // MISC
+  ////////////////////////
+  toggleShowRest = newValue => {
+    this.setState({ showRest: newValue });
+  };
 
+  ////////////////////////
+  ////////////////////////
+  ///////OLD
+  ////////////////////////
   ////////////////////////
   // DATES
   ////////////////////////

@@ -12,7 +12,7 @@ const AppBarComponent = props => {
   const {
     routerState: { routeName }
   } = routerStore;
-  const { devMode } = UiStore;
+  // const { devMode } = UiStore;
   return (
     <Box
       className="AppBar"
@@ -41,41 +41,54 @@ const AppBarComponent = props => {
             BreederBoard
           </Heading>
         </Button>
-      </Box>
-      <Box direction="row" className="menuButtons" gap="medium">
-        <Button
-          margin="none"
-          onClick={() => props.appLink("home")}
-          className={`menuItem ${routeName === "home" ? "selected" : ""}`}
+        <Box
+          direction="row"
+          className="menuButtons"
+          gap="medium"
+          margin={{ left: "large" }}
         >
-          Boards
-        </Button>
-        <Button
-          margin="none"
-          onClick={() => props.appLink("global")}
-          className={`menuItem ${routeName === "global" ? "selected" : ""}`}
-        >
-          Global
-        </Button>
+          <Button
+            margin="none"
+            onClick={() => props.appLink("home")}
+            className={`menuItem ${routeName === "home" ? "selected" : ""}`}
+          >
+            Boards
+          </Button>
+          <Button
+            margin="none"
+            onClick={() => props.appLink("global")}
+            className={`menuItem ${routeName === "global" ? "selected" : ""}`}
+          >
+            Global
+          </Button>
 
-        <Button
-          margin="none"
-          onClick={() => props.appLink("fancies")}
-          className={`menuItem ${
-            routeName === "fancies" || routeName === "fancy" ? "selected" : ""
-          }`}
-        >
-          Fancies
-        </Button>
+          <Button
+            margin="none"
+            onClick={() => props.appLink("fancies")}
+            className={`menuItem ${
+              routeName === "fancies" || routeName === "fancy" ? "selected" : ""
+            }`}
+          >
+            Fancies
+          </Button>
 
-        {/* <Button margin="small" onClick={() => props.appLink("about")}>
+          {/* <Button margin="small" onClick={() => props.appLink("about")}>
           About
         </Button> */}
+        </Box>
       </Box>
 
       <Box direction="row" gap="xsmall">
         {UiStore.speed && (
-          <Box direction="row" className="miniStatsWrap">
+          <Box direction="row" className="miniStatsWrap" align="center">
+            <Box
+              className="kittyIconWrap"
+              // width="24px"
+              align="center"
+              justify="center"
+            >
+              <img src={logo} alt="kitty Icon" />
+            </Box>
             <MiniStats
               fancyPercent={UiStore.fancyPercent}
               notFancyPercent={UiStore.notFancyPercent}

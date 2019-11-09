@@ -1,0 +1,77 @@
+.Pill {
+  padding: 0;
+  font-weight: 500;
+  transition: background-image 0.3s ease, box-shadow 0.3s ease;
+  .closeButton {
+    background: rgba(255, 255, 255, 0.1);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    position: relative;
+    cursor: pointer;
+    @media (hover: hover) {
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+  .checkBoxButton {
+    padding-left: 0.75rem;
+  }
+  .pillText {
+    white-space: nowrap;
+  }
+
+  // OPTIONS
+  &.hasClose {
+    padding-left: 0.5rem;
+  }
+  // MODES
+  &.default {
+    background-color: hsl(256, 90%, 51%);
+  }
+  &.simple {
+    background-color: hsl(286, 90%, 41%);
+    background-image: none;
+  }
+  &.featured {
+    background-image: linear-gradient(
+      145deg,
+      hsl(286, 90%, 41%),
+      hsl(256, 90%, 51%)
+    );
+    transition: background-image 0.3s ease, box-shadow 0.3s ease;
+    @media (hover: hover) {
+      &:hover {
+        background-image: linear-gradient(
+          145deg,
+          hsl(286, 100%, 51%),
+          hsl(256, 100%, 61%)
+        );
+        box-shadow: 0 4px 1rem 0.25rem rgba(0, 0, 0, 0.2);
+      }
+    }
+  }
+  &.fancy {
+    background-image: linear-gradient(
+      135deg,
+      hsl(206, 80%, 51%),
+      hsl(256, 80%, 51%)
+    );
+  }
+
+  // TOGGLES
+  &.isToggle {
+    cursor: pointer;
+    &.isActive {
+      // background: red !important;
+    }
+    &.isInactive {
+      background: #ccc;
+      @media (hover: hover) {
+        &:hover {
+          background: #cfcfcf;
+          box-shadow: none;
+        }
+      }
+    }
+  }
+}

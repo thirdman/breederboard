@@ -51,6 +51,11 @@ export const routes = [
     pattern: "/fancy/:id",
     beforeEnter: checkForUserSignedIn
   },
+  {
+    name: "purrstige",
+    pattern: "/purrstige",
+    beforeEnter: checkForUserSignedIn
+  },
 
   {
     name: "about",

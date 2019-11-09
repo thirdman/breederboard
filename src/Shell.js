@@ -9,6 +9,7 @@ import { AdminPage } from "./pages/AdminPage/AdminPage";
 import { GlobalPage } from "./pages/GlobalPage/GlobalPage";
 import { FanciesPage } from "./pages/FanciesPage/FanciesPage";
 import { FancyPage } from "./pages/FancyPage/FancyPage";
+import { PrestigesPage } from "./pages/PrestigesPage/PrestigesPage";
 
 const viewMap = {
   home: <HomePage />,
@@ -17,7 +18,8 @@ const viewMap = {
   global: <GlobalPage />,
   admin: <AdminPage />,
   fancies: <FanciesPage />,
-  fancy: <FancyPage />
+  fancy: <FancyPage />,
+  purrstige: <PrestigesPage />
 };
 
 class Shell extends Component {

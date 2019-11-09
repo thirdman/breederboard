@@ -1,7 +1,7 @@
 import { observable } from "mobx";
 import firebase from "firebase/app";
 import "firebase/firestore";
-import { initFirestorter, Collection, Document } from "firestorter";
+import { initFirestorter,  Document } from "firestorter";
 import config from "../firebase-config";
 
 !firebase.apps.length ? firebase.initializeApp(config) : firebase.app();

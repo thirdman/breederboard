@@ -1,15 +1,18 @@
 import React, { Component } from "react";
 import firebase from "firebase/app";
-import { formatDistanceStrict, fromUnixTime } from "date-fns";
+// import "firebase/storage";
+import { Document } from "firestorter";
+// import config from "./../../firebase-config";
+
+// import { formatDistanceStrict, fromUnixTime } from "date-fns";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { Box, Button, TextInput, Collapsible, Heading } from "grommet";
-import { FormAdd, View, Edit } from "grommet-icons";
-import Board from "../../components/Board/Board";
+import { FormAdd } from "grommet-icons";
 import "./AdminPage.scss";
 import apiConfig from "./../../apiConfig";
 import ckUtils from "../../utils/ck";
-import Loading from "./../../components/Loading/Loading";
+// import Loading from "./../../components/Loading/Loading";
 class AdminPageComponent extends Component {
   state = {
     allAttributes: [],
@@ -22,19 +25,19 @@ class AdminPageComponent extends Component {
   }
   render() {
     const {
-      rootStore: { routerStore, UiStore, BoardsStore, SiteStore }
+      rootStore: { routerStore, UiStore, SiteStore }
     } = this.props;
-    const {
-      routerState: { params }
-    } = routerStore;
+    // const {
+    //   routerState: { params }
+    // } = routerStore;
     const {
       showAddFancy,
       newFancyLabel,
       newFancyValue,
       showFancyList
     } = this.state;
-    const { allAttributes } = UiStore;
     const { allFancies } = SiteStore.data;
+    // const { allAttributes } = UiStore;
     // console.log("allFancies", allFancies);
     // const dateNow = new Date();
     return (
@@ -190,7 +193,7 @@ class AdminPageComponent extends Component {
 
   handleLoad = async () => {
     const {
-      rootStore: { routerStore, UiStore, BoardsStore, SiteStore }
+      rootStore: { SiteStore }
     } = this.props;
     const { allFancies } = SiteStore.data;
     console.log("allFancies", allFancies);
@@ -212,13 +215,13 @@ class AdminPageComponent extends Component {
 
   getAttributes = address => {
     const {
-      rootStore: { UiStore, SiteStore }
+      rootStore: { UiStore }
     } = this.props;
 
     console.log("address", address);
-    const {
-      rootStore: { AssetsStore }
-    } = this.props;
+    // const {
+    //   rootStore: { AssetsStore }
+    // } = this.props;
     console.log("AssetsStore");
     let theHeaders = new Headers();
     this.setState({
@@ -245,9 +248,9 @@ class AdminPageComponent extends Component {
   };
 
   getIsFancy = () => {
-    const {
-      rootStore: { UiStore }
-    } = this.props;
+    // const {
+    //   rootStore: { UiStore }
+    // } = this.props;
 
     let theHeaders = new Headers();
     this.setState({
@@ -273,9 +276,9 @@ class AdminPageComponent extends Component {
   };
 
   getColors = () => {
-    const {
-      rootStore: { UiStore }
-    } = this.props;
+    // const {
+    //   rootStore: { UiStore }
+    // } = this.props;
 
     let theHeaders = new Headers();
     this.setState({
@@ -301,9 +304,9 @@ class AdminPageComponent extends Component {
   };
 
   getFancies = () => {
-    const {
-      rootStore: { UiStore }
-    } = this.props;
+    // const {
+    //   rootStore: { UiStore }
+    // } = this.props;
 
     let theHeaders = new Headers();
     this.setState({
@@ -396,81 +399,104 @@ class AdminPageComponent extends Component {
     );
   };
 
-  handleUpdateFancies = () => {
+  handleUpdateFancies = async () => {
     const {
-      rootStore: { UiStore, SiteStore }
+      rootStore: { UiStore }
     } = this.props;
+    // await UiStore.ready();
     const existingFancies = UiStore.allFancies.slice();
-    // const { newFancyLabel, newFancyValue } = this.state;
-    // const newObj = { value: newFancyValue, label: newFancyLabel };
-    const newFanciesArray = existingFancies.map(async (fancy, index) => {
-      const idString = fancy.value.toLowerCase();
-      let fancyObj = {};
-      if (index === 0) {
-        const optionsFirst = {
-          limit: 1,
-          fancyType: idString,
-          orderBy: "created_at",
-          direction: "asc"
-        };
-
-        const optionsLast = {
-          limit: 1,
-          fancyType: idString,
-          orderBy: "created_at",
-          direction: "desc"
-        };
-
-        const getFirstFancy = ckUtils.getKittiesByType(optionsFirst);
-        const getLastFancy = ckUtils.getKittiesByType(optionsLast);
-
-        Promise.all([getFirstFancy, getLastFancy])
-          .then(async values => {
-            const firstKittyData = values[0];
-            const lastKittyData = values[1];
-            console.log(
-              "firstKittyData, lastKittyData",
-              firstKittyData,
-              lastKittyData
-            );
-            let tempFancyOb = {};
-            if (firstKittyData.kitties) {
-              const fancyMeta1 = this.getFancyMeta(firstKittyData, "first");
-              const fancyMeta2 = this.getFancyMeta(lastKittyData, "last");
-              tempFancyOb = { ...fancyObj, ...fancyMeta1, ...fancyMeta2 };
-
-              console.log("fancy Obj now", fancyObj);
-            }
-            return fancyObj;
-          })
-          .catch(error => console.error(error));
-
-        console.log("fancy obj", fancyObj);
-        return fancyObj;
-      }
+    existingFancies.map(async (fancy, index) => {
+      console.log("...doing ", fancy.value);
+      this.applyFancyData(fancy, index);
     });
-    // await getResults.then(data => console.log("results data", data));
-
-    // console.log("getResults", getResults);
-    console.log("existingFancies", existingFancies);
-    console.log("newFanciesArray", newFanciesArray);
-
-    // const mergedArray = [...existingFancies, newObj];
-    // console.log("newobj will be", newObj);
-    // console.log("new merged will be", mergedArray);
-
-    // SiteStore.set(
-    //   {
-    //     testFancies: mergedArray
-    //   },
-    //   { merge: true }
-    // );
   };
+  applyFancyData = async (fancy, index) => {
+    const {
+      rootStore: { FancyStore }
+    } = this.props;
+    FancyStore.path = `fancies/${fancy.value}`;
+    const idString = fancy.value.toLowerCase();
+    const optionsFirst = {
+      limit: 1,
+      fancyType: idString,
+      orderBy: "created_at",
+      direction: "asc"
+    };
 
+    const optionsLast = {
+      limit: 1,
+      fancyType: idString,
+      orderBy: "created_at",
+      direction: "desc"
+    };
+
+    const getFirstFancy = ckUtils.getKittiesByType(optionsFirst);
+    const getLastFancy = ckUtils.getKittiesByType(optionsLast);
+
+    return Promise.all([getFirstFancy, getLastFancy])
+      .then(async values => {
+        const firstKittyData = values[0];
+        const lastKittyData = values[1];
+        // console.log(
+        //   "firstKittyData, lastKittyData",
+        //   firstKittyData,
+        //   lastKittyData
+        // );
+        let tempFancyObj = {};
+        if (firstKittyData.kitties) {
+          const fancyMeta1 = this.getFancyMeta(firstKittyData, "first");
+          const fancyMeta2 = this.getFancyMeta(lastKittyData, "last");
+          tempFancyObj = { ...fancy, ...fancyMeta1, ...fancyMeta2 };
+
+          const fancyRef = new Document(`fancies/${fancy.value}`);
+          // let dateNow = firebase.firestore.Timestamp.fromDate(new Date());
+          console.log("fancyRef", fancyRef);
+          fancyRef
+            .set(tempFancyObj, { merge: true })
+            .then(result => {
+              console.log("set fancy, result", result);
+              // this.setState({ productId: fileId });
+              return result;
+            })
+            .catch(error => {
+              console.error(error);
+            });
+
+          //doc.set(tempFancyObj, { merge: true });
+          // console.log("tempFancyObj now", tempFancyObj);
+          // const newFancies = UiStore.allFancies.slice();
+
+          // newFancies[index] = tempFancyObj;
+
+          // console.log("now existingFancies", newFancies);
+
+          // FanciesStore.set(fancy.value)
+          // SiteStore.set(
+          //   {
+          //     allFancies: newFancies
+          //   },
+          //   { merge: true }
+          // );
+        }
+        return tempFancyObj;
+      })
+      .catch(error => console.error(error));
+
+    // return getData;
+
+    // .then(data => {
+    //   console.loc("result of promised all = ", data);
+    //   return data;
+    // })
+    // .catch(e => console.error(e));
+    // console.log("test", test);
+    // console.log("fancy obj", fancyObj);
+    // return fancyObj;
+  };
   getFancyMeta = (data, direction) => {
-    console.log("getFancyMeta data", data);
+    // console.log("getFancyMeta data", data);
     const firstKitty = data.kitties && data.kitties[0];
-    console.log("firstKitty", firstKitty);
+    // console.log("firstKitty", firstKitty);
     let fancyMetaObj = {};
     if (direction === "first") {
       fancyMetaObj = {
@@ -483,7 +509,8 @@ class AdminPageComponent extends Component {
       fancyMetaObj = {
         total: data.total,
         image_url: firstKitty.image_url,
-        lastDate: firstKitty.created_at
+        lastDate: firstKitty.created_at,
+        lastFancyCount: firstKitty.fancy_ranking
       };
     }
     return fancyMetaObj;

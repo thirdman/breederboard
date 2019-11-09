@@ -3,9 +3,25 @@
   &.isTransitioning {
     opacity: 0;
   }
+  .sectionHeading {
+    position: relative;
+    padding: 1rem 0 1.5rem;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2rem;
+      height: 3px;
+      background: #ccc;
+    }
+  }
+
   .mainHeader {
     min-height: 10rem;
     position: relative;
+    margin-bottom: 2rem;
     .bannerWrap {
       z-index: 3;
       position: absolute;
@@ -15,7 +31,7 @@
       right: 2%;
       width: auto;
       margin-top: 0rem;
-      bottom: 1rem;
+      bottom: 2rem;
       h1 {
         text-transform: capitalize;
       }
@@ -37,6 +53,27 @@
         // margin-top: 20%;
         border: none;
       }
+    }
+  }
+  .colorItem {
+    .colorSwatch {
+      border: 1px solid white;
+      border-radius: 100%;
+    }
+    .colorKitty {
+      .filled {
+      }
+      .vacant {
+      }
+    }
+  }
+}
+
+.KittyItem {
+  .kittyItemImage {
+    img {
+      width: 100%;
+      height: auto;
     }
   }
 }

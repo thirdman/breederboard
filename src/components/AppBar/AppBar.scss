@@ -7,6 +7,7 @@
   .menuButtons {
     position: relative;
     height: 48px;
+
     // margin: -12px 0;
 
     .menuItem {
@@ -19,8 +20,34 @@
       }
     }
   }
+
   .miniStatsWrap {
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
+
+    .kittyIconWrap {
+      margin-left: 0.75rem;
+      margin-right: 0.25rem;
+
+      img {
+        width: 1rem;
+        height: 1rem;
+        filter: grayscale(1);
+        transform: scale3d(1, 1, 1);
+        transition: transform 0.3s ease-in-out;
+      }
+    }
+    @media (hover: hover) {
+      &:hover {
+        background: #eee;
+        // cursor: pointer;
+        .kittyIconWrap {
+          img {
+            filter: grayscale(0);
+            transform: scale3d(1.2, 1.2, 1.2);
+          }
+        }
+      }
+    }
   }
 }

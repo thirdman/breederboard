@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
+import { parseISO, formatDistanceStrict, format } from "date-fns";
+
 import { Box, Button, Heading, Stack, Text } from "grommet";
 import { Fireball, View } from "grommet-icons";
 import Loading from "../../components/Loading/Loading";
@@ -17,7 +19,7 @@ class FanciesPageComponent extends Component {
   }
   render() {
     const {
-      rootStore: { routerStore, UiStore, BoardStore, BoardsStore }
+      rootStore: { routerStore, UiStore, BoardStore, FanciesStore }
     } = this.props;
 
     const {
@@ -32,6 +34,7 @@ class FanciesPageComponent extends Component {
       storeFancies
     } = this.state;
     const { allFancies } = UiStore;
+
     if (params.attributes) {
       // console.log("params.attributes", params.attributes);
     }
@@ -39,7 +42,7 @@ class FanciesPageComponent extends Component {
       console.log("params.id", params.id);
       BoardStore.path = `boards/${params.id}`;
     }
-    const isReady = BoardStore.ready();
+
     return (
       <Box
         className={classNames("FanciesPage", {
@@ -63,39 +66,66 @@ class FanciesPageComponent extends Component {
           // alignItems="center"
           // justifyContent="center"
           round="none"
-          margin="large"
-          // fill="horizontal"
-
           margin={{ top: "none", bottom: "large", horizontal: "large" }}
           style={{ maxWidth: "1024px" }}
         >
           {/* {isLoadingStore && <Box>unloaded content</Box>}
           {!isLoadingStore && <Box>Loaded content</Box>} */}
           {!fanciesLoaded && <Loading text="Loading fancies" />}
+
           {fanciesLoaded && (
             <Box>
-              fancies:
               {storeFancies.map(fancy => (
-                <Box key={fancy.value}>
+                <Box key={fancy.data.value}>
                   <Button
                     onClick={() =>
-                      this.appLink("fancy", fancy.value, "breederboard")
+                      this.appLink("fancy", fancy.data.value, "breederboard")
                     }
                   >
                     <Box
+                      className="fancyItem"
                       margin="small"
-                      pad={{ horizontal: "large", vertical: "small" }}
-                      align="center"
+                      // pad={{ horizontal: "large", vertical: "small" }}
+
+                      align="stretch"
                       justify="center"
                       round="small"
                       background="white"
                       elevation="xsmall"
                       direction="row"
+                      gap="small"
+                      overflow="hidden"
                     >
-                      <Box className="fancyImage">image</Box>
-                      <Box>
-                        <Heading level={4}>{fancy.label}</Heading>
-                        <Text>{fancy.total}</Text>
+                      <Box
+                        className="fancyImage"
+                        basis="20%"
+                        align="center"
+                        justify="center"
+                        pad="xxsmall"
+                      >
+                        <img src={fancy.data.image_url} alt="" />
+                      </Box>
+                      <Box basis="80%" pad="small">
+                        <Heading level={3}>{fancy.data.label}</Heading>
+                        <Box direction="row" gap="medium">
+                          <Box>
+                            <Heading level={6} margin="none">
+                              Total Bred
+                            </Heading>
+                            <Text>{fancy.data.total}</Text>
+                          </Box>
+                          <Box>
+                            <Heading level={6} margin="none">
+                              First Bred
+                            </Heading>
+                            <Text>
+                              {format(
+                                parseISO(fancy.data.firstDate),
+                                "d MMM, yyyy"
+                              )}
+                            </Text>
+                          </Box>
+                        </Box>
                       </Box>
                     </Box>
                   </Button>
@@ -134,13 +164,14 @@ class FanciesPageComponent extends Component {
 
   loadFancies = async () => {
     const {
-      rootStore: { SiteStore }
+      rootStore: { SiteStore, FanciesStore }
     } = this.props;
     console.log("loading fancies");
-    await SiteStore.ready().then(() => {
-      console.log("site ready", SiteStore);
+    await FanciesStore.ready().then(() => {
+      console.log("site ready", FanciesStore);
       this.setState({
-        storeFancies: SiteStore.data.allFancies,
+        storeFancies: FanciesStore.docs,
+
         fanciesLoaded: true
       });
     });
