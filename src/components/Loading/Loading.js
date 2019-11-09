@@ -9,7 +9,8 @@ class Loading extends Component {
     const {
       displayMode = "default",
       text = "Loading...",
-      isActive = true
+      isActive = true,
+      hasMargin = false
     } = this.props;
     return (
       <div
@@ -19,7 +20,13 @@ class Loading extends Component {
           isActive ? "isActive" : ""
         )}
       >
-        <Box direction="row" align="center" justify="center" gap="small">
+        <Box
+          direction="row"
+          align="center"
+          justify="center"
+          gap="small"
+          margin={hasMargin ? { vertical: "large" } : "none"}
+        >
           <Box className="iconWrap" align="center" justify="center">
             <Nodes />
           </Box>

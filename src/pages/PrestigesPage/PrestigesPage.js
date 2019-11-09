@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { parseISO, formatDistanceStrict } from "date-fns";
 import { Box, Button, Heading, Text } from "grommet";
-// import { Fireball, View } from "grommet-icons";
+import { CaretNext, View } from "grommet-icons";
 import Loading from "../../components/Loading/Loading";
 import Pill from "../../components/Pill/Pill";
 import "./PrestigesPage.scss";
@@ -62,126 +62,227 @@ class PrestigesPageComponent extends Component {
             <Heading level={2} margin="xsmall">
               Purrstige
             </Heading>
-            <Box direction="row">
-              {prestigesLoaded &&
-                prestigesDataFiltered &&
-                prestigesDataFiltered.length &&
-                prestigesDataFiltered.length !== limit && (
-                  <Text size="small">
-                    <strong>{prestigesDataFiltered.length}</strong>
-                    {` of `}
-                  </Text>
-                )}
-              <Text size="small"> {limit} latest kitties</Text>
-            </Box>
           </Box>
-          {prestigeTypes && (
-            <Box
-              direction="row"
-              justify="center"
-              gap="xsmall"
-              wrap
-              margin={{ vertical: "small" }}
-            >
-              {prestigeTypes.map(typeItem => (
-                <Pill
-                  displayMode="simple"
-                  key={`typeName_${typeItem.type}`}
-                  text={`${typeItem.count} ${typeItem.type}`}
-                  isToggle
-                  isActive={typeItem.isActive}
-                  onClick={() => this.handleTypeToggle(typeItem.type)}
-                />
-              ))}
-            </Box>
-          )}
 
-          {!prestigesLoaded && <Loading text="Loading data" />}
+          <Box className="contentRow" direction="row" gap="medium">
+            <Box className="contentSection" basis="2/3">
+              <Heading level={3} margin="none">
+                Recently Bred
+              </Heading>
+              <Box direction="row">
+                {prestigesLoaded &&
+                  prestigesDataFiltered &&
+                  prestigesDataFiltered.length &&
+                  prestigesDataFiltered.length !== limit && (
+                    <Text size="small">
+                      <strong>{prestigesDataFiltered.length}</strong>
+                      {` of `}
+                    </Text>
+                  )}{" "}
+                <Text size="small">{limit} latest kitties</Text>
+              </Box>
+              {prestigeTypes && (
+                <Box
+                  direction="row"
+                  justify="center"
+                  gap="xsmall"
+                  wrap
+                  margin={{ vertical: "small" }}
+                >
+                  {prestigeTypes.map(typeItem => (
+                    <Pill
+                      displayMode="simple"
+                      key={`typeName_${typeItem.type}`}
+                      text={`${typeItem.count} ${typeItem.type}`}
+                      isToggle
+                      isActive={typeItem.isActive}
+                      onClick={() => this.handleTypeToggle(typeItem.type)}
+                    />
+                  ))}
+                </Box>
+              )}
 
-          {prestigesLoaded && (
-            <Box>
-              {prestigesDataFiltered.map(prestigeKitty => (
-                <Box key={prestigeKitty.name}>
-                  <Button
-                    onClick={() =>
-                      this.appLink("prestige", prestigeKitty.id, "breederboard")
-                    }
-                  >
-                    <Box
-                      className="fancyItem"
-                      margin={{ vertical: "xsmall" }}
-                      align="stretch"
-                      justify="stretch"
-                      round="small"
-                      background="white"
-                      elevation="xsmall"
-                      direction="row"
-                      gap="xsmall"
-                      overflow="hidden"
-                    >
-                      <Box
-                        className="fancyImage"
-                        basis="20%"
-                        align="center"
-                        justify="center"
-                        pad="xxsmall"
-                        background={this.getColor(
-                          prestigeKitty.color,
-                          "background"
-                        )}
-                        border={{
-                          color: this.getColor(prestigeKitty.color, "color"),
-                          size: "medium",
-                          style: "solid",
-                          side: "left"
-                        }}
+              {!prestigesLoaded && <Loading text="Loading data" hasMargin />}
+
+              {prestigesLoaded && (
+                <Box>
+                  {prestigesDataFiltered.map(prestigeKitty => (
+                    <Box key={prestigeKitty.name}>
+                      <Button
+                        onClick={() =>
+                          this.appLink(
+                            "prestige",
+                            prestigeKitty.id,
+                            "breederboard"
+                          )
+                        }
                       >
-                        <img src={prestigeKitty.image_url} alt="" />
                         <Box
-                          className="shadow"
-                          background={this.getColor(
-                            prestigeKitty.color,
-                            "shadow"
-                          )}
-                        ></Box>
-                      </Box>
-                      <Box basis="80%" pad="small">
-                        <Heading level={3} margin={{ vertical: "small" }}>
-                          {prestigeKitty.name}
-                        </Heading>
-                        <Box direction="row" gap="medium">
-                          <Box>
-                            <Heading level={6} margin="none">
-                              Prestige
-                            </Heading>
-                            <Text>{prestigeKitty.prestige_type}</Text>
+                          className="fancyItem"
+                          margin={{ vertical: "xsmall" }}
+                          align="stretch"
+                          justify="stretch"
+                          round="small"
+                          background="white"
+                          elevation="xsmall"
+                          direction="row"
+                          gap="xsmall"
+                          overflow="hidden"
+                        >
+                          <Box
+                            className="fancyImage"
+                            basis="20%"
+                            align="center"
+                            justify="center"
+                            pad="xxsmall"
+                            background={this.getColor(
+                              prestigeKitty.color,
+                              "background"
+                            )}
+                            border={{
+                              color: this.getColor(
+                                prestigeKitty.color,
+                                "color"
+                              ),
+                              size: "medium",
+                              style: "solid",
+                              side: "left"
+                            }}
+                          >
+                            <img src={prestigeKitty.image_url} alt="" />
+                            <Box
+                              className="shadow"
+                              background={this.getColor(
+                                prestigeKitty.color,
+                                "shadow"
+                              )}
+                            ></Box>
                           </Box>
-                          <Box>
-                            <Heading level={6} margin="none">
-                              Ranking
+                          <Box basis="80%" pad="small">
+                            <Heading level={4} margin={{ vertical: "small" }}>
+                              {prestigeKitty.name}
                             </Heading>
-                            <Text>{prestigeKitty.prestige_ranking}</Text>
-                          </Box>
-                          <Box>
-                            <Heading level={6} margin="none">
-                              Born
-                            </Heading>
-                            <Text>
-                              {formatDistanceStrict(
-                                parseISO(prestigeKitty.created_at),
-                                dateNow
-                              )}{" "}
-                              ago
-                            </Text>
+                            <Box direction="row" gap="medium">
+                              <Box>
+                                <Heading level={6} margin="none">
+                                  Prestige
+                                </Heading>
+                                <Text>{prestigeKitty.prestige_type}</Text>
+                              </Box>
+                              <Box>
+                                <Heading level={6} margin="none">
+                                  Ranking
+                                </Heading>
+                                <Text>{prestigeKitty.prestige_ranking}</Text>
+                              </Box>
+                              <Box>
+                                <Heading level={6} margin="none">
+                                  Born
+                                </Heading>
+                                <Text>
+                                  {formatDistanceStrict(
+                                    parseISO(prestigeKitty.created_at),
+                                    dateNow
+                                  )}{" "}
+                                  ago
+                                </Text>
+                              </Box>
+                            </Box>
                           </Box>
                         </Box>
-                      </Box>
+                      </Button>
                     </Box>
-                  </Button>
+                  ))}
                 </Box>
-              ))}
+              )}
             </Box>
-          )}
+            <Box className="contentSection" basis="1/3">
+              <Heading level={3} margin="none">
+                Recent Types
+              </Heading>
+              {prestigeTypes && (
+                <Box
+                  direction="column"
+                  justify="center"
+                  gap="xsmall"
+                  fill="horizontal"
+                  margin={{ vertical: "small" }}
+                >
+                  {prestigeTypes.map(typeItem => (
+                    <Box key={typeItem.type}>
+                      <Button
+                        onClick={() =>
+                          this.appLink("purrstige", typeItem.type, "top")
+                        }
+                        className="prestigeTypeButton"
+                      >
+                        <Box
+                          className="fancyItem"
+                          // margin={{ vertical: "xsmall" }}
+                          align="center"
+                          justify="stretch"
+                          round="small"
+                          // background="white"
+                          // elevation="xsmall"
+                          direction="row"
+                          gap="xsmall"
+                          overflow="hidden"
+                        >
+                          <Box
+                            className="fancyImage"
+                            basis="30%"
+                            align="center"
+                            justify="center"
+                            pad="xxsmall"
+                            // background={this.getColor(
+                            //   typeItem.lastKitty.color,
+                            //   "background"
+                            // )}
+                          >
+                            <img src={typeItem.lastKitty.image_url} alt="" />
+                            <Box
+                              className="shadow"
+                              background={this.getColor(
+                                typeItem.lastKitty.color,
+                                "shadow"
+                              )}
+                            ></Box>
+                          </Box>
+                          <Box basis="50%" pad="small">
+                            <Heading level={4} margin={{ vertical: "small" }}>
+                              {typeItem.type}
+                            </Heading>
+                            {/* <Box direction="row" gap="medium">
+                              <Box>
+                                <Heading level={6} margin="none">
+                                  Born
+                                </Heading>
+                                <Text>
+                                  {formatDistanceStrict(
+                                    parseISO(typeItem.lastKitty.created_at),
+                                    dateNow
+                                  )}{" "}
+                                  ago
+                                </Text>
+                              </Box>
+                            </Box> */}
+                          </Box>
+                          <Box
+                            basis="20%"
+                            align="center"
+                            justify="center"
+                            className="actionIconWrap"
+                          >
+                            <CaretNext />
+                          </Box>
+                        </Box>
+                      </Button>
+                    </Box>
+                  ))}
+                </Box>
+              )}
+            </Box>
+          </Box>
         </Box>
       </Box>
     );
@@ -276,16 +377,17 @@ class PrestigesPageComponent extends Component {
 
   // CALCS
   filterPrestigeTypes(data) {
-    console.log("data", data);
     // filterPrestigeTypes
 
     const unique = [...new Set(data.map(item => item.prestige_type))];
     let uniqueArray = unique.map(type => {
       const filtered = data.filter(kitty => kitty.prestige_type === type);
+      const lastKitty = filtered[filtered.length - 1];
       const tempObj = {
         type: type,
         count: filtered.length,
-        isActive: true
+        isActive: true,
+        lastKitty: lastKitty
       };
       return tempObj;
     });

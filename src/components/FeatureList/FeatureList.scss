@@ -1,0 +1,227 @@
+@import "./../../App.scss";
+
+.FeatureList {
+  h6 {
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  .noWrap {
+    white-space: nowrap;
+  }
+  .textInput {
+    background: #ddd;
+  }
+  .heroButton {
+    text-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+    // background: linear-gradient(90deg, #e520af, hsl(276, 90%, 41%));
+    border: none;
+  }
+  .errorBorder {
+    border: 1px solid red;
+  }
+  .errorWarning {
+    color: #ff0000;
+  }
+  .buttonGroupWrap {
+    .ButtonGroup {
+      white-space: nowrap;
+    }
+  }
+
+  .topList {
+  }
+  .kittyRow {
+    &:not(.header) {
+      background: #fff;
+    }
+    .kittyCount {
+      .numberWrap {
+        border-radius: 3rem;
+        width: 3rem;
+        height: 3rem;
+        z-index: 4;
+        &.first {
+          background: #dd4ddd;
+          font-weight: 600;
+        }
+        &.top10 {
+          // background: violet;
+          // color: #fff;
+          font-weight: 600;
+        }
+        &.top20 {
+          background: #ddd;
+        }
+        &.plain {
+          background: #fff;
+        }
+      }
+    }
+
+    .kittyImage {
+      .imgWrap {
+        border-radius: 3rem;
+        z-index: 2;
+        position: relative;
+      }
+      img {
+        width: 100%;
+        transform: scale(1.25);
+      }
+    }
+    .kittyTime {
+      text-transform: capitalize;
+    }
+  }
+
+  //// OLD
+  .toggleButton {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    @media (hover: hover) {
+      &:hover {
+        // background: rgba(0, 0, 0, 0.05);
+        color: #000;
+        background: violet;
+        cursor: pointer;
+        svg path {
+          stroke: #fff;
+        }
+      }
+    }
+  }
+
+  .noData {
+    font-style: italic;
+    opacity: 0.7;
+  }
+
+  .kittyBlock {
+    background: #fff;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+    height: auto;
+    .kittyRow {
+      font-size: 0.875rem;
+      order: 5;
+
+      @media (hover: hover) {
+        &:hover {
+          // background: rgba(0, 0, 0, 0.05);
+          color: #000;
+          background: #ee82ee1f;
+          cursor: pointer;
+        }
+      }
+      .subtitle {
+        opacity: 0.7;
+      }
+
+      &:last-child {
+        border-bottom: none !important;
+      }
+      &.header {
+        order: 1;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        font-weight: bold;
+        color: hsl(286, 90%, 41%);
+      }
+      &.fancy {
+        // border: 1px solid red;
+        order: 2;
+      }
+    }
+  }
+  .theBoard {
+    z-index: 10;
+    position: relative;
+    box-shadow: 0px 4px 8px 7px rgba(0, 0, 0, 0.2);
+    .theBoardHeader {
+      background: transparent;
+      // background: linear-gradient(
+      //   120deg,
+      //   hsl(286, 90%, 41%),
+      //   hsl(256, 90%, 61%)
+      // );
+    }
+    .theBoardHeaderRow {
+      h6 {
+        color: hsl(286, 90%, 41%);
+        font-weight: bold;
+        font-size: 0.75rem;
+        letter-spacing: 0.035rem;
+      }
+      background: rgba(255, 255, 255, 0.5) !important;
+      border-radius: 4px 4px 0 0;
+      border-bottom: 1px solid hsla(286, 90%, 41%, 0.5);
+    }
+    .theBoardContent {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 0 0 4px 4px;
+      // box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+      .breederRow {
+        border-bottom: 1px solid #9414cf1c;
+      }
+      .fancyWrap {
+        width: 2.5rem;
+        height: 2.5rem;
+        // background: #7242f5;
+        border-radius: 100%;
+        // border: 2px solid #7242f5;
+        // position: absolute;
+        right: 0;
+        // margin-top: -0.25rem;
+        position: absolute;
+        img {
+          width: 100% !important;
+        }
+      }
+      .breederNickname {
+        font-weight: 500;
+        position: relative;
+        // font-size: 0.875rem;
+        .breederBar {
+          width: 50%;
+          height: 1rem;
+          display: inline-block;
+          background: violet;
+          border-radius: 0 0.25rem 0.25rem 0;
+          left: -0.4rem;
+          position: relative;
+        }
+      }
+    }
+    .viewLink {
+      &:hover {
+        svg path {
+          stroke: #e520af;
+        }
+      }
+    }
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: -1;
+      margin: -10px; /* !importanté */
+      border-radius: inherit; /* !importanté */
+      // background: linear-gradient(to right, red, orange);
+      background: linear-gradient(
+        120deg,
+        hsl(286, 90%, 41%),
+        hsl(256, 90%, 61%)
+      );
+    }
+  }
+}
+.pointsDescription {
+  color: #aaa;
+  font-size: 0.875rem;
+
+  strong {
+    padding-left: 0.5ch;
+  }
+}

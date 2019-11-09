@@ -52,8 +52,13 @@ export const routes = [
     beforeEnter: checkForUserSignedIn
   },
   {
-    name: "purrstige",
+    name: "purrstiges",
     pattern: "/purrstige",
+    beforeEnter: checkForUserSignedIn
+  },
+  {
+    name: "purrstige",
+    pattern: "/purrstige/:id",
     beforeEnter: checkForUserSignedIn
   },
 

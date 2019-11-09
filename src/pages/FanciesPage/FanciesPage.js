@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { parseISO, formatDistanceStrict, format } from "date-fns";
 
 import { Box, Button, Heading, Stack, Text } from "grommet";
-import { Fireball, View } from "grommet-icons";
+import { CaretNext } from "grommet-icons";
 import Loading from "../../components/Loading/Loading";
 import "./FanciesPage.scss";
 import apiConfig from "../../apiConfig";
@@ -69,6 +69,16 @@ class FanciesPageComponent extends Component {
           margin={{ top: "none", bottom: "large", horizontal: "large" }}
           style={{ maxWidth: "1024px" }}
         >
+          <Box
+            justify="center"
+            fill="horizontal"
+            align="center"
+            margin={{ vertical: "large" }}
+          >
+            <Heading level={2} margin="xsmall">
+              Fancies
+            </Heading>
+          </Box>
           {/* {isLoadingStore && <Box>unloaded content</Box>}
           {!isLoadingStore && <Box>Loaded content</Box>} */}
           {!fanciesLoaded && <Loading text="Loading fancies" />}
@@ -105,7 +115,7 @@ class FanciesPageComponent extends Component {
                       >
                         <img src={fancy.data.image_url} alt="" />
                       </Box>
-                      <Box basis="80%" pad="small">
+                      <Box basis="60%" pad="small">
                         <Heading level={3}>{fancy.data.label}</Heading>
                         <Box direction="row" gap="medium">
                           <Box>
@@ -126,6 +136,14 @@ class FanciesPageComponent extends Component {
                             </Text>
                           </Box>
                         </Box>
+                      </Box>
+                      <Box
+                        basis="20%"
+                        align="center"
+                        justify="center"
+                        className="actionIconWrap"
+                      >
+                        <CaretNext />
                       </Box>
                     </Box>
                   </Button>

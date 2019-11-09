@@ -72,6 +72,18 @@ const AppBarComponent = props => {
             Fancies
           </Button>
 
+          <Button
+            margin="none"
+            onClick={() => props.appLink("purrstiges")}
+            className={`menuItem ${
+              routeName === "purrstiges" || routeName === "purrstige"
+                ? "selected"
+                : ""
+            }`}
+          >
+            Purrstige
+          </Button>
+
           {/* <Button margin="small" onClick={() => props.appLink("about")}>
           About
         </Button> */}

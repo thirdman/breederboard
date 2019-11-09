@@ -7,16 +7,17 @@ import { Box, Heading, Text } from "grommet";
 import { FeatureList } from "../../components/FeatureList/FeatureList";
 import Loading from "../../components/Loading/Loading";
 import Banner from "../../components/Banner/Banner";
-import "./FancyPage.scss";
+import "./PrestigePage.scss";
 // import apiConfig from "../../apiConfig";
 import ckUtils from "../../utils/ck";
 
-class FancyPageComponent extends Component {
+class PrestigePageComponent extends Component {
   state = {
-    allAttributes: []
+    allAttributes: [],
+    limit: 100
   };
-  componentDidMount() {
-    this.handleLoad();
+  async componentDidMount() {
+    await this.handleLoad();
   }
   render() {
     const {
@@ -29,11 +30,12 @@ class FancyPageComponent extends Component {
     const { id } = params;
 
     const {
-      allAttributes = UiStore.allAttributes,
+      limit,
+      // allAttributes = UiStore.allAttributes,
       isLoadingStore = true,
       // isLoadingHighGenData,
-      fancyMeta,
-      fancyData,
+      kittyMeta,
+      kittyData,
       isLoadingData,
       colorWinnersData,
       highGenData,
@@ -54,7 +56,7 @@ class FancyPageComponent extends Component {
           direction="row"
           pad="xxsmall"
           round="small"
-          gap={displayMode === "ranking" ? "xxsmall" : "small"}
+          gap={displayMode === "ranking" ? "none" : "small"}
           justify={displayMode === "ranking" ? "center" : "stretch"}
           fill="horizontal"
           background="#fff"
@@ -63,7 +65,7 @@ class FancyPageComponent extends Component {
         >
           <Box
             className="kittyItemImage"
-            basis={displayMode === "ranking" ? "24px" : "10%"}
+            basis={displayMode === "ranking" ? "20px" : "10%"}
           >
             <img src={kitty.image_url} alt="" />
           </Box>
@@ -77,14 +79,14 @@ class FancyPageComponent extends Component {
             justify="end"
             basis={displayMode === "ranking" ? "20px" : "10%"}
           >
-            <Text size="medium">#{kitty.fancy_ranking}</Text>
+            <Text size="medium">#{kitty.prestige_ranking}</Text>
           </Box>
         </Box>
       );
     };
     return (
       <Box
-        className={classNames("FancyPage", {
+        className={classNames("PrestigePage", {
           isTransitioning: !!routerStore.isTransitioning
         })}
         // fill="vertical"
@@ -118,7 +120,7 @@ class FancyPageComponent extends Component {
                 <Heading level={1}>{id}</Heading>
               </Banner>
             </Box>
-            {fancyMeta && (
+            {kittyMeta && (
               <Box
                 className="fancyMeta"
                 align="center"
@@ -139,7 +141,7 @@ class FancyPageComponent extends Component {
                     <Heading level="6" margin="none">
                       Total
                     </Heading>
-                    <Text>{fancyMeta.total}</Text>
+                    <Text>{kittyMeta.total}</Text>
                   </Box>
                 </Box>
                 <Box
@@ -149,7 +151,7 @@ class FancyPageComponent extends Component {
                   className="heroImageWrap"
                 >
                   <img
-                    src={fancyMeta.image_url}
+                    src={kittyMeta.image_url}
                     alt=""
                     className="fancyImage"
                   />
@@ -161,13 +163,13 @@ class FancyPageComponent extends Component {
                   className="metaSide"
                   border="all"
                 >
-                  {fancyMeta.firstDate ? (
+                  {kittyMeta.firstDate ? (
                     <Box>
                       <Heading level="6" margin="none">
                         First Bred
                       </Heading>
                       <Text>
-                        {format(parseISO(fancyMeta.firstDate), "d MMM, yyyy")}
+                        {format(parseISO(kittyMeta.firstDate), "d MMM, yyyy")}
                       </Text>
                       {/* <Text>
                         {formatDistanceStrict(
@@ -185,16 +187,16 @@ class FancyPageComponent extends Component {
             )}
           </Box>
 
-          {isLoadingData && !fancyData && (
+          {isLoadingData && !kittyData && (
             <Loading text="Loading Data" hasMargin />
           )}
           {/* {!isLoadingData && fancyData && <Box>"dff"</Box>} */}
 
           {!isLoadingStore && (
             <FeatureList
-              mode="fancy"
-              kittyData={fancyData}
-              kittyMeta={fancyMeta}
+              mode="prestige"
+              kittyMeta={kittyMeta}
+              kittyData={kittyData}
               queryParams={
                 queryParams && queryParams.attributes
                   ? queryParams.attributes.split(",")
@@ -331,88 +333,6 @@ class FancyPageComponent extends Component {
               direction="column"
               // className="contentSection"
             >
-              <Box
-                className="contentRow"
-                direction="row"
-                justify="evenly"
-                gap="xsmall"
-              >
-                <Box
-                  fill="horizontal"
-                  margin={{ vertical: "medium" }}
-                  direction="column"
-                  className="contentSection"
-                >
-                  <Box className="sectionHeading" pad={{ vertical: "small" }}>
-                    <Heading level={3} margin="none">
-                      Time {fancyData && ` to ${fancyData.kitties.length}`}
-                    </Heading>
-                  </Box>
-                  {dateData ? (
-                    <Box>
-                      <Text size="xlarge">{dateData.hours}</Text>
-                      <Text size="medium">Hours</Text>
-                    </Box>
-                  ) : (
-                    <Loading text="Calculating Rate" hasMargin />
-                  )}
-                </Box>
-
-                <Box
-                  fill="horizontal"
-                  margin={{ vertical: "medium" }}
-                  direction="column"
-                  className="contentSection"
-                >
-                  <Box className="sectionHeading" pad={{ vertical: "small" }}>
-                    <Heading level={3} margin="none">
-                      Speed {fancyData && ` to ${fancyData.kitties.length}`}
-                    </Heading>
-                  </Box>
-                  {dateData ? (
-                    <Box>
-                      <Text size="xlarge">{dateData.perHour}</Text>
-                      <Text size="medium">Kph</Text>
-                    </Box>
-                  ) : (
-                    <Loading text="Calculating Speeds" hasMargin></Loading>
-                  )}
-                </Box>
-              </Box>
-              <Box
-                fill="horizontal"
-                margin={{ vertical: "medium" }}
-                direction="column"
-                className="contentSection"
-              >
-                <Box className="sectionHeading" pad={{ vertical: "small" }}>
-                  <Heading level={3} margin="none">
-                    Breeders{" "}
-                    {fancyData &&
-                      ` (First ${fancyData.kitties.length} kitties)`}
-                  </Heading>
-                </Box>
-                {breederData ? (
-                  <Box>
-                    {breederData.map(breeder => (
-                      <Box
-                        key={breeder.nickname}
-                        direction="row"
-                        justify="stretch"
-                        align="center"
-                        margin={{ vertical: "xxsmall" }}
-                      >
-                        <Box basis="80%">{breeder.nickname}</Box>
-                        <Box basis="20%" direction="row" justify="end">
-                          {breeder.kitties.length}
-                        </Box>
-                      </Box>
-                    ))}
-                  </Box>
-                ) : (
-                  <Loading text="Thinking about breeders" hasMargin></Loading>
-                )}
-              </Box>
               {!isLoadingStore && highGenData && (
                 <Box
                   fill="horizontal"
@@ -451,6 +371,89 @@ class FancyPageComponent extends Component {
                     })}
                 </Box>
               )}
+
+              <Box
+                className="contentRow"
+                direction="row"
+                justify="evenly"
+                gap="xsmall"
+              >
+                <Box
+                  fill="horizontal"
+                  margin={{ vertical: "medium" }}
+                  direction="column"
+                  className="contentSection"
+                >
+                  <Box className="sectionHeading" pad={{ vertical: "small" }}>
+                    <Heading level={3} margin="none">
+                      Time {kittyData && ` to ${kittyData.kitties.length}`}
+                    </Heading>
+                  </Box>
+                  {dateData ? (
+                    <Box>
+                      <Text size="xlarge">{dateData.hours}</Text>
+                      <Text size="medium">Hours</Text>
+                    </Box>
+                  ) : (
+                    <Loading text="Calculating Rate" hasMargin />
+                  )}
+                </Box>
+
+                <Box
+                  fill="horizontal"
+                  margin={{ vertical: "medium" }}
+                  direction="column"
+                  className="contentSection"
+                >
+                  <Box className="sectionHeading" pad={{ vertical: "small" }}>
+                    <Heading level={3} margin="none">
+                      Speed {kittyData && ` to ${kittyData.kitties.length}`}
+                    </Heading>
+                  </Box>
+                  {dateData ? (
+                    <Box>
+                      <Text size="xlarge">{dateData.perHour}</Text>
+                      <Text size="medium">Kph</Text>
+                    </Box>
+                  ) : (
+                    <Loading text="Calculating Speeds" hasMargin></Loading>
+                  )}
+                </Box>
+              </Box>
+              <Box
+                fill="horizontal"
+                margin={{ vertical: "medium" }}
+                direction="column"
+                className="contentSection"
+              >
+                <Box className="sectionHeading" pad={{ vertical: "small" }}>
+                  <Heading level={3} margin="none">
+                    Breeders{" "}
+                    {kittyData &&
+                      ` (First ${kittyData.kitties.length} kitties)`}
+                  </Heading>
+                </Box>
+                {breederData ? (
+                  <Box>
+                    {breederData.map(breeder => (
+                      <Box
+                        key={breeder.nickname}
+                        direction="row"
+                        justify="stretch"
+                        align="center"
+                        margin={{ vertical: "xxsmall" }}
+                      >
+                        <Box basis="80%">{breeder.nickname}</Box>
+                        <Box basis="20%" direction="row" justify="end">
+                          {breeder.kitties.length}
+                        </Box>
+                      </Box>
+                    ))}
+                  </Box>
+                ) : (
+                  <Loading text="Thinking about breeders" hasMargin></Loading>
+                )}
+              </Box>
             </Box>
           </Box>
         </Box>
@@ -459,7 +462,6 @@ class FancyPageComponent extends Component {
   }
 
   handleLoad = async () => {
-    // console.log("handling load");
     const {
       rootStore: { routerStore, UiStore, BoardStore }
     } = this.props;
@@ -467,28 +469,21 @@ class FancyPageComponent extends Component {
       routerState: { params, queryParams }
     } = routerStore;
     const { id } = params;
-    if (id) {
-      BoardStore.path = `boards/${id}`;
-    }
-    // console.log("params", params);
-    // console.log("queryParams", queryParams);
-    if (queryParams.attributes) {
-      // console.log("queryParams.attributes", queryParams.attributes);
-      BoardStore.boardAttributes = queryParams.attributes;
-      // console.log(
-      //   "queryParams.attributes.split",
-      //   queryParams.attributes.split(" ")
-      // );
-    }
+    // if (id) {
+    //   BoardStore.path = `boards/${id}`;
+    // }
+    // if (queryParams.attributes) {
+    //   BoardStore.boardAttributes = queryParams.attributes;
+    // }
     console.log("before ready");
-    await BoardStore.ready();
-    console.log(BoardStore.data.allAttributes);
-    console.log("ready");
+    // await BoardStore.ready();
+    // console.log(BoardStore.data.allAttributes);
+    // console.log("ready");
     await UiStore.UiData.ready();
     // console.log(UiStore.allAttributes);
     console.log("ready");
     this.setState({
-      isLoadingAttributes: true,
+      // isLoadingAttributes: true,
       queryParams:
         queryParams && queryParams.attributes
           ? queryParams.attributes.split(",")
@@ -498,42 +493,58 @@ class FancyPageComponent extends Component {
       isLoadingStore: false,
       isLoadingAttributes: false
     });
-    this.getFancyData(id);
-    this.getHighGenData(id);
+    this.getKittyData(id);
     // this.loadFancies();
+
+    this.getHighGenData(id);
   };
 
   //////////////////////////////
   ////// fancy Data
   //////////////////////////////
-  getFancyData = (type = "pawderick") => {
-    console.log("get by type");
+  getKittyData = type => {
+    console.log("get by type", type);
+    if (!type) {
+      return;
+    }
     this.setState({ isLoadingData: true });
     const idString = type.toLowerCase();
+    const { limit } = this.state;
     const options = {
-      limit: 100,
-      fancyType: idString,
+      limit: limit,
+      prestigeType: idString,
+      isPrestige: true,
       orderBy: "created_at",
-      direction: "asc"
+      direction: "ast",
+      pageCount: limit,
+      searchMode: "default"
+      // idFrom
+      // idTo,
+      // saveToFirebase = false
     };
+    const getPrestige = ckUtils.getKittiesByPrestige(options);
 
-    const getFancy = ckUtils.getKittiesByType(options);
-    getFancy
+    // const options = {
+    //   limit: 100,
+    //   fancyType: "",
+    //   prestigeType: idString,
+    //   orderBy: "created_at",
+    //   direction: "asc"
+    // };
+
+    // const getPrestige = ckUtils.getKittiesByType(options);
+    getPrestige
       .then(data => {
         console.log("data result by type: ", data);
-        const fancyMeta = this.getFancyMeta(data);
+        const kittyMeta = this.getMeta(data);
         this.setState({
           isLoadingData: false,
-          fancyData: data,
-          fancyMeta: fancyMeta
+          kittyData: data,
+          kittyMeta: kittyMeta
         });
         return data;
       })
-      .then(data => {
-        console.log("about to send calc:", data);
-        this.handleCalc({ data: data });
-        return data;
-      })
+
       .then(data => {
         this.getColors(data);
         const dateData = ckUtils.calcDates({
@@ -543,16 +554,17 @@ class FancyPageComponent extends Component {
         });
         console.log("dateData:", dateData);
         this.setState({ dateData: dateData });
-        this.handleCalc(data);
+        return data;
       })
-
+      .then(data => {
+        console.log("about to send calc:", data);
+        this.handleCalc({ data: data });
+        return data;
+      })
       .catch(error => console.error(error));
   };
 
-  getHighGenData = type => {
-    if (!type) {
-      return;
-    }
+  getHighGenData = (type = "pawderick") => {
     this.setState({ isLoadingHighGenData: true });
     const idString = type.toLowerCase();
     const options = {
@@ -562,33 +574,33 @@ class FancyPageComponent extends Component {
       direction: "desc"
     };
 
-    const getHighGen = ckUtils.getKittiesByType(options);
-    getHighGen
-      .then(data => {
-        console.log("high gen data result by type: ", data);
-        const sorted = data.kitties.sort(this.compareGen);
-        // const highGenData = this.getFancyMeta(data);
-        this.setState({
-          isLoadingHighGenData: false,
-          highGenData: sorted
-        });
-        return data;
-      })
+    // const getHighGen = ckUtils.getKittiesByType(options);
+    // getHighGen
+    //   .then(data => {
+    //     console.log("high gen data result by type: ", data);
+    //     const sorted = data.kitties.sort(this.compareGen);
+    //     // const highGenData = this.getFancyMeta(data);
+    //     this.setState({
+    //       isLoadingHighGenData: false,
+    //       highGenData: sorted
+    //     });
+    //     return data;
+    //   })
 
-      .catch(error => console.error(error));
+    //   .catch(error => console.error(error));
   };
 
-  getFancyMeta = data => {
+  getMeta = data => {
     // console.log("getFancyMeta data", data);
     const firstKitty = data.kitties && data.kitties[0];
     // console.log("firstKitty", firstKitty);
-    const fancyMetaObj = {
+    const metaObj = {
       total: data.total,
       image_url: firstKitty.image_url,
       firstDate: firstKitty.created_at
       // startDate
     };
-    return fancyMetaObj;
+    return metaObj;
   };
 
   handleCalc(props) {
@@ -714,4 +726,6 @@ class FancyPageComponent extends Component {
     routerStore.goTo(routeName, { id: id || "none", stage: stage || "none" });
   };
 }
-export const FancyPage = inject("rootStore")(observer(FancyPageComponent));
+export const PrestigePage = inject("rootStore")(
+  observer(PrestigePageComponent)
+);

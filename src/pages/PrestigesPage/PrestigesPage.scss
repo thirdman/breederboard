@@ -10,8 +10,8 @@
       // background: rgba(0, 0, 0, 0.05);
       padding-left: 10px;
       img {
-        width: auto;
-        height: 100%;
+        width: 100%;
+        height: auto;
         z-index: 2;
         transform: scale(1.25);
       }
@@ -27,6 +27,22 @@
         // background-color: var(--shadowColor);
         border-radius: 50%;
         z-index: 1;
+      }
+    }
+  }
+  .prestigeTypeButton {
+    @media (hover: hover) {
+      &:hover {
+        background: rgba(0, 0, 0, 0.05);
+        // color: #000;
+        // background: violet;
+        // cursor: pointer;
+        .actionIconWrap {
+          svg polygon,
+          svg path {
+            stroke: violet;
+          }
+        }
       }
     }
   }
