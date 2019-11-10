@@ -2,11 +2,15 @@ import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { parseISO, format } from "date-fns";
-import { Box, Heading, Text } from "grommet";
-// import { Fireball, View } from "grommet-icons";
+import { Box, Button, Heading, Text } from "grommet";
+import { CaretUp, CaretDown } from "grommet-icons";
 import { FeatureList } from "../../components/FeatureList/FeatureList";
 import Loading from "../../components/Loading/Loading";
 import Banner from "../../components/Banner/Banner";
+import BreederList from "../../components/BreederList/BreederList";
+import ColorList from "../../components/ColorList/ColorList";
+import KittyItem from "../../components/KittyItem/KittyItem";
+import GenDistribution from "../../components/GenDistribution/GenDistribution";
 import "./FancyPage.scss";
 // import apiConfig from "../../apiConfig";
 import ckUtils from "../../utils/ck";
@@ -38,7 +42,8 @@ class FancyPageComponent extends Component {
       colorWinnersData,
       highGenData,
       dateData,
-      breederData
+      breederData,
+      showAllColors = false
     } = this.state;
     // const { allFancies } = UiStore;
     if (params.attributes) {
@@ -46,42 +51,6 @@ class FancyPageComponent extends Component {
     }
     // const dateNow = new Date();
 
-    const KittyItem = props => {
-      const { kitty, displayMode } = props;
-      return (
-        <Box
-          className={`KittyItem ${displayMode}`}
-          direction="row"
-          pad="xxsmall"
-          round="small"
-          gap={displayMode === "ranking" ? "xxsmall" : "small"}
-          justify={displayMode === "ranking" ? "center" : "stretch"}
-          fill="horizontal"
-          background="#fff"
-          elevation="xsmall"
-          align="center"
-        >
-          <Box
-            className="kittyItemImage"
-            basis={displayMode === "ranking" ? "24px" : "10%"}
-          >
-            <img src={kitty.image_url} alt="" />
-          </Box>
-          {displayMode !== "ranking" && (
-            <Box className="kittyBreeder" basis="80%">
-              <Text size="small">{kitty.hatcher.nickname}</Text>
-            </Box>
-          )}
-          <Box
-            className="kittyFancyRank"
-            justify="end"
-            basis={displayMode === "ranking" ? "20px" : "10%"}
-          >
-            <Text size="medium">#{kitty.fancy_ranking}</Text>
-          </Box>
-        </Box>
-      );
-    };
     return (
       <Box
         className={classNames("FancyPage", {
@@ -257,70 +226,25 @@ class FancyPageComponent extends Component {
                     </Heading>
                   </Box>
                 </Box>
-                {colorWinnersData ? (
-                  colorWinnersData.map(color => {
-                    return (
-                      <Box
-                        key={color.name}
-                        className="colorItem"
-                        direction="row"
-                        fill="horizontal"
-                        align="center"
-                        justify="stretch"
-                        gap="xxsmall"
-                        margin={{ vertical: "xxsmall" }}
-                      >
-                        <Box className="colorSwatchWrap" basis="20%">
-                          <Box
-                            background={color.backgroundColorHex}
-                            pad="small"
-                            className="colorSwatch"
-                            round="xxsmall"
-                            width="20px"
-                          />
-                        </Box>
-                        <Box className="colorName" basis="50%">
-                          <Text size="small">{color.name}</Text>
-                        </Box>
-                        <Box
-                          className="colorCount"
-                          basis="30%"
-                          align="center"
-                          justify="center"
-                        >
-                          <Text size="small">{color.count}</Text>
-                        </Box>
-                        <Box className="colorKitty" basis="30%">
-                          {color.kitty ? (
-                            <Box className="filled">
-                              <KittyItem
-                                displayMode="ranking"
-                                kitty={color.kitty}
-                              />
-                            </Box>
-                          ) : (
-                            <Box
-                              className="vacant"
-                              border="all"
-                              round="small"
-                              pad="xsmall"
-                              align="center"
-                              justify="center"
-                            >
-                              <Text size="small">No Kitty</Text>
-                            </Box>
-                          )}
-                        </Box>
-                      </Box>
-                    );
-                  })
-                ) : (
+                <ColorList colorData={colorWinnersData} />
+
+                {fancyData && (
                   <Box
-                    pad={{ vertical: "large" }}
-                    fill="horizontal"
-                    justify="center"
+                    className="contentSection"
+                    margin={{ vertical: "small" }}
                   >
-                    <Loading text="Considering Color" hasMargin />
+                    <Box className="sectionHeading" pad={{ vertical: "small" }}>
+                      <Heading level={3} margin="none">
+                        Generation
+                      </Heading>
+                    </Box>
+                    <GenDistribution
+                      limit={
+                        (fancyData.kitties && fancyData.kitties.length) || 100
+                      }
+                      // genData={kittyGenArray}
+                      kittyData={fancyData}
+                    />
                   </Box>
                 )}
               </Box>
@@ -379,6 +303,7 @@ class FancyPageComponent extends Component {
                   )}
                 </Box>
               </Box>
+              {/* BREEDERS */}
               <Box
                 fill="horizontal"
                 margin={{ vertical: "medium" }}
@@ -393,26 +318,16 @@ class FancyPageComponent extends Component {
                   </Heading>
                 </Box>
                 {breederData ? (
-                  <Box>
-                    {breederData.map(breeder => (
-                      <Box
-                        key={breeder.nickname}
-                        direction="row"
-                        justify="stretch"
-                        align="center"
-                        margin={{ vertical: "xxsmall" }}
-                      >
-                        <Box basis="80%">{breeder.nickname}</Box>
-                        <Box basis="20%" direction="row" justify="end">
-                          {breeder.kitties.length}
-                        </Box>
-                      </Box>
-                    ))}
-                  </Box>
+                  <BreederList
+                    breederData={breederData}
+                    totalCount={fancyData.kitties.length}
+                  />
                 ) : (
                   <Loading text="Thinking about breeders" hasMargin></Loading>
                 )}
               </Box>
+
+              {/* HIGH GENB */}
               {!isLoadingStore && highGenData && (
                 <Box
                   fill="horizontal"
@@ -673,6 +588,9 @@ class FancyPageComponent extends Component {
     return colorWinnerArray;
   };
 
+  toggleShowAllColors = newValue => {
+    this.setState({ showAllColors: newValue });
+  };
   ////////////////
   // MISC
   ////////////////

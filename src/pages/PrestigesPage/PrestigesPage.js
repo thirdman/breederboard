@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { parseISO, formatDistanceStrict } from "date-fns";
 import { Box, Button, Heading, Text } from "grommet";
-import { CaretNext, View } from "grommet-icons";
+import { CaretNext } from "grommet-icons";
 import Loading from "../../components/Loading/Loading";
 import Pill from "../../components/Pill/Pill";
 import "./PrestigesPage.scss";
@@ -26,7 +26,7 @@ class PrestigesPageComponent extends Component {
     const {
       limit,
       prestigesLoaded = false,
-      prestigesData,
+      // prestigesData,
       prestigesDataFiltered,
       prestigeTypes
     } = this.state;
@@ -430,7 +430,7 @@ class PrestigesPageComponent extends Component {
       if (type.isActive) {
         return type.type;
       } else {
-        return;
+        return //eslint-disable-line
       }
     });
     // console.log("filterArray", filterArray);

@@ -1,0 +1,29 @@
+.BreederList {
+  .breederRow {
+    border-bottom: 1px solid #9414cf1c;
+  }
+  .fancyWrap {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 100%;
+    right: 0;
+    position: absolute;
+    img {
+      width: 100% !important;
+    }
+  }
+  .breederNickname {
+    font-weight: 500;
+    position: relative;
+    // font-size: 0.875rem;
+    .breederBar {
+      width: 50%;
+      height: 1rem;
+      display: inline-block;
+      background: violet;
+      border-radius: 0.25rem;
+      // left: -0.4rem;
+      position: relative;
+    }
+  }
+}

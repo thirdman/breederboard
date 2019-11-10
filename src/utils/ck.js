@@ -113,7 +113,7 @@ function getActivePrestige(props) {
     // isPrestige = true,
     prestigeType = "",
     orderBy = "prestige_time_limit",
-    direction = "desc",
+    direction = "desc"
     // searchMode = "default",
     // isActive = true
   } = props;
@@ -160,6 +160,7 @@ function getBoardData(props) {
           kittyImg: kitty.image_url,
           kittyAttributes: [],
           isFancy: kitty.is_fancy,
+          isPrestige: kitty.is_prestige,
           created_at: kitty.created_at,
           // fancyRanking: kitty.fancy_ranking,
           generation: kitty.generation
@@ -197,7 +198,7 @@ function getBoardData(props) {
 
 function handleCalc(props) {
   const {
-    data,
+    data
     // attributeValues,
     // fancyValue = [],
     // titleEdited,
@@ -226,8 +227,12 @@ function handleCalc(props) {
     const thisUserFancyKitties = thisUserKitties.filter(
       rowItem => rowItem.isFancy === true
     );
+    const thisUserPurrstige = thisUserKitties.filter(
+      rowItem => rowItem.isPrestige === true
+    );
     // const numberOfCats = thisUserKitties.length;
     thisUserKitties.reduce((sum, x) => sum + x);
+
     // const sortedByDate = thisUserKitties.sort(this.compareDates);
     // const sortedByAttrCount = thisUserKitties.sort(this.compareCount);
     const breederObj = {
@@ -236,6 +241,7 @@ function handleCalc(props) {
       kitties: thisUserKitties,
       // numberOfCats: numberOfCats,
       // breederPoints: breederPoints,
+      prestigeArray: thisUserPurrstige,
       fancyArray: thisUserFancyKitties
     };
 
@@ -282,11 +288,16 @@ function calcType(props) {
   if (!data.kitties) {
     return;
   }
-  const fancies = data.kitties.filter(kitty => kitty.is_fancy);
-  const notFancies = data.kitties.filter(kitty => !kitty.is_fancy);
+  const kittyCount = data.kitties && data.kitties.length;
+  const fancies = data.kitties.filter(kitty => kitty.is_fancy) || 0;
+  const prestige = data.kitties.filter(kitty => kitty.is_prestige) || 0;
+  const normalCount = data.kitties.length - fancies.length - prestige.length;
+
   const typeObj = {
     fancyCount: fancies.length,
-    notFancyCount: notFancies.length
+    notFancyCount: normalCount,
+    normalCount: normalCount,
+    prestigeCount: prestige.length
   };
   return typeObj;
 }

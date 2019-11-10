@@ -16,6 +16,10 @@ const UiStore = new observable({
   hasMenu: false,
   devMode: false,
   allFancies: [
+    
+    
+    { value: "Gwendolion", label: "Gwendolion" },
+    { value: "Catseye", label: "Catseye" },
     { value: "Skeletonne", label: "Skeletonne" },
     { value: "Furmione", label: "Furmione" },
     { value: "Jack", label: "Jack" },

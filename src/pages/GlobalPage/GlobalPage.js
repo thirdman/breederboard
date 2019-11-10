@@ -8,6 +8,7 @@ import { Box, Meter, Button, Heading, Text } from "grommet";
 import { CaretDown, CaretUp } from "grommet-icons";
 import Loading from "../../components/Loading/Loading";
 import SpeedChart from "../../components/SpeedChart/SpeedChart";
+import GenDistribution from "../../components/GenDistribution/GenDistribution";
 import "./GlobalPage.scss";
 import apiConfig from "../../apiConfig";
 import ckUtils from "../../utils/ck";
@@ -35,24 +36,27 @@ class GlobalPageComponent extends Component {
         //, queryParams
       }
     } = routerStore;
-    const { id } = params;
+    // const { id } = params;
     const { devMode } = UiStore;
     const {
       // allAttributes = UiStore.allAttributes,
       // isLoadingStore = true,
       // fanciesLoaded,
       // storeFancies,
+      kittyData,
       loadingStatus,
       breederArray,
       fancyCount,
-      notFancyCount,
-      kittyGenArray,
+      prestigeCount,
+      normalCount,
+      // notFancyCount,
+      // kittyGenArray,
       dateData,
       attributeData,
       limit,
       showRest,
       showRestAttributes,
-      saveToFirebase,
+      // saveToFirebase,
       speedData
     } = this.state;
 
@@ -148,7 +152,12 @@ class GlobalPageComponent extends Component {
                   </Box>
                   <Box basis="10%" align="end">
                     <Heading level={6} margin="none">
-                      Fancies
+                      Fancy
+                    </Heading>
+                  </Box>
+                  <Box basis="10%" align="end">
+                    <Heading level={6} margin="none">
+                      Purrstige
                     </Heading>
                   </Box>
                   <Box basis="10%" align="end">
@@ -182,11 +191,18 @@ class GlobalPageComponent extends Component {
                         >
                           <Box
                             basis={`${((breeder.kitties.length -
-                              breeder.fancyArray.length) /
+                              breeder.fancyArray.length -
+                              breeder.prestigeArray.length) /
                               limit) *
                               100 *
                               4}%`}
                             background="violet"
+                          />
+                          <Box
+                            basis={`${(breeder.prestigeArray.length / limit) *
+                              100 *
+                              4}%`}
+                            background="#9414cf"
                           />
                           <Box
                             basis={`${(breeder.fancyArray.length / limit) *
@@ -207,6 +223,11 @@ class GlobalPageComponent extends Component {
                         <Box align="end" basis="10%">
                           <Text size="small">
                             {breeder.fancyArray.length || 0}
+                          </Text>
+                        </Box>
+                        <Box align="end" basis="10%">
+                          <Text size="small">
+                            {breeder.prestigeArray.length || 0}
                           </Text>
                         </Box>
                         <Box align="end" basis="10%">
@@ -334,8 +355,15 @@ class GlobalPageComponent extends Component {
                           onClick: () => {}
                         },
                         {
-                          value: (notFancyCount / limit) * 100,
-                          label: "not Fancy",
+                          value: (prestigeCount / limit) * 100,
+                          label: "Prestige",
+                          color: "#9414cf",
+                          onClick: () => {}
+                        },
+
+                        {
+                          value: (normalCount / limit) * 100,
+                          label: "Normal",
                           color: "#ccc",
                           onClick: () => {}
                         }
@@ -358,12 +386,17 @@ class GlobalPageComponent extends Component {
                         Fancy: {fancyCount}
                       </Box>
                       <Box direction="row" gap="xsmall">
+                        <Box round="xsmall" background="#9414cf" width="10px"></Box>
+                        Purrstige: {prestigeCount}
+                      </Box>
+
+                      <Box direction="row" gap="xsmall">
                         <Box
                           round="xsmall"
                           background="#ccc"
                           width="10px"
                         ></Box>
-                        Not Fancy: {notFancyCount}
+                        Normal: {normalCount}
                       </Box>
                     </Box>
                   </Box>
@@ -404,75 +437,18 @@ class GlobalPageComponent extends Component {
                 </Box>
               )}
             </Box>
-            {kittyGenArray && (
+            {kittyData && (
               <Box className="contentSection" margin={{ vertical: "small" }}>
                 <Box className="sectionHeading" pad={{ vertical: "small" }}>
                   <Heading level={3} margin="none">
                     Generation
                   </Heading>
                 </Box>
-                <Box
-                  direction="row"
-                  height="200px"
-                  fill="horizontal"
-                  justify="stretch"
-                >
-                  {kittyGenArray.map((gen, index) => (
-                    <Box
-                      className="generationItem"
-                      direction="column"
-                      justify="start"
-                      gap="xsamll"
-                      margin="xxsmall"
-                      key={`kittyGen${index}`}
-                      basis="10%"
-                    >
-                      <Box
-                        margin={{ bottom: "small" }}
-                        fill="horizontal"
-                        align="center"
-                      >
-                        <Text size="xsmall" className="percentText">
-                          {parseFloat((gen.amount / limit) * 100).toFixed(0)}%
-                        </Text>
-                      </Box>
-
-                      <Box
-                        className="meterWrap"
-                        basis="80%"
-                        background="#eee"
-                        direction="column"
-                        align="end"
-                        round="xsmall"
-                        justify="end"
-                      >
-                        <Box
-                          className="amountText"
-                          fill="horizontal"
-                          align="center"
-                        >
-                          <Text size="xsmall">{gen.amount}</Text>
-                        </Box>
-                        <Box
-                          round="xxsmall"
-                          background={`hsl(${index * 12},50%, 50%)`}
-                          basis={`${(gen.amount / limit) * 100 * 4}%`}
-                          align="center"
-                          fill="horizontal"
-                        >
-                          {/* <Text size="xsmall">{(gen.amount / limit) * 100}%</Text> */}
-                        </Box>
-                      </Box>
-                      <Box basis="20px" justify="end" align="center">
-                        <Text size="small">
-                          <strong>
-                            {gen.generation === 10000 ? "> 23" : gen.generation}
-                          </strong>
-                        </Text>
-                      </Box>
-                    </Box>
-                  ))}
-                </Box>
+                <GenDistribution
+                  limit={limit}
+                  // genData={kittyGenArray}
+                  kittyData={kittyData}
+                />
               </Box>
             )}
             {attributeData && (
@@ -555,7 +531,7 @@ class GlobalPageComponent extends Component {
                             align="center"
                             justify="center"
                             pad={{ vertical: "xsmall", horizontal: "medium" }}
-                            animation="appear"
+                            // animation="arrige"
                           >
                             <Text size="small">
                               {attr.description} appears in{" "}
@@ -629,7 +605,10 @@ class GlobalPageComponent extends Component {
     } = this.props;
     const { limit = 500, saveToFirebase } = this.state;
     const {
-      routerState: { params, queryParams }
+      routerState: {
+        // params,
+        queryParams
+      }
     } = routerStore;
     const { devMode } = UiStore;
     this.setState({ loadingStatus: "Loading Global Data" });
@@ -651,13 +630,14 @@ class GlobalPageComponent extends Component {
         this.setState({ loadingStatus: "Doing Calculations" });
         this.setState({
           // kitties: data.kitties,
+          kittyData: data,
           sourceCount: data.kitties.length
         });
         return data;
       })
       .then(data => {
         const breedersObj = ckUtils.handleCalc({ data: data });
-        console.log("breedersObj", breedersObj);
+        // console.log("breedersObj", breedersObj);
         this.setState({ loadingStatus: "Doing More Calculations" });
         this.setState({
           breederArray: breedersObj.breederArray
@@ -672,14 +652,16 @@ class GlobalPageComponent extends Component {
           data: data,
           limit: limit
         });
-        console.log("kittyTypeObj", kittyTypeObj);
-        console.log("kittyGenArray", kittyGenArray);
-        console.log("dateData", dateData);
-        console.log("attributeData", attributeData);
+        // console.log("kittyTypeObj", kittyTypeObj);
+        // console.log("kittyGenArray", kittyGenArray);
+        // console.log("dateData", dateData);
+        // console.log("attributeData", attributeData);
 
         this.setState({
           fancyCount: kittyTypeObj.fancyCount,
+          prestigeCount: kittyTypeObj.prestigeCount,
           notFancyCount: kittyTypeObj.notFancyCount,
+          normalCount: kittyTypeObj.normalCount,
           kittyGenArray: kittyGenArray,
           dateData: dateData,
           attributeData: attributeData,
@@ -710,8 +692,7 @@ class GlobalPageComponent extends Component {
     });
     this.setState({
       isLoadingStore: false,
-      isLoadingAttributes: false,
-      isLoadingStore: false
+      isLoadingAttributes: false
     });
     this.loadFancies();
   };
@@ -733,36 +714,35 @@ class GlobalPageComponent extends Component {
     });
   };
 
-  getAttributes = address => {
-    const {
-      rootStore: { UiStore }
-    } = this.props;
+  // getAttributes = address => {
+  //   // const {
+  //   //   rootStore: { UiStore }
+  //   // } = this.props;
 
-    // console.log("address", address);
-    const {
-      rootStore: { AssetsStore }
-    } = this.props;
-    // console.log("AssetsStore");
-    let theHeaders = new Headers();
-    this.setState({
-      isLoadingAssets: true
-    });
-    // Add a few headers
-    theHeaders.append("Content-Type", "application/json");
-    theHeaders.append("x-api-token", apiConfig.apiToken);
-    const API = "https://public.api.cryptokitties.co/v1/cattributes";
-    fetch(API, { headers: theHeaders })
-      .then(response => response.json())
-      .then(data => {
-        this.setState({ allAttributes: data });
-        this.setState({
-          isLoadingAttributes: false
-        });
-        // UiStore.allAttributes = data;
-        // console.log("UiStore");
-        return true;
-      });
-  };
+  //   // const {
+  //   //   rootStore: { AssetsStore }
+  //   // } = this.props;
+  //   // console.log("AssetsStore");
+  //   let theHeaders = new Headers();
+  //   this.setState({
+  //     isLoadingAssets: true
+  //   });
+  //   // Add a few headers
+  //   theHeaders.append("Content-Type", "application/json");
+  //   theHeaders.append("x-api-token", apiConfig.apiToken);
+  //   const API = "https://public.api.cryptokitties.co/v1/cattributes";
+  //   fetch(API, { headers: theHeaders })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       this.setState({ allAttributes: data });
+  //       this.setState({
+  //         isLoadingAttributes: false
+  //       });
+  //       // UiStore.allAttributes = data;
+  //       // console.log("UiStore");
+  //       return true;
+  //     });
+  // };
 
   ////////////////
   // SPEEDS

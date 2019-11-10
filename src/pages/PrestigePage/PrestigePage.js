@@ -3,10 +3,13 @@ import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { parseISO, format } from "date-fns";
 import { Box, Heading, Text } from "grommet";
-// import { Fireball, View } from "grommet-icons";
+import { Fireball, View } from "grommet-icons";
 import { FeatureList } from "../../components/FeatureList/FeatureList";
 import Loading from "../../components/Loading/Loading";
 import Banner from "../../components/Banner/Banner";
+import GenDistribution from "../../components/GenDistribution/GenDistribution";
+import ColorList from "../../components/ColorList/ColorList";
+import BreederList from "../../components/BreederList/BreederList";
 import "./PrestigePage.scss";
 // import apiConfig from "../../apiConfig";
 import ckUtils from "../../utils/ck";
@@ -21,7 +24,7 @@ class PrestigePageComponent extends Component {
   }
   render() {
     const {
-      rootStore: { routerStore, UiStore }
+      rootStore: { routerStore }
     } = this.props;
 
     const {
@@ -30,7 +33,7 @@ class PrestigePageComponent extends Component {
     const { id } = params;
 
     const {
-      limit,
+      // limit,
       // allAttributes = UiStore.allAttributes,
       isLoadingStore = true,
       // isLoadingHighGenData,
@@ -84,6 +87,7 @@ class PrestigePageComponent extends Component {
         </Box>
       );
     };
+
     return (
       <Box
         className={classNames("PrestigePage", {
@@ -259,70 +263,25 @@ class PrestigePageComponent extends Component {
                     </Heading>
                   </Box>
                 </Box>
-                {colorWinnersData ? (
-                  colorWinnersData.map(color => {
-                    return (
-                      <Box
-                        key={color.name}
-                        className="colorItem"
-                        direction="row"
-                        fill="horizontal"
-                        align="center"
-                        justify="stretch"
-                        gap="xxsmall"
-                        margin={{ vertical: "xxsmall" }}
-                      >
-                        <Box className="colorSwatchWrap" basis="20%">
-                          <Box
-                            background={color.backgroundColorHex}
-                            pad="small"
-                            className="colorSwatch"
-                            round="xxsmall"
-                            width="20px"
-                          />
-                        </Box>
-                        <Box className="colorName" basis="50%">
-                          <Text size="small">{color.name}</Text>
-                        </Box>
-                        <Box
-                          className="colorCount"
-                          basis="30%"
-                          align="center"
-                          justify="center"
-                        >
-                          <Text size="small">{color.count}</Text>
-                        </Box>
-                        <Box className="colorKitty" basis="30%">
-                          {color.kitty ? (
-                            <Box className="filled">
-                              <KittyItem
-                                displayMode="ranking"
-                                kitty={color.kitty}
-                              />
-                            </Box>
-                          ) : (
-                            <Box
-                              className="vacant"
-                              border="all"
-                              round="small"
-                              pad="xsmall"
-                              align="center"
-                              justify="center"
-                            >
-                              <Text size="small">No Kitty</Text>
-                            </Box>
-                          )}
-                        </Box>
-                      </Box>
-                    );
-                  })
-                ) : (
+                <ColorList colorData={colorWinnersData} />
+
+                {kittyData && (
                   <Box
-                    pad={{ vertical: "large" }}
-                    fill="horizontal"
-                    justify="center"
+                    className="contentSection"
+                    margin={{ vertical: "small" }}
                   >
-                    <Loading text="Considering Color" hasMargin />
+                    <Box className="sectionHeading" pad={{ vertical: "small" }}>
+                      <Heading level={3} margin="none">
+                        Generation
+                      </Heading>
+                    </Box>
+                    <GenDistribution
+                      limit={
+                        (kittyData.kitties && kittyData.kitties.length) || 100
+                      }
+                      // genData={kittyGenArray}
+                      kittyData={kittyData}
+                    />
                   </Box>
                 )}
               </Box>
@@ -420,6 +379,8 @@ class PrestigePageComponent extends Component {
                   )}
                 </Box>
               </Box>
+
+              {/* BREEDERS */}
               <Box
                 fill="horizontal"
                 margin={{ vertical: "medium" }}
@@ -434,22 +395,10 @@ class PrestigePageComponent extends Component {
                   </Heading>
                 </Box>
                 {breederData ? (
-                  <Box>
-                    {breederData.map(breeder => (
-                      <Box
-                        key={breeder.nickname}
-                        direction="row"
-                        justify="stretch"
-                        align="center"
-                        margin={{ vertical: "xxsmall" }}
-                      >
-                        <Box basis="80%">{breeder.nickname}</Box>
-                        <Box basis="20%" direction="row" justify="end">
-                          {breeder.kitties.length}
-                        </Box>
-                      </Box>
-                    ))}
-                  </Box>
+                  <BreederList
+                    breederData={breederData}
+                    totalCount={kittyData.kitties.length}
+                  />
                 ) : (
                   <Loading text="Thinking about breeders" hasMargin></Loading>
                 )}
@@ -463,27 +412,15 @@ class PrestigePageComponent extends Component {
 
   handleLoad = async () => {
     const {
-      rootStore: { routerStore, UiStore, BoardStore }
+      rootStore: { routerStore, UiStore }
     } = this.props;
     const {
       routerState: { params, queryParams }
     } = routerStore;
     const { id } = params;
-    // if (id) {
-    //   BoardStore.path = `boards/${id}`;
-    // }
-    // if (queryParams.attributes) {
-    //   BoardStore.boardAttributes = queryParams.attributes;
-    // }
-    console.log("before ready");
-    // await BoardStore.ready();
-    // console.log(BoardStore.data.allAttributes);
-    // console.log("ready");
     await UiStore.UiData.ready();
-    // console.log(UiStore.allAttributes);
-    console.log("ready");
+    //  console.log("ready");
     this.setState({
-      // isLoadingAttributes: true,
       queryParams:
         queryParams && queryParams.attributes
           ? queryParams.attributes.split(",")
@@ -566,13 +503,13 @@ class PrestigePageComponent extends Component {
 
   getHighGenData = (type = "pawderick") => {
     this.setState({ isLoadingHighGenData: true });
-    const idString = type.toLowerCase();
-    const options = {
-      limit: 3,
-      fancyType: idString,
-      orderBy: "generation",
-      direction: "desc"
-    };
+    // const idString = type.toLowerCase();
+    // const options = {
+    //   limit: 3,
+    //   fancyType: idString,
+    //   orderBy: "generation",
+    //   direction: "desc"
+    // };
 
     // const getHighGen = ckUtils.getKittiesByType(options);
     // getHighGen
