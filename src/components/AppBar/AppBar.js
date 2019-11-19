@@ -50,7 +50,9 @@ const AppBarComponent = props => {
           <Button
             margin="none"
             onClick={() => props.appLink("home")}
-            className={`menuItem ${routeName === "home" ? "selected" : ""}`}
+            className={`menuItem ${
+              routeName === "home" || routeName === "board" ? "selected" : ""
+            }`}
           >
             Boards
           </Button>
@@ -82,6 +84,17 @@ const AppBarComponent = props => {
             }`}
           >
             Purrstige
+          </Button>
+          <Button
+            margin="none"
+            onClick={() => props.appLink("breederSearch")}
+            className={`menuItem ${
+              routeName === "breeder" || routeName === "breederSearch"
+                ? "selected"
+                : ""
+            }`}
+          >
+            Breeder
           </Button>
 
           {/* <Button margin="small" onClick={() => props.appLink("about")}>

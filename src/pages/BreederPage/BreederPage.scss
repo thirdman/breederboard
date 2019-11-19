@@ -1,0 +1,21 @@
+.BreederPage {
+  transition: opacity 0.2s linear;
+  opacity: 1;
+  &.isTransitioning {
+    opacity: 0;
+  }
+  .sectionHeading {
+    position: relative;
+    padding: 1rem 0 1.5rem;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2rem;
+      height: 3px;
+      background: #ccc;
+    }
+  }
+}

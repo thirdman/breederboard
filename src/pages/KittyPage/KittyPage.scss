@@ -1,0 +1,80 @@
+.KittyPage {
+  transition: opacity 0.2s linear;
+  &.isTransitioning {
+    opacity: 0;
+  }
+  .sectionHeading {
+    position: relative;
+    padding: 1rem 0 1.5rem;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2rem;
+      height: 3px;
+      background: #ccc;
+    }
+  }
+
+  .mainHeader {
+    min-height: 10rem;
+    position: relative;
+    margin-bottom: 2rem;
+    .bannerWrap {
+      z-index: 3;
+      position: absolute;
+      // top: 50%;
+      //width: 100%;
+      left: 2%;
+      right: 2%;
+      width: auto;
+      margin-top: 0rem;
+      bottom: 2rem;
+      h1 {
+        text-transform: capitalize;
+      }
+    }
+    .fancyMeta {
+      .heroImageWrap {
+        // background: red;
+        max-width: 300px;
+        // position: relative;
+        // top: -10rem;
+      }
+      .fancyImage {
+        max-width: 100%;
+        z-index: 2;
+        border-radius: 100%;
+        background: rgba(0, 0, 0, 0.05);
+      }
+      .metaSide {
+        // margin-top: 20%;
+        border: none;
+      }
+    }
+  }
+  .colorItem {
+    .colorSwatch {
+      border: 1px solid white;
+      border-radius: 100%;
+    }
+    .colorKitty {
+      .filled {
+      }
+      .vacant {
+      }
+    }
+  }
+}
+
+.KittyItem {
+  .kittyItemImage {
+    img {
+      width: 100%;
+      height: auto;
+      transform: scale(1.55);
+    }
+  }
+}

@@ -1,7 +1,7 @@
 import { observable } from "mobx";
 import firebase from "firebase/app";
 import "firebase/firestore";
-import { initFirestorter,  Document } from "firestorter";
+import { initFirestorter, Document } from "firestorter";
 import config from "../firebase-config";
 
 !firebase.apps.length ? firebase.initializeApp(config) : firebase.app();
@@ -15,9 +15,148 @@ const UiStore = new observable({
   isLive: true,
   hasMenu: false,
   devMode: false,
+  defaultScores: {
+    fancyScores: {
+      top10: {
+        points: 100,
+        description: "Top 10 Fancy",
+        category: "fancy",
+        type: "every"
+      },
+      top1: {
+        points: 1000,
+        description: "First Fancy",
+        category: "fancy",
+        type: "every"
+      },
+      top100: {
+        points: 20,
+        description: "Top 100 Fancy",
+        category: "fancy",
+        type: "every"
+      },
+      fancyKitty: {
+        points: 10,
+        description: "Fancy",
+        category: "fancy",
+        type: "every"
+      }
+    },
+    prestigeScores: {
+      top10: {
+        points: 100,
+        description: "Top 10 Prestige",
+        category: "prestige",
+        type: "every"
+      },
+      top1: {
+        points: 1000,
+        description: "First Prestige",
+        category: "prestige",
+        type: "every"
+      },
+      top100: {
+        points: 20,
+        description: "Top 100 Prestige",
+        category: "prestige",
+        type: "every"
+      },
+      prestigeKitty: {
+        points: 10,
+        description: "Fancy",
+        category: "prestige",
+        type: "every"
+      }
+    },
+    idScores: {
+      top1000: {
+        points: 1000,
+        description: "First 1000 kitties",
+        category: "idNumber",
+        type: "every"
+      },
+      id1000: {
+        points: 1000,
+        target: 1000,
+        description: "Is id 1000",
+        category: "idNumber",
+        type: "portfolio"
+      },
+      id10000: {
+        points: 1000,
+        target: 10000,
+        description: "Is id 10000",
+        category: "idNumber",
+        type: "portfolio"
+      },
+      id12345: {
+        points: 1000,
+        target: 12345,
+        description: "Is id 12345",
+        category: "idNumber",
+        type: "portfolio"
+      },
+      id123456: {
+        points: 1000,
+        target: 123456,
+        description: "Is id 123456",
+        category: "idNumber",
+        type: "portfolio"
+      }
+    },
+    colorScores: {
+      color: {
+        points: 10,
+        description: "A kitty is this color",
+        category: "color",
+        type: "portfolio"
+      },
+      allColorBonus: {
+        points: 500,
+        description: "Has all Colors",
+        target: 31,
+        category: "color",
+        type: "portfolio"
+      }
+    },
+    generatonScores: {
+      generation: {
+        points: 10,
+        description: "A kitty is this generation",
+        category: "generation",
+        type: "portfolio"
+      },
+      allGenBonus: {
+        points: 500,
+        description: "Has all top 24 generations",
+        target: 23,
+        category: "generation",
+        type: "portfolio"
+      },
+      above1000Bonus: {
+        points: 500,
+        description: "Has a generation higher than 1000",
+        target: 500,
+        category: "generation",
+        type: "portfolio"
+      }
+    },
+    vintageScores: {
+      hasVintage: {
+        points: 500,
+        description: "Has a Vintage Kitty",
+        category: "vintage",
+        type: "portfolio"
+      }
+    }
+  },
+  vintageConditions: {
+    colorprimary: ["cloudwhite", "greymatter", "koala", "onyx", "shadowgrey"],
+    colorsecondary: ["cyborg", "egyptiankohl", "lilac", "pearl", "wolfgrey"],
+    colortertiary: ["cashewmilk", "granitegrey", "icy", "purplehaze", "shale"],
+    coloreyes: ["eclipse", "thundergrey"]
+  },
   allFancies: [
-    
-    
     { value: "Gwendolion", label: "Gwendolion" },
     { value: "Catseye", label: "Catseye" },
     { value: "Skeletonne", label: "Skeletonne" },
@@ -93,6 +232,47 @@ const UiStore = new observable({
     { value: "咚咚锵", label: "DancingLion" },
     { value: "汪星爷", label: "Dogcat" },
     { value: "红包喵", label: "LuckyCat" }
+  ],
+  allPrestiges: [
+    { value: "aegis", label: "aegis" },
+    { value: "alpacacino", label: "alpacacino" },
+    { value: "alpunka", label: "alpunka" },
+    { value: "beatlesque", label: "beatlesque" },
+    { value: "bionic", label: "bionic" },
+    { value: "brassard", label: "brassard" },
+    { value: "catterypack", label: "catterypack" },
+    { value: "centurion", label: "centurion" },
+    { value: "cindylou", label: "cindylou" },
+    { value: "dominator", label: "dominator" },
+    { value: "dreamcloud", label: "dreamcloud" },
+    { value: "duckduckcat", label: "duckduckcat" },
+    { value: "explorer", label: "explorer" },
+    { value: "fileshare", label: "fileshare" },
+    { value: "furball", label: "furball" },
+    { value: "gauntlet", label: "gauntlet" },
+    { value: "guard", label: "guard" },
+    { value: "holidaycheer", label: "holidaycheer" },
+    { value: "hooked", label: "hooked" },
+    { value: "huacool", label: "huacool" },
+    { value: "inaband", label: "inaband" },
+    { value: "landlubber", label: "landlubber" },
+    { value: "lit", label: "lit" },
+    { value: "maraud", label: "maraud" },
+    { value: "oohshiny", label: "oohshiny" },
+    { value: "pawsfree", label: "pawsfree" },
+    { value: "prune", label: "prune" },
+    { value: "purrbados", label: "purrbados" },
+    { value: "purrior", label: "purrior" },
+    { value: "reindeer", label: "reindeer" },
+    { value: "scout", label: "scout" },
+    { value: "scratchingpost", label: "scratchingpost" },
+    { value: "squelch", label: "squelch" },
+    { value: "thatsawrap", label: "thatsawrap" },
+    { value: "timbers", label: "timbers" },
+    { value: "uplink", label: "uplink" },
+    { value: "velite", label: "velite" },
+    { value: "werekitty", label: "werekitty" },
+    { value: "wrecked", label: "wrecked" }
   ],
   allAttributes: [
     "fangtastic",

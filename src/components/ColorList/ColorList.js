@@ -13,7 +13,11 @@ class ColorList extends Component {
     showAllColors: false
   };
   render() {
-    const { displayMode = "default", colorData } = this.props;
+    const {
+      displayMode = "default",
+      colorData,
+      handleKittyLink = () => {}
+    } = this.props;
     const { showAllColors = this.props.showAllColors } = this.state;
     // const [hasSelected, setHasSelected] = useState(true);
     // const chartHeight = 160;
@@ -60,7 +64,11 @@ class ColorList extends Component {
                 <Box className="colorKitty" basis="30%">
                   {color.kitty ? (
                     <Box className="filled">
-                      <KittyItem displayMode="ranking" kitty={color.kitty} />
+                      <KittyItem
+                        displayMode="ranking"
+                        kitty={color.kitty}
+                        handleKittyLink={handleKittyLink}
+                      />
                     </Box>
                   ) : (
                     <Box

@@ -226,7 +226,10 @@ class FancyPageComponent extends Component {
                     </Heading>
                   </Box>
                 </Box>
-                <ColorList colorData={colorWinnersData} />
+                <ColorList
+                  colorData={colorWinnersData}
+                  handleKittyLink={this.handleKittyLink}
+                />
 
                 {fancyData && (
                   <Box
@@ -458,7 +461,7 @@ class FancyPageComponent extends Component {
         });
         console.log("dateData:", dateData);
         this.setState({ dateData: dateData });
-        this.handleCalc(data);
+        // this.handleCalc(data);
       })
 
       .catch(error => console.error(error));
@@ -624,6 +627,13 @@ class FancyPageComponent extends Component {
     // console.log("hasMenu", UiStore.hasMenu);
     UiStore.hasMenu = !UiStore.hasMenu;
     // console.log("handle menu", UiStore);
+  };
+  handleKittyLink = kitty => {
+    const {
+      rootStore: { KittyStore }
+    } = this.props;
+    KittyStore.kittyData = kitty;
+    this.appLink("kitty", kitty.id, "overview");
   };
   appLink = (routeName, id, stage) => {
     const {

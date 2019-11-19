@@ -1,0 +1,7 @@
+.BreederSearch {
+  transition: opacity 0.2s linear;
+  opacity: 1;
+  &.isTransitioning {
+    opacity: 0;
+  }
+}

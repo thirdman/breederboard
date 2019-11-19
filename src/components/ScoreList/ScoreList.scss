@@ -1,0 +1,12 @@
+.ScoreList {
+  .listItem {
+    &.header {
+      h6 {
+        text-transform: uppercase;
+      }
+    }
+  }
+  .numberColumn {
+    text-align: right;
+  }
+}

@@ -13,6 +13,6 @@ const BoardsStore = new Collection("boards", { mode: "on" });
 // BoardsStore.query = ref => ref.where("isPublic", "==", true);
 // BoardsStore.query = ref =>
 //  ref.where("isNew", "==", "no").orderBy("dateCreated", "desc");
-BoardsStore.query = ref => ref.orderBy("dateModified", "desc");
+BoardsStore.query = ref => ref.orderBy("dateModified", "desc").limit(12);
 
 export { BoardsStore };

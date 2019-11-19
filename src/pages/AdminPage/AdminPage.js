@@ -37,6 +37,7 @@ class AdminPageComponent extends Component {
       showFancyList
     } = this.state;
     const { allFancies } = SiteStore.data;
+    const { allPrestiges } = UiStore;
     // const { allAttributes } = UiStore;
     // console.log("allFancies", allFancies);
     // const dateNow = new Date();
@@ -126,8 +127,42 @@ class AdminPageComponent extends Component {
               </Box>
             </Button>
             <Button onClick={() => this.handleUpdateFancies()}>
-              <Box pad="small" border="all">
+              <Box
+                pad="small"
+                border="all"
+                background="secondary"
+                round="small"
+              >
                 update fancies (dates)
+              </Box>
+            </Button>
+          </Box>
+
+          <Box pad="small" round="small" background="#eee" fill="horizontal">
+            <Heading level={3}>Prestiges</Heading>
+            {/* <Button
+              // label="Add Fancy"
+              onClick={() => this.setState({ showAddFancy: true })}
+            >
+              <Box pad="small" direction="row" border="all">
+                <FormAdd /> Add Fancy
+              </Box>
+            </Button>
+            <Button
+              onClick={() =>
+                this.setState({
+                  showAddFancy: false,
+                  showFancyList: !showFancyList
+                })
+              }
+            >
+              <Box pad="small">
+                {showFancyList ? "Hide Fancy List" : "Show Fancy List"}
+              </Box>
+            </Button> */}
+            <Button onClick={() => this.handleUpdatePrestiges()}>
+              <Box pad="small" border="all" background="secondary">
+                Update Prestiges
               </Box>
             </Button>
           </Box>
@@ -410,6 +445,7 @@ class AdminPageComponent extends Component {
       this.applyFancyData(fancy, index);
     });
   };
+
   applyFancyData = async (fancy, index) => {
     const {
       rootStore: { FancyStore }
@@ -444,8 +480,8 @@ class AdminPageComponent extends Component {
         // );
         let tempFancyObj = {};
         if (firstKittyData.kitties) {
-          const fancyMeta1 = this.getFancyMeta(firstKittyData, "first");
-          const fancyMeta2 = this.getFancyMeta(lastKittyData, "last");
+          const fancyMeta1 = this.getMeta(firstKittyData, "first", "fancy");
+          const fancyMeta2 = this.getMeta(lastKittyData, "last", "fancy");
           tempFancyObj = { ...fancy, ...fancyMeta1, ...fancyMeta2 };
 
           const fancyRef = new Document(`fancies/${fancy.value}`);
@@ -481,39 +517,113 @@ class AdminPageComponent extends Component {
         return tempFancyObj;
       })
       .catch(error => console.error(error));
-
-    // return getData;
-
-    // .then(data => {
-    //   console.loc("result of promised all = ", data);
-    //   return data;
-    // })
-    // .catch(e => console.error(e));
-    // console.log("test", test);
-    // console.log("fancy obj", fancyObj);
-    // return fancyObj;
   };
-  getFancyMeta = (data, direction) => {
-    // console.log("getFancyMeta data", data);
+
+  ////////////////
+  // PRESTIGE
+  ////////////////
+
+  handleUpdatePrestiges = async () => {
+    const {
+      rootStore: { UiStore }
+    } = this.props;
+    // await UiStore.ready();
+    const existingPrestiges = UiStore.allPrestiges.slice();
+    existingPrestiges.map(async (prestige, index) => {
+      console.log("...doing ", prestige.value);
+      this.applyPrestigeData(prestige, index);
+    });
+  };
+
+  applyPrestigeData = async (prestige, index) => {
+    const {
+      rootStore: { PrestigeStore }
+    } = this.props;
+    PrestigeStore.path = `prestiges/${prestige.value}`;
+    const idString = prestige.value.toLowerCase();
+    const optionsFirst = {
+      limit: 1,
+      fancyType: "",
+      prestigeType: idString,
+      orderBy: "created_at",
+      direction: "asc"
+    };
+
+    const optionsLast = {
+      limit: 1,
+      fancyType: "",
+      prestigeType: idString,
+      orderBy: "created_at",
+      direction: "desc"
+    };
+    const getFirstPrestige = ckUtils.getKittiesByType(optionsFirst);
+    const getLastPrestige = ckUtils.getKittiesByType(optionsLast);
+
+    // console.log("getFirstPrestige", getFirstPrestige);
+    // console.log("getLastPrestige", getLastPrestige);
+    return Promise.all([getFirstPrestige, getLastPrestige])
+      .then(async values => {
+        const firstKittyData = values[0];
+        const lastKittyData = values[1];
+        console.log(
+          "firstKittyData, lastKittyData",
+          firstKittyData,
+          lastKittyData
+        );
+        let tempObj = {};
+        if (firstKittyData.kitties) {
+          const meta1 = this.getMeta(firstKittyData, "first", "prestige");
+          const meta2 = this.getMeta(lastKittyData, "last", "prestige");
+          tempObj = { ...prestige, ...meta1, ...meta2 };
+          console.log("tempObj", tempObj);
+          const prestigeRef = new Document(`prestiges/${prestige.value}`);
+          //       // let dateNow = firebase.firestore.Timestamp.fromDate(new Date());
+          console.log("prestigeRef", prestigeRef);
+          prestigeRef
+            .set(tempObj, { merge: true })
+            .then(result => {
+              console.log("set prestige, result", result);
+              return result;
+            })
+            .catch(error => {
+              console.error(error);
+            });
+        }
+        return tempObj;
+        //return "test";
+      })
+      .catch(error => console.error(error));
+  };
+
+  ////////////////
+  // GENERAL
+  ////////////////
+  getMeta = (data, direction, type) => {
     const firstKitty = data.kitties && data.kitties[0];
-    // console.log("firstKitty", firstKitty);
-    let fancyMetaObj = {};
+    let metaObj = {};
     if (direction === "first") {
-      fancyMetaObj = {
+      metaObj = {
         total: data.total,
         image_url: firstKitty.image_url,
         firstDate: firstKitty.created_at
       };
     }
     if (direction === "last") {
-      fancyMetaObj = {
+      metaObj = {
         total: data.total,
         image_url: firstKitty.image_url,
-        lastDate: firstKitty.created_at,
-        lastFancyCount: firstKitty.fancy_ranking
+        lastDate: firstKitty.created_at
       };
     }
-    return fancyMetaObj;
+    if (type === "fancy") {
+      metaObj.lastKittyCount = firstKitty.fancy_ranking;
+      metaObj.lastFancyCount = firstKitty.fancy_ranking;
+    }
+    if (type === "prestige") {
+      console.log("doign prestige last count!");
+      metaObj.lastKittyCount = firstKitty.prestige_ranking;
+    }
+    return metaObj;
   };
   ////////////////
   // MISC

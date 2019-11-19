@@ -14,7 +14,11 @@ class KittyItem extends Component {
   };
   render() {
     // const { displayMode = "default", colorData } = this.props;
-    const { kitty, displayMode = "default" } = this.props;
+    const {
+      kitty,
+      displayMode = "default",
+      handleKittyLink = () => {}
+    } = this.props;
 
     // const { showAllColors = this.props.showAllColors } = this.state;
     // const [hasSelected, setHasSelected] = useState(true);
@@ -32,6 +36,7 @@ class KittyItem extends Component {
         background="#fff"
         elevation="xsmall"
         align="center"
+        onClick={() => handleKittyLink(kitty)}
       >
         <Box
           className="kittyItemImage"
@@ -44,16 +49,19 @@ class KittyItem extends Component {
             <Text size="small">{kitty.hatcher.nickname}</Text>
           </Box>
         )}
-        <Box
-          className="kittyFancyRank"
-          justify="end"
-          basis={displayMode === "ranking" ? "20px" : "10%"}
-        >
-          <Text size="medium">#{kitty.fancy_ranking}</Text>
-        </Box>
+        {kitty.fancy_ranking && (
+          <Box
+            className="kittyFancyRank"
+            justify="end"
+            basis={displayMode === "ranking" ? "20px" : "10%"}
+          >
+            <Text size="medium">#{kitty.fancy_ranking}</Text>
+          </Box>
+        )}
       </Box>
     );
   }
 }
 
 export default KittyItem;
+// || kitty.id

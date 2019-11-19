@@ -263,7 +263,10 @@ class PrestigePageComponent extends Component {
                     </Heading>
                   </Box>
                 </Box>
-                <ColorList colorData={colorWinnersData} />
+                <ColorList
+                  colorData={colorWinnersData}
+                  handleKittyLink={this.handleKittyLink}
+                />
 
                 {kittyData && (
                   <Box
@@ -431,7 +434,6 @@ class PrestigePageComponent extends Component {
       isLoadingAttributes: false
     });
     this.getKittyData(id);
-    // this.loadFancies();
 
     this.getHighGenData(id);
   };
@@ -655,6 +657,13 @@ class PrestigePageComponent extends Component {
     // console.log("hasMenu", UiStore.hasMenu);
     UiStore.hasMenu = !UiStore.hasMenu;
     // console.log("handle menu", UiStore);
+  };
+  handleKittyLink = kitty => {
+    const {
+      rootStore: { KittyStore }
+    } = this.props;
+    KittyStore.kittyData = kitty;
+    this.appLink("kitty", kitty.id, "overview");
   };
   appLink = (routeName, id, stage) => {
     const {

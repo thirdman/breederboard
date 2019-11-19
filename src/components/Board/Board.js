@@ -12,6 +12,7 @@ import Loading from "../Loading/Loading";
 import Pill from "../Pill/Pill";
 import ButtonGroup from "../ButtonGroup/ButtonGroup";
 import ckUtils from "../../utils/ck";
+import scoreUtils from "../../utils/scoring";
 
 import {
   FormClose,
@@ -59,7 +60,8 @@ class BoardComponent extends Component {
     searchMode: "recent",
     showShareModal: false,
     pageCount: 250,
-    idFrom: ""
+    idFrom: "",
+    anyFancy: false
   };
   componentDidMount() {
     if (this.props.queryParams) {
@@ -80,7 +82,7 @@ class BoardComponent extends Component {
       // console.log("BoardStore, did mount, ready: ", BoardStore);
       const {
         attributeValues,
-        searchMode,
+        searchMode = this.state.searchMode,
         idFrom,
         idTo,
         pageCount,
@@ -163,7 +165,8 @@ class BoardComponent extends Component {
       pageCount,
       userBoards,
       idFrom,
-      error
+      error,
+      anyFancy
       // canEdit
     } = this.state;
 
@@ -547,7 +550,7 @@ class BoardComponent extends Component {
                 direction="column"
                 align="start"
                 justify="stretch"
-                basis="50%"
+                basis="37%"
               >
                 <Heading margin="none" level={6}>
                   Attributes:
@@ -611,17 +614,24 @@ class BoardComponent extends Component {
               direction="column"
               align="stretch"
               justify="stretch"
-              basis="20%"
+              basis="33%"
             >
               <Heading margin="none" level={6}>
                 Include Fancy
               </Heading>
 
-              <Box basis="90%" align="start" justify="center">
+              <Box
+                basis="90%"
+                align="center"
+                justify="center"
+                direction="row"
+                gap="xsmall"
+              >
                 {editBoard && (
                   <Select
                     options={fancyOptionsFiltered}
                     multiple={false}
+                    disabled={anyFancy}
                     value={fancyValue}
                     onChange={({ option }) => this.setFancy(option)}
                     onSearch={searchText => {
@@ -635,6 +645,17 @@ class BoardComponent extends Component {
                       });
                     }}
                   />
+                )}
+                {editBoard && (
+                  <Box pad="none">
+                    <CheckBox
+                      checked={anyFancy}
+                      label={"Any"}
+                      onChange={event =>
+                        this.handleSetAnyFancy(event.target.checked)
+                      }
+                    />
+                  </Box>
                 )}
               </Box>
             </Box>
@@ -700,9 +721,13 @@ class BoardComponent extends Component {
                 {attributeValues &&
                   attributeValues.length > 0 &&
                   attributeValues.map(attribute => (
-                    
-                    <Pill text={attribute} displayMode="featured" hasClose={editBoard} onClickRemove={() => this.removeAttribute(attribute)} />
-                    
+                    <Pill
+                      key={`attributeValues_${attribute}`}
+                      text={attribute}
+                      displayMode="featured"
+                      hasClose={editBoard}
+                      onClickRemove={() => this.removeAttribute(attribute)}
+                    />
                   ))}
               </Box>
             </Box>
@@ -719,14 +744,19 @@ class BoardComponent extends Component {
                   className="noData"
                   pad="small"
                 >
-                  <Text classname="noData">No Fancy Selected</Text>
+                  <Text classname="noData">
+                    {anyFancy ? "Any Fancy" : "No Fancy Selected"}
+                  </Text>
                 </Box>
               )}
               <Box direction="row" align="start" justify="start" gap="xsmall">
                 {fancyValue && fancyValue[0] && (
-                  
-                    <Pill text={fancyValue[0]} displayMode="fancy" hasClose={editBoard} onClickRemove={() => this.removeFancy()} />
-                    
+                  <Pill
+                    text={fancyValue[0]}
+                    displayMode="fancy"
+                    hasClose={editBoard}
+                    onClickRemove={() => this.removeFancy()}
+                  />
                 )}
               </Box>
             </Box>
@@ -1632,7 +1662,15 @@ class BoardComponent extends Component {
   handleSetPageCount = count => {
     this.setState({ pageCount: count });
   };
+  handleSetAnyFancy = checked => {
+    console.log("setany", checked);
+    const {
+      rootStore: { BoardStore }
+    } = this.props;
 
+    this.setState({ anyFancy: checked });
+    BoardStore.update({ anyFancy: checked });
+  };
   //////////////////////////////
   ////// DATA
   //////////////////////////////
@@ -1720,7 +1758,8 @@ class BoardComponent extends Component {
       attributeValues,
       fancyValue = [],
       titleEdited,
-      boardTitle
+      boardTitle,
+      anyFancy
     } = BoardStore.data;
     const { pageCount = 250, searchMode = "recent" } = this.state;
     // console.log("fancyValue", fancyValue);
@@ -1742,8 +1781,13 @@ class BoardComponent extends Component {
         // );
 
         // HANDLE FANCY
-        if (kitty.is_fancy && kitty.fancy_type === tempFancyValue) {
-          const thisPoints = this.calculateFancyPoints(kitty);
+        if (
+          kitty.is_fancy &&
+          (kitty.fancy_type === tempFancyValue || anyFancy === true)
+        ) {
+          // const thisPoints = this.calculateFancyPoints(kitty);
+          const thisPoints = scoreUtils.calcFancyPoints(kitty);
+
           if (nickname) {
             const itemObj = {
               nickname: nickname,
@@ -1768,7 +1812,7 @@ class BoardComponent extends Component {
         });
 
         const thisAtrrCount = attrs.length;
-        const thisPoints = this.calculatePoints(attrs);
+        const thisPoints = scoreUtils.calcKittyPoints(attrs);
 
         if (nickname) {
           const itemObj = {

@@ -61,7 +61,21 @@ export const routes = [
     pattern: "/purrstige/:id",
     beforeEnter: checkForUserSignedIn
   },
-
+  {
+    name: "breeder",
+    pattern: "/breeder/:id",
+    beforeEnter: checkForUserSignedIn
+  },
+  {
+    name: "breederSearch",
+    pattern: "/breeder",
+    beforeEnter: checkForUserSignedIn
+  },
+  {
+    name: "kitty",
+    pattern: "/kitty/:id",
+    beforeEnter: checkForUserSignedIn
+  },
   {
     name: "about",
     pattern: "/about",

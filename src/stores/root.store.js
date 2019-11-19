@@ -10,6 +10,9 @@ import { SpeedsStore } from "./speeds";
 import { KittehStore } from "./kitteh";
 import { FanciesStore } from "./fancies";
 import { FancyStore } from "./fancy";
+import { PrestigesStore } from "./prestiges";
+import { PrestigeStore } from "./prestige";
+import { KittyStore } from "./kitty";
 // import { SnapshotStore } from "./snapshot";
 
 const notFound = new RouterState("notFound");
@@ -24,5 +27,8 @@ export class RootStore {
   KittehStore = KittehStore;
   FanciesStore = FanciesStore;
   FancyStore = FancyStore;
+  PrestigesStore = PrestigesStore;
+  PrestigeStore = PrestigeStore;
+  KittyStore = KittyStore;
   // SnapshotStore = SnapshotStore;
 }

@@ -13,8 +13,10 @@ function getKitties(props) {
     pageCount = 50,
     limit = 50,
     searchMode = "default",
-    idFrom
-    // idTo,
+    walletAddress = "",
+    idFrom,
+    idTo,
+    direction = "desc"
     // saveToFirebase = false
   } = props;
   if (searchMode === "id" && !idFrom) {
@@ -26,9 +28,12 @@ function getKitties(props) {
   let theHeaders = new Headers();
   theHeaders.append("Content-Type", "application/json");
   theHeaders.append("x-api-token", apiConfig.apiToken);
-
-  let API = `https://public.api.cryptokitties.co/v1/kitties?orderBy=created_at&orderDirection=desc&limit=${limit}`;
-
+  let API = `https://public.api.cryptokitties.co/v1/kitties?orderBy=created_at&orderDirection=${direction}&limit=${limit}&owner_wallet_address=${walletAddress}`;
+  if (searchMode === "id") {
+    API = `https://public.api.cryptokitties.co/v1/kitties?orderBy=created_at&orderDirection=${direction}&limit=${limit}&owner_wallet_address=${walletAddress}&kittyId=${idFrom}-${idTo ||
+      idFrom + limit}`;
+  }
+  console.log("api", API);
   return fetch(API, { headers: theHeaders })
     .then(response => response.json())
     .then(data => {
@@ -42,7 +47,8 @@ function getKitties(props) {
 function getKittiesByType(props) {
   const {
     limit = 50,
-    fancyType = "ducat",
+    fancyType = "",
+    prestigeType = "",
     orderBy = "created_at",
     direction = "desc",
     pageCount = 50,
@@ -56,13 +62,12 @@ function getKittiesByType(props) {
     return;
   }
 
-  console.log("props", props, pageCount);
+  // console.log("props", props, pageCount);
   let theHeaders = new Headers();
   theHeaders.append("Content-Type", "application/json");
   theHeaders.append("x-api-token", apiConfig.apiToken);
 
-  let API = `https://public.api.cryptokitties.co/v1/kitties?orderBy=${orderBy}&orderDirection=${direction}&limit=${limit}&fancy=${fancyType}`;
-
+  let API = `https://public.api.cryptokitties.co/v1/kitties?orderBy=${orderBy}&orderDirection=${direction}&limit=${limit}&fancy=${fancyType}&prestige=${prestigeType}`;
   return fetch(API, { headers: theHeaders })
     .then(response => response.json())
     .then(data => {
@@ -251,7 +256,7 @@ function handleCalc(props) {
   breederArray.sort(compareKittyCount);
 
   const theTotalPoints = sumValues(breederArray, "breederPoints");
-  console.log("breederArray", breederArray);
+  // console.log("breederArray", breederArray);
   // const leaderObj = breederArray.length > -1 && breederArray[0];
   // const leaderName = leaderObj.nickname;
   //const leaderScore = leaderObj.breederPoints;

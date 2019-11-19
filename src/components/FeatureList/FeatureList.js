@@ -456,7 +456,6 @@ class FeatureListComponent extends Component {
               )}
             </Box>
           )}
-
         </Box>
 
         {showShareModal && (

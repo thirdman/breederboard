@@ -131,17 +131,22 @@ class App extends Component {
                     <Text>3 cattributes:</Text>
                     <strong>9pt</strong>
                   </Box>
+
                   <Box direction="row" justify="between" fill="horizontal">
-                    <Text>Fancy:</Text>
-                    <strong>10pt</strong>
+                    <Text>Fancy (First):</Text>
+                    <strong>1000pt</strong>
                   </Box>
                   <Box direction="row" justify="between" fill="horizontal">
                     <Text>Fancy (top 10):</Text>
-                    <strong>20pt</strong>
+                    <strong>100pt</strong>
                   </Box>
                   <Box direction="row" justify="between" fill="horizontal">
-                    <Text>Fancy (First):</Text>
+                    <Text>Fancy (top 100):</Text>
                     <strong>100pt</strong>
+                  </Box>
+                  <Box direction="row" justify="between" fill="horizontal">
+                    <Text>Fancy:</Text>
+                    <strong>10pt</strong>
                   </Box>
                 </Box>
                 <Box className="credits">

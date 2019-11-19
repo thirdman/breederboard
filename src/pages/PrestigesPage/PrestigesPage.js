@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
-import { parseISO, formatDistanceStrict } from "date-fns";
+import { parseISO, format, formatDistanceStrict } from "date-fns";
 import { Box, Button, Heading, Text } from "grommet";
 import { CaretNext } from "grommet-icons";
 import Loading from "../../components/Loading/Loading";
@@ -28,7 +28,9 @@ class PrestigesPageComponent extends Component {
       prestigesLoaded = false,
       // prestigesData,
       prestigesDataFiltered,
-      prestigeTypes
+      prestigeTypes,
+      storePrestiges,
+      storePrestigesLoaded
     } = this.state;
     const dateNow = new Date();
 
@@ -64,122 +66,193 @@ class PrestigesPageComponent extends Component {
             </Heading>
           </Box>
 
-          <Box className="contentRow" direction="row" gap="medium">
-            <Box className="contentSection" basis="2/3">
-              <Heading level={3} margin="none">
-                Recently Bred
-              </Heading>
-              <Box direction="row">
-                {prestigesLoaded &&
-                  prestigesDataFiltered &&
-                  prestigesDataFiltered.length &&
-                  prestigesDataFiltered.length !== limit && (
-                    <Text size="small">
-                      <strong>{prestigesDataFiltered.length}</strong>
-                      {` of `}
-                    </Text>
-                  )}{" "}
-                <Text size="small">{limit} latest kitties</Text>
-              </Box>
-              {prestigeTypes && (
-                <Box
-                  direction="row"
-                  justify="center"
-                  gap="xsmall"
-                  wrap
-                  margin={{ vertical: "small" }}
-                >
-                  {prestigeTypes.map(typeItem => (
-                    <Pill
-                      displayMode="simple"
-                      key={`typeName_${typeItem.type}`}
-                      text={`${typeItem.count} ${typeItem.type}`}
-                      isToggle
-                      isActive={typeItem.isActive}
-                      onClick={() => this.handleTypeToggle(typeItem.type)}
-                    />
-                  ))}
-                </Box>
-              )}
-
-              {!prestigesLoaded && <Loading text="Loading data" hasMargin />}
-
-              {prestigesLoaded && (
-                <Box>
-                  {prestigesDataFiltered.map(prestigeKitty => (
-                    <Box key={prestigeKitty.name}>
-                      <Button
-                        onClick={() =>
-                          this.appLink(
-                            "prestige",
-                            prestigeKitty.id,
-                            "breederboard"
-                          )
-                        }
-                      >
-                        <Box
-                          className="fancyItem"
-                          margin={{ vertical: "xsmall" }}
-                          align="stretch"
-                          justify="stretch"
-                          round="small"
-                          background="white"
-                          elevation="xsmall"
-                          direction="row"
-                          gap="xsmall"
-                          overflow="hidden"
+          <Box
+            className="contentRow"
+            direction="row"
+            gap="medium"
+            justify="stretch"
+            align="start"
+          >
+            <Box className="contentColumn" basis="60%">
+              <Box direction="column" className="contentSection">
+                <Heading level={3} margin="none">
+                  {storePrestigesLoaded && storePrestiges.length} Types
+                </Heading>
+                {!storePrestigesLoaded && (
+                  <Loading text="Loading All Purrstige Types" hasMargin />
+                )}
+                {storePrestigesLoaded && (
+                  <Box>
+                    {storePrestiges.map(prestigeType => (
+                      <Box key={prestigeType.data.value}>
+                        <Button
+                          onClick={() =>
+                            this.appLink(
+                              "purrstige",
+                              prestigeType.data.value,
+                              "top"
+                            )
+                          }
                         >
                           <Box
-                            className="fancyImage"
-                            basis="20%"
-                            align="center"
+                            className="prestigeItem"
+                            margin={{ vertical: "small" }}
+                            align="stretch"
                             justify="center"
-                            pad="xxsmall"
-                            background={this.getColor(
-                              prestigeKitty.color,
-                              "background"
-                            )}
-                            border={{
-                              color: this.getColor(
-                                prestigeKitty.color,
-                                "color"
-                              ),
-                              size: "medium",
-                              style: "solid",
-                              side: "left"
-                            }}
+                            round="small"
+                            background="white"
+                            elevation="xsmall"
+                            direction="row"
+                            gap="small"
+                            overflow="hidden"
                           >
-                            <img src={prestigeKitty.image_url} alt="" />
                             <Box
-                              className="shadow"
+                              className="prestigeImage"
+                              basis="20%"
+                              align="center"
+                              justify="center"
+                              pad="xxsmall"
+                            >
+                              <img src={prestigeType.data.image_url} alt="" />
+                            </Box>
+                            <Box basis="60%" pad="small">
+                              <Heading
+                                className="kittyTitle"
+                                level={3}
+                                margin={{ top: "none", bottom: "small" }}
+                              >
+                                {prestigeType.data.label}
+                              </Heading>
+                              <Box direction="row" gap="medium">
+                                <Box>
+                                  <Heading level={6} margin="none">
+                                    Total Bred
+                                  </Heading>
+                                  <Text>{prestigeType.data.total}</Text>
+                                </Box>
+                                <Box>
+                                  <Heading level={6} margin="none">
+                                    First Bred
+                                  </Heading>
+                                  <Text>
+                                    {format(
+                                      parseISO(prestigeType.data.firstDate),
+                                      "d MMM, yyyy"
+                                    )}
+                                  </Text>
+                                </Box>
+                              </Box>
+                            </Box>
+                            <Box
+                              basis="20%"
+                              align="center"
+                              justify="center"
+                              className="actionIconWrap"
+                            >
+                              <CaretNext />
+                            </Box>
+                          </Box>
+                        </Button>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+              </Box>
+            </Box>
+            <Box className="contentColumn" basis="40%">
+              <Box className="contentSection">
+                <Heading level={3} margin="none">
+                  Recently Bred
+                </Heading>
+                <Box direction="row">
+                  {prestigesLoaded &&
+                    prestigesDataFiltered &&
+                    prestigesDataFiltered.length &&
+                    prestigesDataFiltered.length !== limit && (
+                      <Text size="small">
+                        <strong>{prestigesDataFiltered.length}</strong>
+                        {` of `}
+                      </Text>
+                    )}{" "}
+                  <Text size="small">{limit} latest kitties</Text>
+                </Box>
+                {prestigeTypes && (
+                  <Box
+                    direction="row"
+                    justify="center"
+                    gap="xsmall"
+                    wrap
+                    margin={{ vertical: "small" }}
+                  >
+                    {prestigeTypes.map(typeItem => (
+                      <Pill
+                        displayMode="simple"
+                        key={`typeName_${typeItem.type}`}
+                        text={`${typeItem.count} ${typeItem.type}`}
+                        isToggle
+                        isActive={typeItem.isActive}
+                        onClick={() => this.handleTypeToggle(typeItem.type)}
+                      />
+                    ))}
+                  </Box>
+                )}
+
+                {!prestigesLoaded && <Loading text="Loading data" hasMargin />}
+
+                {prestigesLoaded && (
+                  <Box>
+                    {prestigesDataFiltered.map(prestigeKitty => (
+                      <Box key={prestigeKitty.name}>
+                        <Button
+                          onClick={() => this.handleKittyLink(prestigeKitty)}
+                        >
+                          <Box
+                            className="fancyItem"
+                            margin={{ vertical: "xsmall" }}
+                            align="stretch"
+                            justify="stretch"
+                            round="small"
+                            background="white"
+                            elevation="xsmall"
+                            direction="row"
+                            gap="xsmall"
+                            overflow="hidden"
+                          >
+                            <Box
+                              className="fancyImage"
+                              basis="40%"
+                              align="center"
+                              justify="center"
+                              pad="xxsmall"
                               background={this.getColor(
                                 prestigeKitty.color,
-                                "shadow"
+                                "background"
                               )}
-                            ></Box>
-                          </Box>
-                          <Box basis="80%" pad="small">
-                            <Heading level={4} margin={{ vertical: "small" }}>
-                              {prestigeKitty.name}
-                            </Heading>
-                            <Box direction="row" gap="medium">
+                              border={{
+                                color: this.getColor(
+                                  prestigeKitty.color,
+                                  "color"
+                                ),
+                                size: "medium",
+                                style: "solid",
+                                side: "left"
+                              }}
+                            >
+                              <img src={prestigeKitty.image_url} alt="" />
+                              <Box
+                                className="shadow"
+                                background={this.getColor(
+                                  prestigeKitty.color,
+                                  "shadow"
+                                )}
+                              ></Box>
+                            </Box>
+                            <Box basis="60%" pad="small">
+                              <Heading level={4} margin="none">
+                                {prestigeKitty.name}
+                              </Heading>
                               <Box>
-                                <Heading level={6} margin="none">
-                                  Prestige
-                                </Heading>
-                                <Text>{prestigeKitty.prestige_type}</Text>
-                              </Box>
-                              <Box>
-                                <Heading level={6} margin="none">
-                                  Ranking
-                                </Heading>
-                                <Text>{prestigeKitty.prestige_ranking}</Text>
-                              </Box>
-                              <Box>
-                                <Heading level={6} margin="none">
-                                  Born
-                                </Heading>
-                                <Text>
+                                <Text size="small">
                                   {formatDistanceStrict(
                                     parseISO(prestigeKitty.created_at),
                                     dateNow
@@ -187,101 +260,109 @@ class PrestigesPageComponent extends Component {
                                   ago
                                 </Text>
                               </Box>
+                              <Box direction="row" gap="medium">
+                                <Box>
+                                  <Heading level={6} margin="none">
+                                    Prestige
+                                  </Heading>
+                                  <Text size="small">
+                                    {prestigeKitty.prestige_type}
+                                  </Text>
+                                </Box>
+                                <Box>
+                                  <Heading level={6} margin="none">
+                                    Ranking
+                                  </Heading>
+                                  <Text size="small">
+                                    {prestigeKitty.prestige_ranking}
+                                  </Text>
+                                </Box>
+                              </Box>
                             </Box>
                           </Box>
-                        </Box>
-                      </Button>
-                    </Box>
-                  ))}
-                </Box>
-              )}
+                        </Button>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+              </Box>
             </Box>
-            <Box className="contentSection" basis="1/3">
-              <Heading level={3} margin="none">
-                Recent Types
-              </Heading>
-              {prestigeTypes && (
-                <Box
-                  direction="column"
-                  justify="center"
-                  gap="xsmall"
-                  fill="horizontal"
-                  margin={{ vertical: "small" }}
-                >
-                  {prestigeTypes.map(typeItem => (
-                    <Box key={typeItem.type}>
-                      <Button
-                        onClick={() =>
-                          this.appLink("purrstige", typeItem.type, "top")
-                        }
-                        className="prestigeTypeButton"
-                      >
-                        <Box
-                          className="fancyItem"
-                          // margin={{ vertical: "xsmall" }}
-                          align="center"
-                          justify="stretch"
-                          round="small"
-                          // background="white"
-                          // elevation="xsmall"
-                          direction="row"
-                          gap="xsmall"
-                          overflow="hidden"
+            {/* <Box direction="column" className="contentSection">
+            <Box className="contentColumn" basis="2/3">
+                <Heading level={3} margin="none">
+                  Recent Types
+                </Heading>
+                {prestigeTypes && (
+                  <Box
+                    direction="column"
+                    justify="center"
+                    gap="xsmall"
+                    fill="horizontal"
+                    margin={{ vertical: "small" }}
+                  >
+                    {prestigeTypes.map(typeItem => (
+                      <Box key={typeItem.type}>
+                        <Button
+                          onClick={() =>
+                            this.appLink("purrstige", typeItem.type, "top")
+                          }
+                          className="prestigeTypeButton"
                         >
                           <Box
-                            className="fancyImage"
-                            basis="30%"
+                            className="fancyItem"
+                            // margin={{ vertical: "xsmall" }}
                             align="center"
-                            justify="center"
-                            pad="xxsmall"
-                            // background={this.getColor(
-                            //   typeItem.lastKitty.color,
-                            //   "background"
-                            // )}
+                            justify="stretch"
+                            round="small"
+                            // background="white"
+                            // elevation="xsmall"
+                            direction="row"
+                            gap="xsmall"
+                            overflow="hidden"
                           >
-                            <img src={typeItem.lastKitty.image_url} alt="" />
                             <Box
-                              className="shadow"
-                              background={this.getColor(
-                                typeItem.lastKitty.color,
-                                "shadow"
-                              )}
-                            ></Box>
+                              className="fancyImage"
+                              basis="30%"
+                              align="center"
+                              justify="center"
+                              pad="xxsmall"
+                              // background={this.getColor(
+                              //   typeItem.lastKitty.color,
+                              //   "background"
+                              // )}
+                            >
+                              <img src={typeItem.lastKitty.image_url} alt="" />
+                              <Box
+                                className="shadow"
+                                background={this.getColor(
+                                  typeItem.lastKitty.color,
+                                  "shadow"
+                                )}
+                              ></Box>
+                            </Box>
+                            <Box basis="50%" pad="small">
+                              <Heading level={4} margin={{ vertical: "small" }}>
+                                {typeItem.type}
+                              </Heading>
+                              
+                            </Box>
+                            <Box
+                              basis="20%"
+                              align="center"
+                              justify="center"
+                              className="actionIconWrap"
+                            >
+                              <CaretNext />
+                            </Box>
                           </Box>
-                          <Box basis="50%" pad="small">
-                            <Heading level={4} margin={{ vertical: "small" }}>
-                              {typeItem.type}
-                            </Heading>
-                            {/* <Box direction="row" gap="medium">
-                              <Box>
-                                <Heading level={6} margin="none">
-                                  Born
-                                </Heading>
-                                <Text>
-                                  {formatDistanceStrict(
-                                    parseISO(typeItem.lastKitty.created_at),
-                                    dateNow
-                                  )}{" "}
-                                  ago
-                                </Text>
-                              </Box>
-                            </Box> */}
-                          </Box>
-                          <Box
-                            basis="20%"
-                            align="center"
-                            justify="center"
-                            className="actionIconWrap"
-                          >
-                            <CaretNext />
-                          </Box>
-                        </Box>
-                      </Button>
-                    </Box>
-                  ))}
-                </Box>
-              )}
+                        </Button>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+              </Box>
             </Box>
+                                */}
           </Box>
         </Box>
       </Box>
@@ -300,10 +381,24 @@ class PrestigesPageComponent extends Component {
       isLoadingStore: false,
       isLoadingAttributes: false
     });
+    this.loadStorePrestiges();
     this.loadPrestiges();
     this.loadActivePrestiges();
     // this.loadFancies();
   };
+  loadStorePrestiges = async () => {
+    const {
+      rootStore: { PrestigesStore }
+    } = this.props;
+    await PrestigesStore.ready().then(() => {
+      console.log("PrestigesStore ready", PrestigesStore);
+      this.setState({
+        storePrestiges: PrestigesStore.docs,
+        storePrestigesLoaded: true
+      });
+    });
+  };
+
   loadPrestiges = async () => {
     const { limit } = this.state;
     const options = {
@@ -430,7 +525,7 @@ class PrestigesPageComponent extends Component {
       if (type.isActive) {
         return type.type;
       } else {
-        return //eslint-disable-line
+        return; //eslint-disable-line
       }
     });
     // console.log("filterArray", filterArray);
@@ -463,6 +558,13 @@ class PrestigesPageComponent extends Component {
     // console.log("hasMenu", UiStore.hasMenu);
     UiStore.hasMenu = !UiStore.hasMenu;
     // console.log("handle menu", UiStore);
+  };
+  handleKittyLink = kitty => {
+    const {
+      rootStore: { routerStore, KittyStore }
+    } = this.props;
+    KittyStore.kittyData = kitty;
+    this.appLink("kitty", kitty.id, "overview");
   };
   appLink = (routeName, id, tab) => {
     console.log("applink routename id tab", routeName, id, tab);
