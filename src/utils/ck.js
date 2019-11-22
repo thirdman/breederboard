@@ -415,10 +415,11 @@ function calcAttributes(props) {
   let compiledArray = [];
   let tempAttributeArray = [];
   let compiledArray2 = [];
-
+  console.log("notFancyArray", notFancyArray);
   notFancyArray.map(cat => {
-    // const attributes = cat.enhanced_cattributes;
-    tempAttributeArray[cat.id] = cat.enhanced_cattributes;
+    const thisAttributes = cat.enhanced_cattributes || cat.cattributes;
+    // tempAttributeArray[cat.id] = cat.enhanced_cattributes;
+    tempAttributeArray[cat.id] = thisAttributes;
     // 1. gettypes...
     // attributes.map(attrObj => {
     //   console.log(attrObj.type);

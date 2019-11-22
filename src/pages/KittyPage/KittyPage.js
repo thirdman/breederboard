@@ -3,12 +3,16 @@ import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { parseISO, format } from "date-fns";
 import { Box, Heading, Text, Button } from "grommet";
-import { CaretPrevious } from "grommet-icons";
+import { CaretPrevious, FormView, Share } from "grommet-icons";
 import Loading from "../../components/Loading/Loading";
 import Banner from "../../components/Banner/Banner";
+import Bezier from "../../components/Bezier/Bezier";
+import Line from "../../components/Line/Line";
+import ScoreList from "../../components/ScoreList/ScoreList";
 import "./KittyPage.scss";
 // import apiConfig from "../../apiConfig";
 import ckUtils from "../../utils/ck";
+import scoreUtils from "../../utils/scoring";
 import { empty } from "rxjs";
 
 class KittyPageComponent extends Component {
@@ -33,7 +37,9 @@ class KittyPageComponent extends Component {
 
       kittyMeta,
       kittyData,
-      isLoadingData
+      isLoadingData,
+      scoreData,
+      vintageInfo
       // colorWinnersData,
       // highGenData,
       // dateData,
@@ -43,43 +49,6 @@ class KittyPageComponent extends Component {
       // console.log("params.attributes", params.attributes);
     }
     // const dateNow = new Date();
-
-    // const KittyItem = props => {
-    //   const { kitty, displayMode } = props;
-    //   return (
-    //     <Box
-    //       className={`KittyItem ${displayMode}`}
-    //       direction="row"
-    //       pad="xxsmall"
-    //       round="small"
-    //       gap={displayMode === "ranking" ? "none" : "small"}
-    //       justify={displayMode === "ranking" ? "center" : "stretch"}
-    //       fill="horizontal"
-    //       background="#fff"
-    //       elevation="xsmall"
-    //       align="center"
-    //     >
-    //       <Box
-    //         className="kittyItemImage"
-    //         basis={displayMode === "ranking" ? "20px" : "10%"}
-    //       >
-    //         <img src={kitty.image_url} alt="" />
-    //       </Box>
-    //       {displayMode !== "ranking" && (
-    //         <Box className="kittyBreeder" basis="80%">
-    //           <Text size="small">{kitty.hatcher.nickname}</Text>
-    //         </Box>
-    //       )}
-    //       <Box
-    //         className="kittyFancyRank"
-    //         justify="end"
-    //         basis={displayMode === "ranking" ? "20px" : "10%"}
-    //       >
-    //         <Text size="medium">#{kitty.prestige_ranking}</Text>
-    //       </Box>
-    //     </Box>
-    //   );
-    // };
 
     return (
       <Box
@@ -118,6 +87,26 @@ class KittyPageComponent extends Component {
                 <CaretPrevious /> Back
               </Box>
             </Button>
+            <Button
+              onClick={e => {
+                this.openLink(e, kittyData.id);
+              }}
+              className="viewLink"
+            >
+              <Box
+                align="center"
+                justify="center"
+                gap="xsmall"
+                direction="row"
+                border="all"
+                round="small"
+                pad="small"
+                margin="small"
+              >
+                <Share />
+                <Text size="medium">Open on CK</Text>
+              </Box>
+            </Button>
           </Box>
           <Box
             className="mainHeader"
@@ -147,14 +136,7 @@ class KittyPageComponent extends Component {
                   className="metaSide"
                   border="all"
                   align="end"
-                >
-                  <Box>
-                    <Heading level="6" margin="none">
-                      Gen
-                    </Heading>
-                    <Text>{kittyData.generation}</Text>
-                  </Box>
-                </Box>
+                ></Box>
                 <Box
                   basis="60%"
                   justify="center"
@@ -175,16 +157,237 @@ class KittyPageComponent extends Component {
                   gap="small"
                   className="metaSide"
                   border="all"
-                >
-                  <Box>
-                    <Heading level="6" margin="none">
-                      Born
-                    </Heading>
-                    <Text>
-                      {format(parseISO(kittyData.created_at), "d MMM, yyyy")}
-                    </Text>
-                  </Box>
-                </Box>
+                ></Box>
+                {!kittyData.is_fancy &&
+                  (kittyData.cattributes || kittyData.enhanced_cattributes) && (
+                    <Box className="traitHighlights">
+                      <Box className="traitItem eyeColor">
+                        <Heading level={6} margin="none">
+                          Eye Color
+                        </Heading>
+                        <Text>
+                          {kittyData &&
+                            scoreUtils.getCattribute(kittyData, "coloreyes")}
+                        </Text>
+                        <div className="lineWrap">
+                          <Line
+                            viewBoxWidth={90}
+                            viewBoxHeight={140}
+                            startPoint={{ x: 0, y: 0 }}
+                            endPoint={{ x: 80, y: 130 }}
+                            stroke="violet"
+                            dotSize={10}
+                          />
+                        </div>
+                      </Box>
+                      <Box className="traitItem primaryColor">
+                        <Heading level={6} margin="none">
+                          Primary Color
+                        </Heading>
+                        <Text>
+                          {kittyData &&
+                            scoreUtils.getCattribute(kittyData, "colorprimary")}
+                        </Text>
+                        <div className="lineWrap">
+                          <Line
+                            viewBoxWidth={110}
+                            viewBoxHeight={110}
+                            startPoint={{ x: 0, y: 0 }}
+                            endPoint={{ x: 100, y: 100 }}
+                            stroke="violet"
+                            dotSize={10}
+                          />
+                        </div>
+                      </Box>
+                      <Box className="traitItem secondaryColor">
+                        <Heading level={6} margin="none">
+                          Secondary Color
+                        </Heading>
+                        <Text>
+                          {kittyData &&
+                            scoreUtils.getCattribute(
+                              kittyData,
+                              "colorsecondary"
+                            )}
+                        </Text>
+                        <div className="lineWrap">
+                          <Line
+                            viewBoxWidth={110}
+                            viewBoxHeight={110}
+                            startPoint={{ x: 0, y: 0 }}
+                            endPoint={{ x: 100, y: 70 }}
+                            stroke="violet"
+                            dotSize={10}
+                          />
+                        </div>
+                      </Box>
+                      <Box className="traitItem tertiaryColor">
+                        <Heading level={6} margin="none">
+                          Tertiary Color
+                        </Heading>
+                        <Text>
+                          {kittyData &&
+                            scoreUtils.getCattribute(
+                              kittyData,
+                              "colortertiary"
+                            )}
+                        </Text>
+                        {/* <Box className="curve">
+                      <Bezier
+                        // viewBoxWidth={viewBoxWidth}
+                        // viewBoxHeight={viewBoxHeight}
+                        // startPoint={[0, startPointY]}
+                        // firstControlPoint={[100, firstControlPointY]}
+                        // secondControlPoint={[200, secondControlPointY]}
+                        // endPoint={[300, endPointY]}
+                        viewBoxWidth={300}
+                        viewBoxHeight={300}
+                        startPoint={[0, 0]}
+                        firstControlPoint={[10, 10]}
+                        secondControlPoint={[250, 250]}
+                        endPoint={[300, 150]}
+                      />
+                    </Box> */}
+                        <div className="lineWrap">
+                          <Line
+                            viewBoxWidth={110}
+                            viewBoxHeight={110}
+                            startPoint={{ x: 0, y: 0 }}
+                            endPoint={{ x: 80, y: 50 }}
+                            stroke="violet"
+                            dotSize={10}
+                          />
+                        </div>
+                      </Box>
+                      {kittyData &&
+                      scoreUtils.getCattribute(kittyData, "environment") &&
+                      scoreUtils.getCattribute(kittyData, "environment") !==
+                        "0" ? (
+                        <Box className="traitItem environment">
+                          <Heading level={6} margin="none">
+                            Environment
+                          </Heading>
+                          <Text>
+                            {kittyData &&
+                              scoreUtils.getCattribute(
+                                kittyData,
+                                "environment"
+                              )}
+                          </Text>
+                          <div className="lineWrap">
+                            <Line
+                              viewBoxWidth={80}
+                              viewBoxHeight={50}
+                              startPoint={{ x: 0, y: 0 }}
+                              endPoint={{ x: 60, y: 20 }}
+                              stroke="violet"
+                              dotSize={10}
+                            />
+                          </div>
+                        </Box>
+                      ) : null}
+                      {/* RIGHT SIDE */}
+                      {kittyData &&
+                      scoreUtils.getCattribute(kittyData, "wild") &&
+                      scoreUtils.getCattribute(kittyData, "wild") !== "0" ? (
+                        <Box className="traitItem wild right">
+                          <Heading level={6} margin="none">
+                            Wild
+                          </Heading>
+                          <Text>
+                            {kittyData &&
+                              scoreUtils.getCattribute(kittyData, "wild")}
+                          </Text>
+                          <div className="lineWrap">
+                            <Line
+                              viewBoxWidth={200}
+                              viewBoxHeight={200}
+                              startPoint={{ x: 200, y: 0 }}
+                              endPoint={{ x: 50, y: 100 }}
+                              dotSize={10}
+                              stroke="violet"
+                            />
+                          </div>
+                        </Box>
+                      ) : null}
+                      <Box className="traitItem eyes right">
+                        <Heading level={6} margin="none">
+                          Eyes
+                        </Heading>
+                        <Text>
+                          {kittyData &&
+                            scoreUtils.getCattribute(kittyData, "eyes")}
+                        </Text>
+                        <div className="lineWrap">
+                          <Line
+                            viewBoxWidth={280}
+                            viewBoxHeight={120}
+                            startPoint={{ x: 280, y: 0 }}
+                            endPoint={{ x: 40, y: 100 }}
+                            dotSize={10}
+                            stroke="violet"
+                          />
+                        </div>
+                      </Box>
+                      <Box className="traitItem mouth right">
+                        <Heading level={6} margin="none">
+                          Mouth
+                        </Heading>
+                        <Text>
+                          {kittyData &&
+                            scoreUtils.getCattribute(kittyData, "mouth")}
+                        </Text>
+                        <div className="lineWrap">
+                          <Line
+                            viewBoxWidth={300}
+                            viewBoxHeight={130}
+                            startPoint={{ x: 300, y: 0 }}
+                            endPoint={{ x: 30, y: 60 }}
+                            dotSize={10}
+                            stroke="violet"
+                          />
+                        </div>
+                      </Box>
+                      <Box className="traitItem body right">
+                        <Heading level={6} margin="none">
+                          Body
+                        </Heading>
+                        <Text>
+                          {kittyData &&
+                            scoreUtils.getCattribute(kittyData, "body")}
+                        </Text>
+                        <div className="lineWrap">
+                          <Line
+                            viewBoxWidth={90}
+                            viewBoxHeight={90}
+                            startPoint={{ x: 90, y: 0 }}
+                            endPoint={{ x: 10, y: 40 }}
+                            stroke="violet"
+                            dotSize={10}
+                          />
+                        </div>
+                      </Box>
+                      <Box className="traitItem pattern right">
+                        <Heading level={6} margin="none">
+                          Pattern
+                        </Heading>
+                        <Text>
+                          {kittyData &&
+                            scoreUtils.getCattribute(kittyData, "pattern")}
+                        </Text>
+                        <div className="lineWrap">
+                          <Line
+                            viewBoxWidth={180}
+                            viewBoxHeight={180}
+                            startPoint={{ x: 180, y: 0 }}
+                            endPoint={{ x: 30, y: 30 }}
+                            stroke="violet"
+                            dotSize={10}
+                          />
+                        </div>
+                      </Box>
+                    </Box>
+                  )}
               </Box>
             )}
           </Box>
@@ -198,8 +401,123 @@ class KittyPageComponent extends Component {
             direction="row"
             justify="evenly"
             gap="large"
-          ></Box>
+          >
+            {kittyData && (
+              <Box>
+                <Heading level="6" margin="none">
+                  Breeder
+                </Heading>
+                <Text>
+                  {(kittyData.hatcher && kittyData.hatcher.nickname) ||
+                    kittyData.nickname}
+                </Text>
+              </Box>
+            )}
+            {kittyData && (
+              <Box>
+                <Heading level="6" margin="none">
+                  Born
+                </Heading>
+                <Text>
+                  {format(
+                    parseISO(kittyData && kittyData.created_at),
+                    "d MMM, yyyy"
+                  )}
+                </Text>
+              </Box>
+            )}
+            {kittyData && (
+              <Box>
+                <Heading level="6" margin="none">
+                  Gen
+                </Heading>
+                <Text>{kittyData.generation}</Text>
+              </Box>
+            )}
+          </Box>
+          <Box className="scoreWrap">
+            {scoreData && (
+              <ScoreList
+                scoreData={scoreData}
+                limit={1}
+                displayMode="presentation"
+                includeTypes={["every"]}
+              />
+            )}
+          </Box>
+          {scoreData && (
+            <Box fill="horizontal">
+              <Heading level={6} margin="none">
+                Fancy
+              </Heading>
+              <Box
+                background="#ddd"
+                round="xsmall"
+                fill="horizontal"
+                style={{ height: "20px" }}
+                direction="row"
+                justify="start"
+              >
+                <Box
+                  round="xsmall"
+                  style={{ height: "20px" }}
+                  width={`${(scoreData && scoreData.fancyPoints) || 0}%`}
+                  background="violet"
+                ></Box>
+              </Box>
+            </Box>
+          )}
+          {scoreData && (
+            <Box fill="horizontal">
+              <Heading level={6} margin="none">
+                Prestige
+              </Heading>
+              <Box
+                background="#ddd"
+                round="xsmall"
+                fill="horizontal"
+                style={{ height: "20px" }}
+                direction="row"
+                justify="start"
+              >
+                <Box
+                  round="xsmall"
+                  style={{ height: "20px" }}
+                  width={`${(scoreData && scoreData.prestigePoints > 0
+                    ? 100
+                    : 0) || 0}%`}
+                  background="violet"
+                ></Box>
+              </Box>
+            </Box>
+          )}
+          {vintageInfo && (
+            <Box fill="horizontal">
+              <Heading level={6} margin="none">
+                Vintage
+              </Heading>
+              <Box
+                background="#ddd"
+                round="xsmall"
+                fill="horizontal"
+                style={{ height: "20px" }}
+                direction="row"
+                justify="start"
+              >
+                <Box
+                  round="xsmall"
+                  style={{ height: "20px" }}
+                  width={`${(vintageInfo && vintageInfo.vintagePercent) || 0}%`}
+                  background="violet"
+                ></Box>
+              </Box>
+            </Box>
+          )}
         </Box>
+        <Button onClick={() => this.handleGetScore()}>get score</Button>
+        <Button onClick={() => this.handleGetScoreTypes()}>
+          get handleGetScoreTypes
+        </Button>
       </Box>
     );
   }
@@ -223,7 +541,9 @@ class KittyPageComponent extends Component {
     });
     const { kittyData } = KittyStore;
     console.log("kittyData", kittyData);
-
+    if (kittyData.breederNickname) {
+      console.log("MINIMAL VERSION");
+    }
     if (kittyData && kittyData.id) {
       console.log("not empty");
       if (kittyData.id !== id) {
@@ -313,41 +633,36 @@ class KittyPageComponent extends Component {
     return metaObj;
   };
 
-  // handleCalc(props) {
-  //   const { data } = props;
-  //   console.log("handle calc data", data);
-  //   if (data && !data.kitties) {
-  //     return;
-  //   }
-  //   let breederArray = [];
-  //   data.kitties.map(row => {
-  //     if (
-  //       breederArray.filter(i => i.nickname === row.hatcher.nickname).length > 0
-  //     ) {
-  //       return null;
-  //     }
-  //     const thisUserKitties = data.kitties.filter(
-  //       rowItem => rowItem.hatcher.nickname === row.hatcher.nickname
-  //     );
-  //     thisUserKitties.reduce((sum, x) => sum + x);
-  //     const breederObj = {
-  //       nickname: row.hatcher.nickname,
-  //       address: row.hatcher.address,
-  //       kitties: thisUserKitties
-  //     };
-  //     return breederArray.push(breederObj);
-  //   });
-  //   breederArray.sort(ckUtils.compareKittyCount);
-  //   const returnObj = {
-  //     breederArray: breederArray
-  //   };
-  //   this.setState({ breederData: breederArray });
-  //   return returnObj;
-  // }
+  handleGetScore = () => {
+    const { kittyData } = this.state;
+    const data = {
+      kitties: [kittyData]
+    };
+    console.log("data", data);
+    console.log("data.kitties", data.kitties);
+    const scoreData = scoreUtils.getScore({
+      data: data,
+      includeTypes: ["every"]
+    });
+    // const vintageData = scoreUtils.getVintagePoints({ data: data });
+    const vintageInfo = scoreUtils.isVintage(kittyData);
+    console.log("scoreData", scoreData);
+    console.log("vintageInfo", vintageInfo);
+    this.setState({ scoreData: scoreData, vintageInfo: vintageInfo });
+  };
 
+  handleGetScoreTypes = () => {
+    // const { kittyData } = this.state;
+    const scoreTypes = scoreUtils.getScoreTypes();
+    console.log("scoreTypes", scoreTypes);
+  };
   ////////////////
   // MISC
   ////////////////
+  getCattribute(kitty, cattribute) {
+    const cattr = scoreUtils.getCattribute(kitty, cattribute);
+    console.log(cattr);
+  }
   getColor = name => {
     const {
       rootStore: { UiStore }
@@ -370,6 +685,11 @@ class KittyPageComponent extends Component {
       rootStore: { routerStore }
     } = this.props;
     routerStore.goTo(routeName, { id: id || "none", stage: stage || "none" });
+  };
+  openLink = (e, id) => {
+    e.stopPropagation();
+    const link = `https://www.cryptokitties.co/kitty/${id}`;
+    window.open(link, "_blank");
   };
 }
 export const KittyPage = inject("rootStore")(observer(KittyPageComponent));

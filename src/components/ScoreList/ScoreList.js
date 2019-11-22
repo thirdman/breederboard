@@ -13,7 +13,12 @@ class ScoreList extends Component {
     this.handleLoad();
   }
   render() {
-    const { displayMode = "default", scoreData, limit = 100 } = this.props;
+    const {
+      displayMode = "default",
+      scoreData,
+      limit = 100,
+      includeTypes = ["every", "portfolio"]
+    } = this.props;
     const { height = 160, isLoading } = this.state;
     const {
       points,
@@ -39,12 +44,14 @@ class ScoreList extends Component {
         min-height={`${height}px`}
         margin={{ vertical: "small" }}
       >
-        <Box>
-          <Text size="small">
-            NOTE: Scoring system not yet fully implemented. Join #breederboard
-            on discord to suggest points/attributes to be scored
-          </Text>
-        </Box>
+        {displayMode !== "presentation" && (
+          <Box>
+            <Text size="small">
+              NOTE: Scoring system not yet fully implemented. Join #breederboard
+              on discord to suggest points/attributes to be scored
+            </Text>
+          </Box>
+        )}
         <Box direction="row" justify="stretch" fill="horizontal">
           <Box basis="66%" justify="end">
             <Text size="medium">Score</Text>
@@ -117,17 +124,19 @@ class ScoreList extends Component {
               );
             })}
 
-          <Box direction="row" gap="xsmall" margin={{ top: "small" }}>
-            <Box basis="33%">
-              <Heading level={4} margin="none">
-                Color Points
-              </Heading>
+          {includeTypes.includes("portfolio") && (
+            <Box direction="row" gap="xsmall" margin={{ top: "small" }}>
+              <Box basis="33%">
+                <Heading level={4} margin="none">
+                  Color Points
+                </Heading>
+              </Box>
+              <Box basis="33%">{colorPoints / 10} of 31 Colors</Box>
+              <Box basis="33%">
+                <Text>{colorPoints}</Text>
+              </Box>
             </Box>
-            <Box basis="33%">{colorPoints / 10} of 31 Colors</Box>
-            <Box basis="33%">
-              <Text>{colorPoints}</Text>
-            </Box>
-          </Box>
+          )}
           <Box direction="row" gap="xsmall" margin={{ top: "small" }}>
             <Box basis="33%">
               <Heading level={4} margin="none">

@@ -1,0 +1,46 @@
+.KittyFeed {
+  .feedDate {
+    color: #888;
+  }
+  .feedItem {
+    // background: #eee;
+    height: 3rem;
+    transition: transform 0.3s ease-in-out;
+    .kittyImageWrap {
+      height: 2rem;
+      img {
+        height: 100%;
+        width: auto;
+        transform: scale3d(1.5, 1.5, 1.5) translateX(-5%);
+      }
+    }
+    .kittyText {
+    }
+    .specialImage {
+      img {
+        width: auto;
+        height: 100%;
+      }
+    }
+    .specialText {
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-top: -0.5rem;
+      color: #5a4089;
+    }
+    // ALTERNATES
+    &:hover {
+      background: #fff;
+      box-shadow: 0 1px 5px -1px rgba(0, 0, 0, 0.2);
+      transform: translateY(-3px);
+    }
+
+    // MODIFIERS
+    &.fancy {
+      background: hsla(278, 100%, 81%, 0.14);
+    }
+    &.prestige {
+      background: hsla(200, 100%, 81%, 0.14);
+    }
+  }
+}

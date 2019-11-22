@@ -164,8 +164,6 @@ class BoardPageComponent extends Component {
         this.setState({
           isLoadingAttributes: false
         });
-        // UiStore.allAttributes = data;
-        // console.log("UiStore");
         return true;
       });
   };

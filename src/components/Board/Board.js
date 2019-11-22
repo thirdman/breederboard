@@ -11,6 +11,7 @@ import apiConfig from "./../../apiConfig";
 import Loading from "../Loading/Loading";
 import Pill from "../Pill/Pill";
 import ButtonGroup from "../ButtonGroup/ButtonGroup";
+import ShowHide from "../ShowHide/ShowHide";
 import ckUtils from "../../utils/ck";
 import scoreUtils from "../../utils/scoring";
 
@@ -21,8 +22,11 @@ import {
   FormEdit,
   Share,
   Checkmark,
+  Halt,
   Close,
   Trash,
+  View,
+  Clear,
   FormView
 } from "grommet-icons";
 import {
@@ -37,7 +41,8 @@ import {
   CheckBox,
   Layer,
   Text,
-  Select
+  Select,
+  Stack
 } from "grommet";
 // import { BoardsStore } from "../../stores/boards";
 const MONTHS = ["[2-9]", "0[1-9]", "1[0-2]"];
@@ -61,7 +66,8 @@ class BoardComponent extends Component {
     showShareModal: false,
     pageCount: 250,
     idFrom: "",
-    anyFancy: false
+    anyFancy: false,
+    updatingData: false
   };
   componentDidMount() {
     if (this.props.queryParams) {
@@ -85,7 +91,7 @@ class BoardComponent extends Component {
         searchMode = this.state.searchMode,
         idFrom,
         idTo,
-        pageCount,
+        pageCount = this.state.pageCount,
         title,
         titleEdited
       } = BoardStore.data;
@@ -166,7 +172,9 @@ class BoardComponent extends Component {
       userBoards,
       idFrom,
       error,
-      anyFancy
+      anyFancy,
+      updateResult,
+      updatingData
       // canEdit
     } = this.state;
 
@@ -680,6 +688,67 @@ class BoardComponent extends Component {
             ) : null}
           </Box>
         )}
+        <ShowHide>
+          <Box direction="row" pad={{ bottom: "small" }} gap="small">
+            <Box direction="column">
+              <Heading margin="none" level={6}>
+                Public:
+              </Heading>
+              <ButtonGroup>
+                <Button
+                  
+                  onClick={() => this.handleSetPrivate(true)}
+                >
+                  <Box
+                    pad="xsmall"
+                    round="medium"
+                    
+                    background={
+                      isPublic  ? "brand" : "transparent"
+                    }
+                    border={
+                      isPublic ? { style: "hidden" } : "all"
+                    }
+                  >
+                    <Text size="small">Yep</Text>
+                  </Box>
+                </Button>
+                <Button
+                  
+                  onClick={() => this.handleSetPrivate(false)}
+                >
+                  <Box
+                    pad="xsmall"
+                    round="medium"
+                    background={
+                      !isPublic  ? "brand" : "transparent"
+                    }
+                    border={
+                      !isPublic ? { style: "hidden" } : "all"
+                    }
+                    
+                  >
+                    <Text size="small">Nope</Text>
+                  </Box>
+                </Button>
+              </ButtonGroup>
+            </Box>
+            <Box direction="column">
+              <Heading margin="none" level={6}>
+                Update Data
+              </Heading>
+              <Button onClick={() => this.getData()}>
+                <Box
+                  pad={{ vertical: "xsmall", horizontal: "small" }}
+                  round="small"
+                  border="all"
+                >
+                  Get Data
+                </Box>
+              </Button>
+            </Box>
+          </Box>
+        </ShowHide>
         {BoardStore.isLoading ? (
           <Box
             pad="xsmall"
@@ -760,6 +829,7 @@ class BoardComponent extends Component {
                 )}
               </Box>
             </Box>
+
             <Box
               border="left"
               basis="30%"
@@ -1472,6 +1542,58 @@ class BoardComponent extends Component {
             </Box>
           </Layer>
         )}
+        {!isPublic && (
+          <Box
+            className="shhBox"
+            pad="small"
+            background="#444"
+            round="small"
+            animation="slideUp"
+            direction="row"
+            gap="xsmall"
+          >
+            <Stack>
+              {/* <View /> */}
+              {/* <Clear color="red" size="large" /> */}
+              <Halt />
+            </Stack>{" "}
+            Private!
+          </Box>
+        )}
+        {updatingData && (
+          <Box
+          className="updateMessage"
+            pad="small"
+            
+            round="small"
+            animation="slideUp"
+            direction="column"
+            gap="xsmall"
+            >
+              <Text size="small">Updating</Text>
+              </Box>
+        )}
+        {updateResult && (
+          <Box
+            className="updateResult"
+            pad="small"
+            background="#444"
+            round="small"
+            animation="slideUp"
+            direction="column"
+            gap="xsmall"
+          >
+            <Heading level={6} margin="none">
+              Data Updated.
+            </Heading>
+            <Text size="small">
+              {updateResult.newKitties} New Kitties Found
+            </Text>
+            <Text size="small">
+              {formatDistanceStrict(updateResult.dateUpdated, new Date())} ago
+            </Text>
+          </Box>
+        )}
         {devMode && (
           <BoardLoader
             isLoadingBoard={BoardStore.isLoading}
@@ -1674,6 +1796,82 @@ class BoardComponent extends Component {
   //////////////////////////////
   ////// DATA
   //////////////////////////////
+  getData = () => {
+    console.log("getData!");
+    const {
+      rootStore: { BoardStore }
+    } = this.props;
+    // const {
+    //   kitties
+    // } = BoardStore;
+    const { kitties } = this.state;
+    this.setState({updatingData: true})
+
+    console.log("BoardStore: ", BoardStore);
+    const latestKitty = kitties[0]; // kitties[kitties.length - 1];
+
+    const lastId = this.state.lastId || latestKitty.id;
+    console.log("lastId", lastId);
+    const options = {
+      pageCount: 500,
+      limit: 500,
+      searchMode: "id",
+      idFrom: lastId + 1,
+      direction: "asc"
+    };
+    const getNewKitties = ckUtils.getKitties(options);
+    getNewKitties
+      .then(data => {
+        console.log("data", data);
+        let updateResult = {};
+        if (data.kitties.length < 1) {
+          updateResult = {
+            newKitties: data.kitties.length,
+            dateUpdated: new Date()
+          };
+          this.setState({ updateResult: updateResult, updatingData: false });
+          return data;
+        }
+        const newLastId = data.kitties[0].id;
+        console.log("newLastId", newLastId);
+        const tempKitties = this.state.kitties.slice();
+
+        // const updatedKittiesArray = [...tempKitties, ...data.kitties];
+        data.kitties.map(kitty => {
+          tempKitties.push(kitty);
+        });
+        console.log("tempKitties", tempKitties);
+        updateResult = {
+          newKitties: data.kitties.length,
+          dateUpdated: new Date()
+        };
+
+        this.setState({
+          lastId: lastId,
+          latestKitty: data.kitties[0],
+          sourceCount: tempKitties.length,
+          kitties: tempKitties,
+          updateResult: updateResult,
+          updatingData: false
+        });
+        return tempKitties;
+      })
+      .then(tempKitties => {
+        if (tempKitties.length) {
+          this.handleCalc({ kitties: tempKitties });
+        }
+        
+        return;
+      })
+      .then(() => {
+        setTimeout(() => {
+          this.setState({ updateResult: undefined });
+        }, 5000);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
 
   getKitties = () => {
     const {
@@ -1748,6 +1946,7 @@ class BoardComponent extends Component {
   };
 
   handleCalc = data => {
+    console.log("handle calc data", data);
     const {
       rootStore: { BoardStore }
     } = this.props;
@@ -1898,6 +2097,7 @@ class BoardComponent extends Component {
       pageCount: pageCount,
       searchMode: searchMode,
       isNew: "no",
+      isPublic: this.state.isPublic || true,
       idFrom: this.state.idFrom || null,
       idTo: this.state.idTo || null,
       leaderScore: leaderScore,

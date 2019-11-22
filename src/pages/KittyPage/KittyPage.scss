@@ -53,6 +53,218 @@
         // margin-top: 20%;
         border: none;
       }
+      .traitHighlights {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+        .traitItem {
+          width: 200px;
+          position: relative;
+          border: none;
+          padding: 6px 0;
+          &.right {
+            text-align: right;
+          }
+          &:before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            width: 16px;
+            left: 0;
+            height: 1px;
+            // background: #ddd;
+            width: 100%;
+            background: violet;
+          }
+          &:hover {
+            .lineWrap {
+              path,
+              ellipse,
+              line {
+                stroke: #000;
+              }
+            }
+            &:before {
+              background: #000 !important;
+            }
+          }
+
+          .curve {
+            width: 300px;
+            height: 300px;
+            z-index: 99;
+            position: absolute;
+          }
+          .lineWrap {
+            width: 300px;
+            height: 300px;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            border: 1px solid #ccc;
+            z-index: 99;
+          }
+          &.eyeColor {
+            position: absolute;
+            left: 5%;
+            top: 10%;
+            &:before {
+              width: 100%;
+              background: violet;
+              height: 1px;
+            }
+            .lineWrap {
+              left: calc(100% + 0px);
+              top: calc(-1px);
+              width: 80px;
+              height: 140px;
+              border: none;
+            }
+          }
+          &.primaryColor {
+            // transform: translate(5%, 20%);
+            position: absolute;
+            left: 0%;
+            top: 25%;
+            &:before {
+              width: 100%;
+              background: violet;
+              height: 1px;
+            }
+            .lineWrap {
+              left: calc(100% - 0px);
+              top: calc(-1px);
+              width: 100px;
+              height: 100px;
+              border: none;
+            }
+          }
+          &.secondaryColor {
+            position: absolute;
+            left: 0%;
+            top: 40%;
+            &:before {
+              width: 100%;
+              background: violet;
+              height: 1px;
+            }
+            .lineWrap {
+              left: calc(100% - 0px);
+              top: calc(-1px);
+              width: 100px;
+              height: 100px;
+              border: none;
+            }
+          }
+          &.tertiaryColor {
+            position: absolute;
+            left: 2%;
+            top: 55%;
+            &:before {
+              width: 100%;
+              background: violet;
+              height: 1px;
+            }
+            .lineWrap {
+              left: calc(100% - 1px);
+              top: calc(-1px);
+              width: 100px;
+              height: 100px;
+              border: none;
+            }
+          }
+          &.environment {
+            position: absolute;
+            left: 5%;
+            top: 70%;
+            .lineWrap {
+              left: calc(100% - 1px);
+              top: calc(-1px);
+              width: 80px;
+              height: 80px;
+              border: none;
+            }
+          }
+          &.wild {
+            // transform: translate(60%, 5%);
+            position: absolute;
+            left: 75%;
+            top: 5%;
+            .lineWrap {
+              left: calc(-200px + 1px);
+              top: calc(-1px);
+              width: 200px;
+              height: 200px;
+              border: none;
+            }
+          }
+          &.eyes {
+            // transform: translate(60%, 5%);
+            position: absolute;
+            left: 80%;
+            top: 20%;
+            &:before {
+              width: 100%;
+              background: violet;
+            }
+            .lineWrap {
+              left: calc(-280px + 1px);
+              top: calc(-1px);
+              width: 280px;
+              height: 100px;
+              border: none;
+            }
+          }
+          &.mouth {
+            // transform: translate(60%, 5%);
+            position: absolute;
+            left: 80%;
+            top: 35%;
+            &:before {
+              width: 100%;
+              background: violet;
+            }
+            .lineWrap {
+              left: calc(-300px + 1px);
+              top: calc(-1px);
+              width: 300px;
+              height: 200px;
+              border: none;
+            }
+          }
+          &.body {
+            position: absolute;
+            left: 75%;
+            top: 50%;
+            &:before {
+              width: 100%;
+              background: violet;
+            }
+            .lineWrap {
+              left: calc(-80px + 1px);
+              top: calc(-1px);
+              width: 80px;
+              height: 80px;
+              border: none;
+            }
+          }
+          &.pattern {
+            position: absolute;
+            left: 72%;
+            top: 65%;
+            .lineWrap {
+              left: calc(-180px + 1px);
+              top: calc(-1px);
+              width: 180px;
+              height: 100px;
+              border: none;
+            }
+          }
+        }
+      }
     }
   }
   .colorItem {

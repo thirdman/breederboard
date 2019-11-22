@@ -4,6 +4,7 @@ import { RouterView } from "mobx-state-router";
 
 import { HomePage } from "./pages/HomePage/HomePage.js";
 import { BoardPage } from "./pages/BoardPage/BoardPage.js";
+import { LiveBoardPage } from "./pages/LiveBoardPage/LiveBoardPage.js";
 import { AboutPage } from "./pages/AboutPage/AboutPage";
 import { AdminPage } from "./pages/AdminPage/AdminPage";
 import { GlobalPage } from "./pages/GlobalPage/GlobalPage";
@@ -19,6 +20,7 @@ const viewMap = {
   home: <HomePage />,
   about: <AboutPage />,
   board: <BoardPage />,
+  liveBoard: <LiveBoardPage />,
   global: <GlobalPage />,
   admin: <AdminPage />,
   fancies: <FanciesPage />,

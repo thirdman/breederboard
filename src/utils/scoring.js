@@ -17,13 +17,19 @@ import {
  * */
 
 function getScore(props) {
-  const { data, limit = 50, saveToFirebase = false } = props;
+  const {
+    data,
+    limit = 50,
+    saveToFirebase = false,
+    includeTypes = ["every", "portfolio"]
+  } = props;
   console.log("getScore", props);
   const { targetAttributes = [], fancyValue = [] } = UiStore;
   if (!data.kitties) {
     return;
   }
   let userObj = {};
+
   const normalKitties = data.kitties.filter(
     rowItem => rowItem.is_fancy === false && rowItem.is_prestige === false
   );
@@ -31,6 +37,7 @@ function getScore(props) {
   const userPrestige = data.kitties.filter(
     rowItem => rowItem.is_prestige === true
   );
+
   const fancyPointsArray = userFancies.map(kitty => {
     const points = this.calcFancyPoints(kitty);
     const tempObj = {
@@ -62,8 +69,11 @@ function getScore(props) {
     //   return;
     // }
   });
-
-  const colorPoints = this.calcColorPoints(data.kitties);
+  let colorPoints;
+  if (includeTypes.includes("portfolio")) {
+    console.log("inlides portfolio");
+    colorPoints = this.calcColorPoints(data.kitties);
+  }
   // const generationPoints = this.calcGenerationPoints(data.kitties);
 
   const idPointsArray = fullIdPointsArray.filter(item => item.points > 0);
@@ -76,7 +86,12 @@ function getScore(props) {
 
   // const reducedKitties = data.kitties.reduce((sum, x) => sum + x);
   // const points = sumValues(breederArray, "breederPoints");
-  const points = normalPoints + prestigePoints + fancyPoints + idPoints;
+  const points =
+    normalPoints +
+    prestigePoints +
+    fancyPoints +
+    idPoints +
+    (colorPoints ? colorPoints : 0);
   userObj = {
     // address:
     // nickname
@@ -85,7 +100,7 @@ function getScore(props) {
     normalPoints: normalPoints,
     fancyPoints: fancyPoints,
     idPoints: idPoints,
-    colorPoints: colorPoints,
+    colorPoints: colorPoints || undefined,
     userFancies: userFancies,
     userPrestige: userPrestige,
     userNormal: normalKitties,
@@ -308,7 +323,7 @@ function isVintage(kitty) {
   // console.log("vintageConditions", vintageConditions);
   // console.log("isVintage: ", kitty);
   const targetEyes = vintageConditions.coloreyes;
-  
+
   const coloreyes = this.getCattribute(kitty, "coloreyes");
   const colorprimary = this.getCattribute(kitty, "colorprimary");
   const colorsecondary = this.getCattribute(kitty, "colorsecondary");
@@ -440,12 +455,13 @@ function compareGeneration(a, b) {
 }
 
 function getCattribute(kitty, cattribute) {
-  if (!kitty.enhanced_cattributes) {
+  // console.log("getting cattributes for ", kitty);
+  const cattributes = kitty.enhanced_cattributes || kitty.cattributes;
+  console.log("cattributes", cattributes);
+  if (!cattributes) {
     return 0;
   }
-  const result = kitty.enhanced_cattributes.filter(
-    i => i.type === cattribute
-  )[0];
+  const result = cattributes.filter(i => i.type === cattribute)[0];
   if (result) {
     return result.description;
   } else {

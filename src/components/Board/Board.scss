@@ -210,6 +210,18 @@
       );
     }
   }
+  .shhBox {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+  }
+  .updateResult,
+  .updateMessage {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 10;
+  }
 }
 .pointsDescription {
   color: #aaa;

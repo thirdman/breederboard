@@ -104,25 +104,34 @@ class SpeedChart extends Component {
                   ))}
               </Box>
               <Box className="chartGraphic">
-                <Chart
-                  className="svgChart"
-                  fill="horizontal"
-                  size="small"
-                  thickness="xsmall"
-                  type="area"
-                  width="100%"
-                  height={`${chartHeight}px`}
-                  // color="red"
-                  bounds={[[1, speedData.length], [0, 160]]}
-                  values={speedData.map((item, index) => {
-                    // console.log("item", item);
-                    return {
-                      value: [index + 1, item.data.perHour],
-                      label: item.data.perHour
-                    };
-                  })}
-                  aria-label="chart"
-                />
+                {speedData && speedData[0] && (
+                  <Chart
+                    className="svgChart"
+                    fill="horizontal"
+                    size="small"
+                    thickness="xsmall"
+                    type="area"
+                    width="100%"
+                    height={`${chartHeight}px`}
+                    // color="red"
+                    bounds={[
+                      [1, speedData.length],
+                      [0, 160]
+                    ]}
+
+                    values={
+                      speedData
+                        ? speedData.map((item, index) => {
+                            return {
+                              value: [index + 1, parseInt(item.data.perHour)],
+                              label: item.data.perHour
+                            };
+                          })
+                        : []
+                    }
+                    aria-label="chart"
+                  />
+                )}
               </Box>
             </Box>
             {speedData && (

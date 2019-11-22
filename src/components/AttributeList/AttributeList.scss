@@ -1,0 +1,39 @@
+.AttributeList {
+  //ATRIBTUES
+  .attributeRow {
+    position: relative;
+    .bar,
+    .highlighted {
+      transition: background 0.3s ease;
+    }
+    .highlighted {
+      // background-image: linear-gradient(-45deg, #dd4ddd, transparent);
+      transition: width 0.3s ease-in-out;
+    }
+
+    .barInfo {
+      display: none;
+      position: absolute;
+      // left: 0;
+      top: -2.5rem;
+      left: 20%;
+      // height: 2rem;
+      background: #fff;
+    }
+    &:hover {
+      color: #000;
+      .barInfo {
+        display: block;
+      }
+      .barName {
+        font-weight: 600;
+      }
+      .bar {
+        background: #e0e0e0;
+      }
+      .highlighted {
+        background: #dd4ddd;
+      }
+    }
+  }
+}

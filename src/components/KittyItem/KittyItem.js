@@ -1,6 +1,7 @@
 import React, { Component } from "react";
+import { parseISO, formatDistanceStrict } from "date-fns";
 import classNames from "classnames";
-import { Box, Button, Text } from "grommet";
+import { Box, Button, Heading, Text } from "grommet";
 import { CaretUp, CaretDown } from "grommet-icons";
 // import { parseISO, formatDistanceStrict, format, fromUnixTime } from "date-fns";
 import Loading from "../../components/Loading/Loading";
@@ -17,6 +18,7 @@ class KittyItem extends Component {
     const {
       kitty,
       displayMode = "default",
+      background,
       handleKittyLink = () => {}
     } = this.props;
 
@@ -41,14 +43,40 @@ class KittyItem extends Component {
         <Box
           className="kittyItemImage"
           basis={displayMode === "ranking" ? "24px" : "10%"}
+          background={background ? background : "transparent"}
         >
           <img src={kitty.image_url} alt="" />
         </Box>
         {displayMode !== "ranking" && (
-          <Box className="kittyBreeder" basis="80%">
-            <Text size="small">{kitty.hatcher.nickname}</Text>
+          <Box className="kittyBreeder" basis="80%" align="start">
+            {displayMode === "featured" ? (
+              <Heading level={4} margin={{ top: "0px", bottom: "small" }}>
+                {kitty.name}
+              </Heading>
+            ) : null}
+            <Text size="small">
+              {(kitty.hatcher && kitty.hatcher.nickname) || kitty.nickname}
+            </Text>
           </Box>
         )}
+        {displayMode === "featured" && (
+          <Box className="kittyDetail" justify="end" basis="30%">
+            <Heading level={6} margin="none">
+              Generation
+            </Heading>
+            <Text size="small">{kitty.generation}</Text>
+            <Heading level={6} margin="none">
+              Born
+            </Heading>
+            <Text size="small">
+              <Text size="small">
+                {formatDistanceStrict(parseISO(kitty.created_at), new Date())}{" "}
+                ago
+              </Text>
+            </Text>
+          </Box>
+        )}
+
         {kitty.fancy_ranking && (
           <Box
             className="kittyFancyRank"

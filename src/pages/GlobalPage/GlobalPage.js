@@ -9,6 +9,8 @@ import { CaretDown, CaretUp } from "grommet-icons";
 import Loading from "../../components/Loading/Loading";
 import SpeedChart from "../../components/SpeedChart/SpeedChart";
 import GenDistribution from "../../components/GenDistribution/GenDistribution";
+import AttributeList from "../../components/AttributeList/AttributeList";
+
 import "./GlobalPage.scss";
 import apiConfig from "../../apiConfig";
 import ckUtils from "../../utils/ck";
@@ -92,6 +94,9 @@ class GlobalPageComponent extends Component {
                 </Button>
                 <Button primary onClick={() => this.testByType()}>
                   test fancy get
+                </Button>
+                <Button primary onClick={() => this.testSaveRecent()}>
+                  testSaveRecent
                 </Button>
               </React.Fragment>
             )}
@@ -386,7 +391,11 @@ class GlobalPageComponent extends Component {
                         Fancy: {fancyCount}
                       </Box>
                       <Box direction="row" gap="xsmall">
-                        <Box round="xsmall" background="#9414cf" width="10px"></Box>
+                        <Box
+                          round="xsmall"
+                          background="#9414cf"
+                          width="10px"
+                        ></Box>
                         Purrstige: {prestigeCount}
                       </Box>
 
@@ -462,117 +471,7 @@ class GlobalPageComponent extends Component {
                     Common Attributes
                   </Heading>
                 </Box>
-                <Box fill="horizontal">
-                  <Box
-                    direction="row"
-                    fill="horizontal"
-                    gap="small"
-                    justify="stretch"
-                    pad={{ bottom: "small" }}
-                  >
-                    <Box basis="10%">
-                      <Heading level={6} margin="none">
-                        Attribute
-                      </Heading>
-                    </Box>
-                    <Box basis="80%">-</Box>
-                    <Box basis="10%" align="end">
-                      <Heading level={6} margin="none">
-                        Count
-                      </Heading>
-                    </Box>
-                  </Box>
-                  {attributeData &&
-                    attributeData
-                      .slice(0, showRestAttributes ? attributeData.length : 10)
-                      // .slice(0, 10)
-                      .map((attr, index) => (
-                        <Box
-                          direction="row"
-                          key={`attrlist${index}`}
-                          fill="horizontal"
-                          gap="small"
-                          justify="stretch"
-                          margin={{ bottom: "xxsmall" }}
-                          className="attributeRow"
-                        >
-                          <Box basis="10%" className="barName">
-                            <Text size="small">{attr.description}</Text>
-                          </Box>
-                          <Box
-                            basis="80%"
-                            direction="row"
-                            justify="stretch"
-                            background="#eee"
-                            round="xsmall"
-                            overflow="hidden"
-                            className="bar"
-                          >
-                            <Box
-                              basis={`${(attr.count / attributeData.length) *
-                                100}%`}
-                              background="violet"
-                              className="highlighted"
-                              round="xsmall"
-                            />
-                            <Box
-                              // basis={`${(limit - breeder.kitties.length / limit) *100}%`}
-                              background="#ddd"
-                            />
-                          </Box>
-
-                          <Box align="end" basis="10%">
-                            <strong>{attr.count}</strong>
-                          </Box>
-                          <Box
-                            className="barInfo"
-                            round="small"
-                            elevation="small"
-                            align="center"
-                            justify="center"
-                            pad={{ vertical: "xsmall", horizontal: "medium" }}
-                            // animation="arrige"
-                          >
-                            <Text size="small">
-                              {attr.description} appears in{" "}
-                              {((attr.count / limit) * 100).toFixed(1)}% of{" "}
-                              {limit} kitties
-                            </Text>
-                          </Box>
-                        </Box>
-                      ))}
-                  <Box margin={{ top: "small" }}>
-                    <Text size="small">
-                      {/* Top 10 of {breederArray && breederArray.length - 10}{" "}
-        breeders */}
-                      <Button
-                        plain
-                        onClick={() =>
-                          this.toggleShowRestAttributes(!showRestAttributes)
-                        }
-                      >
-                        <Box
-                          pad={{ vertical: "xxsmall", horizontal: "small" }}
-                          border="all"
-                          round="medium"
-                          direction="row"
-                          gap="xxsmall"
-                          align="center"
-                        >
-                          {showRestAttributes ? (
-                            <CaretUp size="small" color="secondary" />
-                          ) : (
-                            <CaretDown size="small" color="secondary" />
-                          )}
-                          {showRestAttributes
-                            ? "Show Top 10"
-                            : `Show ${attributeData &&
-                                attributeData.length - 10} More`}
-                        </Box>
-                      </Button>
-                    </Text>
-                  </Box>
-                </Box>
+                <AttributeList attributeData={attributeData} limit={limit} />
               </Box>
             )}
 
@@ -764,6 +663,7 @@ class GlobalPageComponent extends Component {
   saveKittehData = data => {
     console.log("saveKittehData", data);
     const massagedData = this.massageData(data);
+
     const getDataKitties = firebase.functions().httpsCallable("getKitties");
     getDataKitties({ text: "ecample", kittyData: massagedData }).then(
       result => {
@@ -842,15 +742,53 @@ class GlobalPageComponent extends Component {
 
   testFirebase = () => {
     console.log("test");
-    // const functions = firebase.functions();
+    const options = {
+      limit: 50,
+      kittyType: "",
+      orderBy: "created_at",
+      direction: "desc"
+    };
+    const ckOptions = { options: options, saveToFirebase: true };
+    const functions = firebase.app().functions("us-central1");
+    // const getRecent = ckUtils.manualGetRecent(options);
+    const getRecent = functions.httpsCallable("manualGetRecent");
+    getRecent(ckOptions)
+      .then(data => {
+        console.log("returned data: ", data);
+      })
+      .catch(error => console.error(error));
 
-    const getDataKitties = firebase.functions().httpsCallable("getKitties");
-    getDataKitties({ text: "ecample" }).then(result => {
-      console.log("result: ", result);
-      // Read result of the Cloud Function.
-      // var sanitizedMessage = result.data.text;
-      // ...
-    });
+    // const saveDataKitties = firebase
+    //   .functions()
+    //   .httpsCallable("manualSaveRecent");
+    // saveDataKitties({ text: "ecample" }).then(result => {
+    //   console.log("result: ", result);
+    //   // Read result of the Cloud Function.
+    //   // var sanitizedMessage = result.data.text;
+    //   // ...
+    // });
+  };
+
+  testSaveRecent = () => {
+    console.log("testsaverecent");
+    const functions = firebase.app().functions("us-central1");
+    // const getRecent = ckUtils.manualGetRecent(options);
+    const saveRecent = functions.httpsCallable("manualSaveRecent");
+    const props = {
+      options: {
+        limit: 50,
+        pageCount: 50,
+        orderBy: "created_at",
+        direction: "desc"
+      },
+      saveOnData: true
+    };
+
+    saveRecent(props)
+      .then(data => {
+        console.log("returned data: ", data);
+      })
+      .catch(error => console.error(error));
   };
 
   testByType = () => {

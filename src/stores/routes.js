@@ -27,6 +27,11 @@ export const routes = [
     // beforeEnter: checkForUserSignedIn
   },
   {
+    name: "liveBoard",
+    pattern: "/board/live/:id"
+    // beforeEnter: checkForUserSignedIn
+  },
+  {
     name: "boardWithAttributes",
     pattern: "/board/:id/:attributes"
     // beforeEnter: checkForUserSignedIn

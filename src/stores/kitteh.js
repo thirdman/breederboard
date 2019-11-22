@@ -8,9 +8,10 @@ import config from "../firebase-config";
 
 // let assetId;
 
-const KittehStore = new Collection("kitteh", {
+const KittehStore = new Collection("kitteh2", {
   // query: ref => ref.orderBy("dateCreated", "desc"),
-  mode: "auto"
+  query: ref => ref.orderBy("id", "desc").limit(15),
+  mode: "on"
 });
 
 export { KittehStore };

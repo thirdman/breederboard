@@ -119,6 +119,8 @@ class HomePageComponent extends Component {
               {docs.map(doc => {
                 // console.log("doc.data", doc.data);
                 const isNotNew = doc.data && doc.data.isNew === "no";
+                const isPublic = doc.data && doc.data.isPublic === true;
+
                 return (
                   isNotNew && (
                     <Box
@@ -244,9 +246,7 @@ class HomePageComponent extends Component {
                               <Pill
                                 displayMode="fancy"
                                 text={doc.data.fancyValue[0]}
-                                key={`attributefancyPill-${
-                                  doc.data.fancyValue[0]
-                                }`}
+                                key={`attributefancyPill-${doc.data.fancyValue[0]}`}
                               />
                             )}
                             {doc.data.attributeValues.map(attribute => (
@@ -366,7 +366,7 @@ class HomePageComponent extends Component {
       titleEdited: false,
       isNew: "yes",
       allAttributes: UiStore.allAttributes,
-      isPublic: false
+      isPublic: true
     });
     console.log("doc.id", doc.id);
 
