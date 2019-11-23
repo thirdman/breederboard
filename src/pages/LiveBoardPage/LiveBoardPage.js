@@ -126,12 +126,42 @@ class LiveBoardPageComponent extends Component {
           gap="small"
           style={{ maxWidth: "1024px" }}
         >
-          <Heading level={2} margin={{ vertical: "small" }} style={{textTransform: "capitalize"}}>
+          <Heading
+            level={2}
+            margin={{ vertical: "small" }}
+            style={{ textTransform: "capitalize" }}
+          >
             Live {mode} Feed
           </Heading>
           {KittehStore && KittehStore.docs && (
             <Box justify="between" fill="horizontal" direction="row">
               <Text size="small">{KittehStore.docs.length} Kitties</Text>
+              <Box direction="row" align="center">
+                <ButtonGroup>
+                  <Button onClick={() => this.appLink("liveBoard", "fancy")}>
+                    <Box
+                      pad="xsmall"
+                      background={id === "fancy" ? "violet" : "transparent"}
+                      border={id === "fancy" ? "none" : "all"}
+                      round="small"
+                      style={{ borderWidth: id === "fancy" ? "0px" : "1px" }}
+                    >
+                      <Text size="small">Fancy</Text>
+                    </Box>
+                  </Button>
+                  <Button onClick={() => this.appLink("liveBoard", "prestige")}>
+                    <Box
+                      pad="xsmall"
+                      background={id === "prestige" ? "violet" : "transparent"}
+                      border={id === "prestige" ? "none" : "all"}
+                      style={{ borderWidth: id === "prestige" ? "0px" : "1px" }}
+                      round="small"
+                    >
+                      <Text size="small">Purrstige</Text>
+                    </Box>
+                  </Button>
+                </ButtonGroup>
+              </Box>
               <Box direction="row" align="center">
                 <Text size="small">Kitty Count:</Text>
                 <ButtonGroup>
@@ -178,7 +208,7 @@ class LiveBoardPageComponent extends Component {
           fill="horizontal"
           alignSelf="center"
           pad="small"
-          margin="small"
+          // margin="small"
           gap="large"
           style={{ maxWidth: "1024px" }}
         >

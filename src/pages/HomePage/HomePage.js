@@ -25,8 +25,8 @@ class HomePageComponent extends Component {
     //   routerState: { params }
     // } = routerStore;
     const { isCreating, userBoards } = this.state;
-
     const { docs } = BoardsStore;
+    const { devMode } = UiStore;
 
     // const dateNow = new Date();
     return (
@@ -57,6 +57,66 @@ class HomePageComponent extends Component {
           <Heading level={2} margin="large">
             Attribute Leaderboards for Kitty Breeders
           </Heading>
+        </Box>
+
+        <Box align="center" justify="center">
+          <Box
+            style={{ maxWidth: "1024px" }}
+            fill="horizontal"
+            className="contentRow"
+            direction="row"
+            justify="center"
+            gap="small"
+          >
+            <Box className="contentColumn" basis="50%">
+              <Heading level={4}>Live Boards (experimental)</Heading>
+              <Box
+                background="#eee"
+                round="small"
+                pad="small"
+                className="livePreviewBox"
+                direction="row"
+                justify="stretch"
+                gap="medium"
+                onClick={() => this.appLink("liveBoard", "fancy")}
+              >
+                <Box basis="60%">
+                  <Box>
+                    <Heading level={4} margin={{ vertical: "xsmall" }}>
+                      Fancy Feed
+                    </Heading>
+                    <Text size="small">
+                      Updates with kitties as they are born
+                    </Text>
+                  </Box>
+                </Box>
+                <Box basis="40%">
+                  <Box className="placeHolderRow"></Box>
+                  <Box className="placeHolderRow"></Box>
+                  <Box className="placeHolderRow"></Box>
+                  <Box className="placeHolderRow"></Box>
+                  <Box justify="center">
+                    <Button
+                      onClick={() => this.appLink("liveBoard", "fancy")}
+                      primary
+                    >
+                      <Box
+                        pad={{ vertical: "xssall", horizontal: "small" }}
+                        // border="all"
+                        round="small"
+                        justify="center"
+                        // fill="horizontal"
+                        style={{ textAlign: "center" }}
+                      >
+                        <Text size="small">View</Text>
+                      </Box>
+                    </Button>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+            <Box className="contentColumn" basis="50%"></Box>
+          </Box>
         </Box>
 
         <Box

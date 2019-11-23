@@ -455,9 +455,7 @@ function compareGeneration(a, b) {
 }
 
 function getCattribute(kitty, cattribute) {
-  // console.log("getting cattributes for ", kitty);
   const cattributes = kitty.enhanced_cattributes || kitty.cattributes;
-  console.log("cattributes", cattributes);
   if (!cattributes) {
     return 0;
   }

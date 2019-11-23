@@ -17,14 +17,8 @@ const apiConfig = {
 const rp = require("request-promise");
 admin.initializeApp();
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
-
-// THIS IS CALLED FROM THE APP
+// MANUAL GET RECENT
+// This is called from the app
 exports.manualGetRecent = functions.https.onCall(async (data, context) => {
   console.log(" - - manualGetRecent - -", data);
   const ckOptions = data.options;
@@ -37,7 +31,6 @@ exports.manualGetRecent = functions.https.onCall(async (data, context) => {
   return getTheKitteh
     .then(result => {
       if (saveToFirebase) {
-        // const doSave = saveKitteh(data)
         console.log("this would save data");
       }
       return result;
@@ -51,9 +44,12 @@ exports.manualGetRecent = functions.https.onCall(async (data, context) => {
     });
 });
 
+/**
+ * MANUAL SAVE RECENT
+ * This is the manual version of the auto save in scheduled
+ */
 exports.manualSaveRecent = functions.https.onCall(async (data, context) => {
   console.log(" - - manualSaveRecent - - data: ", data);
-
   const handleTheJandal = handleRecentKitties(data);
   return await handleTheJandal
     .then(result => {
@@ -69,34 +65,12 @@ exports.manualSaveRecent = functions.https.onCall(async (data, context) => {
       console.error(error);
       return error;
     });
-  // return { result: "ok" };
-  // const kittyData = data.kittyData;
-  // if (!kittyData.kitteh[0]) {
-  //   return false;
-  // }
-
-  // const db = admin.firestore();
-  // const lastKittyId = 12345;
-  // var batch = db.batch();
-  // kittyData.kitteh.map(kitty => {
-  //   const isNewKitty = kitty.id > parseInt(lastKittyId);
-  //   // console.log(
-  //   //   "isNewKitty: ",
-  //   //   isNewKitty,
-  //   //   " since lastKittyId is ",
-  //   //   lastKittyId,
-  //   //   " and this id is",
-  //   //   kitty.id
-  //   // );
-  //   const idString = kitty.id.toString();
-  //   const thisDoc = db.collection("kitteh").doc(idString);
-  //   return batch.set(thisDoc, kitty);
-  // });
-  // return batch.commit().then(() => {
-  //   return { status: "all good" };
-  // });
 });
 
+/**
+ * STORE SPEED
+ * saves speed data into seperate collection
+ */
 exports.storeSpeed = functions.https.onCall((data, context) => {
   console.log("STORE SPEED", data);
   const dateData = data.dateData;
@@ -251,16 +225,19 @@ function massageData(data, lastKittyId) {
   return toReturn;
 }
 
+/**
+ * SAVE KITTEH
+ * Saves the newly sourced kitties to firebase
+ *
+ */
 async function saveKitteh(data) {
-  console.log("savekitteh kitties to save", data.kitteh);
+  // console.log("savekitteh kitties to save", data.kitteh);
   const kittyData = data;
   if (!kittyData.kitteh[0]) {
     return false;
   }
-  console.log("data exists. lastKittyId = ", data.lastKittyId);
-
+  // console.log("data exists. lastKittyId = ", data.lastKittyId);
   const db = admin.firestore();
-
   const lastKittyId = data.latestKittyId;
   var batch = db.batch();
   kittyData.kitteh.map(kitty => {
@@ -269,15 +246,19 @@ async function saveKitteh(data) {
     const thisDoc = db.collection("kitteh2").doc(idString);
     batch.set(thisDoc, kitty);
   });
-  console.log("batch is ready");
   return await batch.commit().then(() => {
     return { status: "all good" };
   });
 }
 
+/**
+ * HANDLE RECENT KITTIES
+ * The main function to get and save recent kitties
+ * called either manually, or on schedule
+ *
+ */
 function handleRecentKitties(props) {
   console.log("------ begin handleRecentKitties----- props: ", props);
-  // let ckOptions = props.options;
   const ckOptions = {
     pageCount: props.options.pageCount || 500,
     limit: props.options.limit || 500,
@@ -308,16 +289,15 @@ function handleRecentKitties(props) {
     .then(values => {
       const lastKittyId = values[0];
       const kittyData = values[1];
-      console.log("++ kittyData: ", kittyData);
+      // console.log("++ kittyData: ", kittyData);
       const dateData = calcDates({ data: kittyData, limit: 500 });
-      console.log("++ dateData: ", dateData);
+      // console.log("++ dateData: ", dateData);
       // console.log("promise all values: ", values);
       // console.log("::: lastKittyId: ", lastKittyId);
       const massagedData = massageData(kittyData, lastKittyId);
-      console.log("++ massagedData", massagedData);
+      // console.log("++ massagedData", massagedData);
       // console.log("massagedData kitteh", massagedData.kitteh);
-      console.log("++ massagedData kitteh length", massagedData.kitteh.length);
-
+      // console.log("++ massagedData kitteh length", massagedData.kitteh.length);
       return massagedData;
       // return values;
     })
@@ -333,11 +313,48 @@ function handleRecentKitties(props) {
 /////// SCHEDULED FUNCTIONS
 ///////////////////////////////////
 
-exports.schedulefunction = functions.pubsub
-  .schedule("every 60 minutes")
+/**
+ * GET LIVE DATA
+ * Gets lates kitties and saves them for live feed pages
+ *
+ */
+exports.getLiveData = functions.pubsub
+  .schedule("every 1 minutes")
   .onRun(async context => {
-    // .onRun(context => {
-    console.log("------ begin schedulefunction: running every 60 minutes-----");
+    console.log("=== begin schedulefunction: running every 5 minutes === ");
+
+    const settings = {
+      options: {
+        limit: 50,
+        pageCount: 50,
+        orderBy: "created_at",
+        direction: "desc"
+      },
+      saveOnData: true
+    };
+
+    const handleTheJandal = handleRecentKitties(settings);
+    return await handleTheJandal
+      .then(result => {
+        console.log("== scheduled handle the jandal result: ", result);
+        return result;
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  });
+
+/**
+ * SCHEDULED FUNTIOSN
+ * older veriosn of the autoget function
+ *
+ */
+exports.schedulefunction = functions.pubsub
+  .schedule("every 600 minutes")
+  .onRun(async context => {
+    console.log(
+      "------ begin schedulefunction: running every 600 minutes-----"
+    );
     const ckOptions = {
       pageCount: 500,
       limit: 500,
@@ -367,15 +384,15 @@ exports.schedulefunction = functions.pubsub
       .then(values => {
         const lastKittyId = values[0];
         const kittyData = values[1];
-        console.log("::: kittyData: ", kittyData);
+        // console.log("::: kittyData: ", kittyData);
         const dateData = calcDates({ data: kittyData, limit: 500 });
-        console.log("::: dateData: ", dateData);
+        // console.log("::: dateData: ", dateData);
         // console.log("promise all values: ", values);
         // console.log("::: lastKittyId: ", lastKittyId);
         const massagedData = massageData(kittyData, lastKittyId);
-        console.log("massagedData", massagedData);
+        // console.log("massagedData", massagedData);
         // console.log("massagedData kitteh", massagedData.kitteh);
-        console.log("massagedData kitteh length", massagedData.kitteh.length);
+        // console.log("massagedData kitteh length", massagedData.kitteh.length);
 
         return massagedData;
         // return values;
@@ -412,37 +429,3 @@ exports.schedulefunction = functions.pubsub
       })
       .catch(error => console.error(error));
   });
-
-// exports.storeKitteh = functions.https.onCall((data, context) => {
-//   console.log("GET KITTIES", data, context);
-//   const text = data.text;
-//   return admin
-//     .firestore()
-//     .collection("kitteh")
-//     .add({ original: { gareth: "cool" } })
-//     .then(result => {
-//       // write is complete here
-//       console.log("result", result);
-//       return result;
-//     })
-//     .catch(error => console.error(error));
-// });
-
-// exports.cloudKitteh = functions.https.onCall((data, context) => {
-//   console.log("data, context", data, context);
-//   const queryStringObject = {
-//     some: "test",
-//     another: "example"
-//   };
-//   var options = {
-//     url: "https://api.balh.blah",
-//     method: "POST",
-//     qs: queryStringObject,
-//     // body: ....
-//     json: true // Automatically stringifies the body to JSON
-//   };
-//   console.log("options");
-
-//   // return rp(options);
-//   return options;
-// });

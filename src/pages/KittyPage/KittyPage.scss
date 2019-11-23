@@ -56,9 +56,13 @@
     .fancyMeta {
       .heroImageWrap {
         // background: red;
-        max-width: 300px;
+        // max-width: 300px;
         // position: relative;
         // top: -10rem;
+        width: 40vw;
+        height: 40vw;
+        background: #ddd;
+        border-radius: 40vw;
       }
       .fancyImage {
         max-width: 100%;
@@ -70,17 +74,289 @@
         // margin-top: 20%;
         border: none;
       }
+      .colorsWrapper {
+        position: absolute;
+        left: 18vw;
+        top: 8vw;
+
+        width: 50px;
+        z-index: 2;
+        .colorContent {
+          width: 3vw;
+          height: 3vw;
+          border-radius: 6px;
+          border: 2px solid white;
+          margin-bottom: 2vw;
+          &:nth-child(1) {
+            margin-left: 3vw;
+          }
+          &:nth-child(2) {
+            margin-left: 1vw;
+          }
+          &:nth-child(4) {
+            margin-left: 1vw;
+          }
+        }
+      }
       .traitHighlights {
         position: absolute;
         right: 0;
-        bottom: 0;
+        // bottom: 0;
         top: 0;
         left: 0;
         z-index: 9999;
+        height: 40vw;
+
+        .traitItemWrap {
+          width: 200px;
+          height: 50px;
+          // background: rgba(0, 255, 0, 0.315);
+
+          &.eyeColor {
+            $markerWidth: 80px;
+            $contentWidth: 180px;
+            position: absolute;
+            left: 4%;
+            top: 5%;
+            width: calc(#{$markerWidth} + #{$contentWidth});
+            height: 100px;
+            .traitItem.primaryColor {
+              left: 0;
+              width: $contentWidth;
+              &:before {
+                width: 100%;
+                background: violet;
+              }
+              .lineWrap {
+                left: calc(#{$contentWidth} + 1px);
+                top: calc(-1px);
+                width: $markerWidth;
+                height: 80px;
+                border: none;
+              }
+            }
+          }
+
+          &.primaryColor {
+            $markerWidth: 110px;
+            $contentWidth: 180px;
+            position: absolute;
+            left: 0%;
+            top: 20%;
+            width: calc(#{$markerWidth} + #{$contentWidth});
+            height: 100px;
+            .traitItem.primaryColor {
+              left: 0;
+              width: $contentWidth;
+              &:before {
+                width: 100%;
+                background: violet;
+              }
+              .lineWrap {
+                left: calc(#{$contentWidth} + 1px);
+                top: calc(-1px);
+                width: $markerWidth;
+                height: 80px;
+                border: none;
+              }
+            }
+          }
+          &.secondaryColor {
+            $markerWidth: 110px;
+            position: absolute;
+            left: -2%;
+            top: 35%;
+            width: calc(#{$markerWidth} + 180px);
+            height: 100px;
+            .traitItem.secondaryColor {
+              left: 0;
+              width: 180px;
+              &:before {
+                width: 100%;
+                background: violet;
+              }
+              .lineWrap {
+                left: calc(180px + 0px);
+                top: calc(-1px);
+                width: $markerWidth;
+                height: 80px;
+                border: none;
+              }
+            }
+          }
+
+          &.tertiaryColor {
+            $markerWidth: 110px;
+            $contentWidth: 180px;
+            position: absolute;
+            left: 2%;
+            top: 50%;
+            width: calc(#{$markerWidth} + #{$contentWidth});
+            height: 100px;
+            .traitItem.tertiaryColor {
+              left: 0;
+              width: $contentWidth;
+              &:before {
+                width: 100%;
+                background: violet;
+              }
+              .lineWrap {
+                left: calc(#{$contentWidth} - 1px);
+                top: calc(-1px);
+                width: $markerWidth;
+                height: 80px;
+                border: none;
+              }
+            }
+          }
+
+          &.environment {
+            $markerWidth: 100px;
+            $contentWidth: 180px;
+            position: absolute;
+            left: 5%;
+            top: 65%;
+            width: calc(#{$markerWidth} + #{$contentWidth});
+            height: 100px;
+            .traitItem.environment {
+              left: 0;
+              width: $contentWidth;
+              &:before {
+                width: 100%;
+                background: violet;
+              }
+              .lineWrap {
+                left: calc(#{$contentWidth} - 1px);
+                top: calc(-1px);
+                margin-top: -20px;
+                width: $markerWidth;
+                height: 80px;
+                border: none;
+              }
+            }
+          }
+
+          &.right {
+          }
+          &.wild {
+            // transform: translate(60%, 5%);
+            $markerWidth: 200px;
+            position: absolute;
+            left: 50%;
+            top: 2vw;
+            width: calc(200px + #{$markerWidth});
+            height: 100px;
+            .traitItem.wild {
+              left: $markerWidth;
+              .lineWrap {
+                left: calc(0px - #{$markerWidth} + 1px);
+                top: calc(-1px);
+                width: $markerWidth;
+                height: 200px;
+                border: none;
+              }
+            }
+          }
+          &.eyes {
+            // transform: translate(60%, 5%);
+            $markerWidth: 280px;
+            $contentWidth: 180px;
+            position: absolute;
+            left: 50%;
+            top: 20%;
+            width: calc(#{$contentWidth} + #{$contentWidth});
+            height: 100px;
+            .traitItem.eyes {
+              left: $markerWidth;
+              width: $contentWidth;
+              // top: 20%;
+              &:before {
+                width: 100%;
+                background: violet;
+              }
+              .lineWrap {
+                left: calc(0px - #{$markerWidth} + 1px);
+                top: calc(-1px);
+                width: $markerWidth;
+                height: 100px;
+                border: none;
+              }
+            }
+          }
+          &.mouth {
+            $markerWidth: 280px;
+            position: absolute;
+            left: 52%;
+            top: 35%;
+            width: calc(#{$markerWidth} + 200px);
+            height: 100px;
+            .traitItem.mouth {
+              left: $markerWidth;
+              &:before {
+                width: 100%;
+                background: violet;
+              }
+              .lineWrap {
+                left: calc(0px - #{$markerWidth} + 1px);
+                top: calc(-1px);
+                width: $markerWidth;
+                height: 200px;
+                border: none;
+              }
+            }
+          }
+          &.pattern {
+            $markerWidth: 240px;
+            position: absolute;
+            left: 55%;
+            top: 50%;
+            width: calc(#{$markerWidth} + 200px);
+            height: 100px;
+            .traitItem.pattern {
+              left: $markerWidth;
+              &:before {
+                width: 100%;
+                background: violet;
+              }
+              .lineWrap {
+                left: calc(0px - #{$markerWidth} + 1px);
+                top: calc(-1px);
+                width: $markerWidth;
+                height: 80px;
+                border: none;
+              }
+            }
+          }
+          &.body {
+            $markerWidth: 230px;
+            $contentWidth: 180px;
+            position: absolute;
+            left: 55%;
+            top: 65%;
+            width: calc(#{$markerWidth} + #{$contentWidth});
+            height: 100px;
+            .traitItem.body {
+              left: $markerWidth;
+              width: $contentWidth;
+              &:before {
+                width: 100%;
+                background: violet;
+              }
+              .lineWrap {
+                left: calc(0px - #{$markerWidth} + 1px);
+                top: calc(-1px);
+                margin-top: -40px;
+                width: $markerWidth;
+                height: 80px;
+                border: none;
+              }
+            }
+          }
+        }
         .traitItem {
           width: 200px;
-          position: relative;
-          border: none;
+          position: absolute;
+          // border: none;
           padding: 6px 0;
           &.right {
             text-align: right;
@@ -123,162 +399,6 @@
             top: 0px;
             border: 1px solid #ccc;
             z-index: 99;
-          }
-          &.eyeColor {
-            position: absolute;
-            left: 5%;
-            top: 10%;
-            &:before {
-              width: 100%;
-              background: violet;
-              height: 1px;
-            }
-            .lineWrap {
-              left: calc(100% + 0px);
-              top: calc(-1px);
-              width: 80px;
-              height: 140px;
-              border: none;
-            }
-          }
-          &.primaryColor {
-            // transform: translate(5%, 20%);
-            position: absolute;
-            left: 0%;
-            top: 25%;
-            &:before {
-              width: 100%;
-              background: violet;
-              height: 1px;
-            }
-            .lineWrap {
-              left: calc(100% - 0px);
-              top: calc(-1px);
-              width: 100px;
-              height: 100px;
-              border: none;
-            }
-          }
-          &.secondaryColor {
-            position: absolute;
-            left: 0%;
-            top: 40%;
-            &:before {
-              width: 100%;
-              background: violet;
-              height: 1px;
-            }
-            .lineWrap {
-              left: calc(100% - 0px);
-              top: calc(-1px);
-              width: 100px;
-              height: 100px;
-              border: none;
-            }
-          }
-          &.tertiaryColor {
-            position: absolute;
-            left: 2%;
-            top: 55%;
-            &:before {
-              width: 100%;
-              background: violet;
-              height: 1px;
-            }
-            .lineWrap {
-              left: calc(100% - 1px);
-              top: calc(-1px);
-              width: 100px;
-              height: 100px;
-              border: none;
-            }
-          }
-          &.environment {
-            position: absolute;
-            left: 5%;
-            top: 70%;
-            .lineWrap {
-              left: calc(100% - 1px);
-              top: calc(-1px);
-              width: 80px;
-              height: 80px;
-              border: none;
-            }
-          }
-          &.wild {
-            // transform: translate(60%, 5%);
-            position: absolute;
-            left: 75%;
-            top: 5%;
-            .lineWrap {
-              left: calc(-200px + 1px);
-              top: calc(-1px);
-              width: 200px;
-              height: 200px;
-              border: none;
-            }
-          }
-          &.eyes {
-            // transform: translate(60%, 5%);
-            position: absolute;
-            left: 80%;
-            top: 20%;
-            &:before {
-              width: 100%;
-              background: violet;
-            }
-            .lineWrap {
-              left: calc(-280px + 1px);
-              top: calc(-1px);
-              width: 280px;
-              height: 100px;
-              border: none;
-            }
-          }
-          &.mouth {
-            // transform: translate(60%, 5%);
-            position: absolute;
-            left: 80%;
-            top: 35%;
-            &:before {
-              width: 100%;
-              background: violet;
-            }
-            .lineWrap {
-              left: calc(-300px + 1px);
-              top: calc(-1px);
-              width: 300px;
-              height: 200px;
-              border: none;
-            }
-          }
-          &.body {
-            position: absolute;
-            left: 75%;
-            top: 50%;
-            &:before {
-              width: 100%;
-              background: violet;
-            }
-            .lineWrap {
-              left: calc(-80px + 1px);
-              top: calc(-1px);
-              width: 80px;
-              height: 80px;
-              border: none;
-            }
-          }
-          &.pattern {
-            position: absolute;
-            left: 72%;
-            top: 65%;
-            .lineWrap {
-              left: calc(-180px + 1px);
-              top: calc(-1px);
-              width: 180px;
-              height: 100px;
-              border: none;
-            }
           }
         }
       }

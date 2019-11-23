@@ -89,7 +89,7 @@ class AdminPageComponent extends Component {
             fill="horizontal"
             margin="large"
           >
-            <Heading level={5}>Unused?</Heading>
+            <Heading level={5}>Colors</Heading>
             <Button onClick={() => this.getAttributes()}>
               <Box pad="small">Get attr</Box>
             </Button>
@@ -101,6 +101,15 @@ class AdminPageComponent extends Component {
             </Button> */}
             <Button onClick={() => this.getColors()}>
               <Box pad="small">get colors</Box>
+            </Button>
+            <Button onClick={() => this.getColorsPrimary()}>
+              <Box pad="small">getColorsPrimary</Box>
+            </Button>
+            <Button onClick={() => this.getColorsSecondary()}>
+              <Box pad="small">getColorsSecondary</Box>
+            </Button>
+            <Button onClick={() => this.getColorsTertiary()}>
+              <Box pad="small">get colors Tertiary</Box>
             </Button>
           </Box>
 
@@ -333,6 +342,90 @@ class AdminPageComponent extends Component {
 
         console.log("=======");
         console.log("data: ", data);
+        console.log("=======");
+        return true;
+      });
+  };
+
+  getColorsPrimary = () => {
+    // const {
+    //   rootStore: { UiStore }
+    // } = this.props;
+
+    let theHeaders = new Headers();
+    this.setState({
+      isLoadingAssets: true
+    });
+    // Add a few headers
+    theHeaders.append("Content-Type", "application/json");
+    theHeaders.append("x-api-token", apiConfig.apiToken);
+    const API = "https://public.api.cryptokitties.co/v1/colors/body";
+    fetch(API, { headers: theHeaders })
+      .then(response => response.json())
+      .then(data => {
+        this.setState({ allAttributes: data });
+        this.setState({
+          isLoadingAttributes: false
+        });
+
+        console.log("=======");
+        console.log("primary/body color data: ", data);
+        console.log("=======");
+        return true;
+      });
+  };
+
+  getColorsSecondary = () => {
+    // const {
+    //   rootStore: { UiStore }
+    // } = this.props;
+
+    let theHeaders = new Headers();
+    this.setState({
+      isLoadingAssets: true
+    });
+    // Add a few headers
+    theHeaders.append("Content-Type", "application/json");
+    theHeaders.append("x-api-token", apiConfig.apiToken);
+    const API = "https://public.api.cryptokitties.co/v1/colors/secondary";
+    fetch(API, { headers: theHeaders })
+      .then(response => response.json())
+      .then(data => {
+        this.setState({ allAttributes: data });
+        this.setState({
+          isLoadingAttributes: false
+        });
+
+        console.log("=======");
+        console.log("secondary color data: ", data);
+        console.log("=======");
+        return true;
+      });
+  };
+
+  getColorsTertiary = () => {
+    // const {
+    //   rootStore: { UiStore }
+    // } = this.props;
+
+    let theHeaders = new Headers();
+    this.setState({
+      isLoadingAssets: true
+    });
+    // Add a few headers
+    theHeaders.append("Content-Type", "application/json");
+    theHeaders.append("x-api-token", apiConfig.apiToken);
+    const API = "https://public.api.cryptokitties.co/v1/colors/tertiary";
+    fetch(API, { headers: theHeaders })
+      .then(response => response.json())
+      .then(data => {
+        this.setState({ allAttributes: data });
+        this.setState({
+          isLoadingAttributes: false
+        });
+
+        console.log("=======");
+        console.log("tertiary color data: ", data);
         console.log("=======");
         return true;
       });

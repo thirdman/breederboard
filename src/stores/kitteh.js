@@ -7,13 +7,13 @@ import config from "../firebase-config";
 // initFirestorter({ firebase: firebase });
 
 // let assetId;
-let pageCount = 15;
+let pageCount = 50;
 const KittehStore = new Collection("kitteh2", {
   // query: ref => ref.orderBy("dateCreated", "desc"),
   query: ref => ref.orderBy("id", "desc").limit(pageCount),
   mode: "on"
 });
 
-KittehStore.pageCount = 15;
+KittehStore.pageCount = 50;
 
 export { KittehStore };

@@ -740,6 +740,384 @@ const UiStore = new observable({
       backgroundColorHex: "#fdf3e0",
       shadowColorHex: "#e7d4b4"
     }
+  ],
+  primaryColors: [
+    {
+      name: "meowgarine",
+      colorHex: "#fcfc95"
+    },
+    {
+      name: "cornflower",
+      colorHex: "#7592fc"
+    },
+    {
+      name: "icicle",
+      colorHex: "#c5e2ff"
+    },
+    {
+      name: "hotcocoa",
+      colorHex: "#5e4a47"
+    },
+    {
+      name: "firstblush",
+      colorHex: "#fcd0f8"
+    },
+    {
+      name: "tundra",
+      colorHex: "#dbccbf"
+    },
+    {
+      name: "glacier",
+      colorHex: "#ccffff"
+    },
+    {
+      name: "hyacinth",
+      colorHex: "#a45de2"
+    },
+    {
+      name: "shamrock",
+      colorHex: "#50c878"
+    },
+    {
+      name: "shadowgrey",
+      colorHex: "#b1b1be"
+    },
+    {
+      name: "salmon",
+      colorHex: "#f4a792"
+    },
+    {
+      name: "orangesoda",
+      colorHex: "#f7bc56"
+    },
+    {
+      name: "cottoncandy",
+      colorHex: "#ecd1eb"
+    },
+    {
+      name: "mauveover",
+      colorHex: "#ded0ee"
+    },
+    {
+      name: "aquamarine",
+      colorHex: "#add5d2"
+    },
+    {
+      name: "nachocheez",
+      colorHex: "#fcda86"
+    },
+    {
+      name: "harbourfog",
+      colorHex: "#afb4d5"
+    },
+    {
+      name: "cinderella",
+      colorHex: "#5ab0f1"
+    },
+    {
+      name: "greymatter",
+      colorHex: "#d1dadf"
+    },
+    {
+      name: "brownies",
+      colorHex: "#b78662"
+    },
+    {
+      name: "dragonfruit",
+      colorHex: "#Ec79f2"
+    },
+    {
+      name: "hintomint",
+      colorHex: "#d0ead2"
+    },
+    {
+      name: "bananacream",
+      colorHex: "#f8f8e0"
+    },
+    {
+      name: "cloudwhite",
+      colorHex: "#ffffff"
+    },
+    {
+      name: "oldlace",
+      colorHex: "#ffebe9"
+    },
+    {
+      name: "koala",
+      colorHex: "#85828a"
+    },
+    {
+      name: "lavender",
+      colorHex: "#bc99ff"
+    },
+    {
+      name: "redvelvet",
+      colorHex: "#F77272"
+    },
+    {
+      name: "verdigris",
+      colorHex: "#73ffc3"
+    },
+    {
+      name: "onyx",
+      colorHex: "#42414c"
+    },
+    {
+      name: "martian",
+      colorHex: "#a4ff6f"
+    }
+  ],
+  secondaryColors: [
+    {
+      name: "cyborg",
+      colorHex: "#959cae"
+    },
+    {
+      name: "ooze",
+      colorHex: "#daea31"
+    },
+    {
+      name: "peppermint",
+      colorHex: "#00a86b"
+    },
+    {
+      name: "inflatablepool",
+      colorHex: "#4fb9c5"
+    },
+    {
+      name: "prairierose",
+      colorHex: "#e0115f"
+    },
+    {
+      name: "springcrocus",
+      colorHex: "#ab7fef"
+    },
+    {
+      name: "egyptiankohl",
+      colorHex: "#4a4855"
+    },
+    {
+      name: "poisonberry",
+      colorHex: "#773c5f"
+    },
+    {
+      name: "lilac",
+      colorHex: "#e5e5f9"
+    },
+    {
+      name: "apricot",
+      colorHex: "#f4a45b"
+    },
+    {
+      name: "royalpurple",
+      colorHex: "#cf5be8"
+    },
+    {
+      name: "padparadscha",
+      colorHex: "#ffd5c7"
+    },
+    {
+      name: "swampgreen",
+      colorHex: "#44e192"
+    },
+    {
+      name: "violet",
+      colorHex: "#765be8"
+    },
+    {
+      name: "scarlet",
+      colorHex: "#ea5f5a"
+    },
+    {
+      name: "barkbrown",
+      colorHex: "#886662"
+    },
+    {
+      name: "coffee",
+      colorHex: "#756650"
+    },
+    {
+      name: "lemonade",
+      colorHex: "#ffef85"
+    },
+    {
+      name: "chocolate",
+      colorHex: "#c47e33"
+    },
+    {
+      name: "butterscotch",
+      colorHex: "#ffce6c"
+    },
+    {
+      name: "safetyvest",
+      colorHex: "#B0f852"
+    },
+    {
+      name: "turtleback",
+      colorHex: "#387573"
+    },
+    {
+      name: "rosequartz",
+      colorHex: "#ffaefb"
+    },
+    {
+      name: "wolfgrey",
+      colorHex: "#737184"
+    },
+    {
+      name: "cerulian",
+      colorHex: "#385877"
+    },
+    {
+      name: "skyblue",
+      colorHex: "#83d5ff"
+    },
+    {
+      name: "garnet",
+      colorHex: "#f4679a"
+    },
+    {
+      name: "universe",
+      colorHex: "#494981"
+    },
+    {
+      name: "royalblue",
+      colorHex: "#5b6ee8"
+    },
+    {
+      name: "mertail",
+      colorHex: "#36f2bc"
+    },
+    {
+      name: "pearl",
+      colorHex: "#fff8fa"
+    }
+  ],
+  tertiaryColors: [
+    {
+      name: "hanauma",
+      colorHex: "#7accb5"
+    },
+    {
+      name: "belleblue",
+      colorHex: "#afd0f7"
+    },
+    {
+      name: "peach",
+      colorHex: "#f9cfad"
+    },
+    {
+      name: "granitegrey",
+      colorHex: "#b1aeb9"
+    },
+    {
+      name: "kittencream",
+      colorHex: "#f7ebda"
+    },
+    {
+      name: "emeraldgreen",
+      colorHex: "#8be179"
+    },
+    {
+      name: "bloodred",
+      colorHex: "#ff7a7a"
+    },
+    {
+      name: "daffodil",
+      colorHex: "#fff09f"
+    },
+    {
+      name: "sandalwood",
+      colorHex: "#b8916c"
+    },
+    {
+      name: "icy",
+      colorHex: "#eef8f8"
+    },
+    {
+      name: "flamingo",
+      colorHex: "#ec87ba"
+    },
+    {
+      name: "seafoam",
+      colorHex: "#9eeec5"
+    },
+    {
+      name: "azaleablush",
+      colorHex: "#ffccd8"
+    },
+    {
+      name: "morningglory",
+      colorHex: "#887cff"
+    },
+    {
+      name: "purplehaze",
+      colorHex: "#dad6e1"
+    },
+    {
+      name: "missmuffett",
+      colorHex: "#f4b3f0"
+    },
+    {
+      name: "summerbonnet",
+      colorHex: "#cbb0ff"
+    },
+    {
+      name: "mallowflower",
+      colorHex: "#c170b1"
+    },
+    {
+      name: "fallspice",
+      colorHex: "#ff9331"
+    },
+    {
+      name: "dreamboat",
+      colorHex: "#fd6cd5"
+    },
+    {
+      name: "periwinkle",
+      colorHex: "#cacaff"
+    },
+    {
+      name: "frosting",
+      colorHex: "#ffdce6"
+    },
+    {
+      name: "patrickstarfish",
+      colorHex: "#ffad97"
+    },
+    {
+      name: "mintmacaron",
+      colorHex: "#B0f1f4"
+    },
+    {
+      name: "shale",
+      colorHex: "#585666"
+    },
+    {
+      name: "cashewmilk",
+      colorHex: "#f9efef"
+    },
+    {
+      name: "buttercup",
+      colorHex: "#f4e65d"
+    },
+    {
+      name: "cobalt",
+      colorHex: "#5262db"
+    },
+    {
+      name: "sully",
+      colorHex: "#70f9f9"
+    },
+    {
+      name: "kalahari",
+      colorHex: "#ffcf8a"
+    },
+    {
+      name: "atlantis",
+      colorHex: "#2a7f96"
+    }
   ]
 });
 export { UiStore };

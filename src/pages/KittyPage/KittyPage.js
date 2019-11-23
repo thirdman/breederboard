@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import posed, { PoseGroup } from "react-pose";
 import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { parseISO, format } from "date-fns";
@@ -18,7 +19,9 @@ import { empty } from "rxjs";
 class KittyPageComponent extends Component {
   state = {
     allAttributes: [],
-    showArrows: true
+    showArrows: true,
+    isLoading: true,
+    isLoadingData: true
   };
   async componentDidMount() {
     await this.handleLoad();
@@ -41,7 +44,8 @@ class KittyPageComponent extends Component {
       isLoadingData,
       scoreData,
       vintageInfo,
-      showArrows
+      showArrows,
+      isLoading
       // colorWinnersData,
       // highGenData,
       // dateData,
@@ -51,6 +55,53 @@ class KittyPageComponent extends Component {
       // console.log("params.attributes", params.attributes);
     }
     // const dateNow = new Date();
+    const PosedBox = posed.div({
+      enter: {
+        x: 0,
+        y: 0,
+        opacity: 1,
+        delay: ({ delay }) => delay,
+        transition: {
+          y: { type: "spring", stiffness: 1000, damping: 25 },
+          default: { duration: 200 }
+        }
+        // flip: true
+      },
+      exit: {
+        x: 0,
+        y: 40,
+        delay: ({ delay }) => delay,
+        opacity: 1,
+        transition: { duration: 200 }
+      }
+    });
+    const PosedTrait = posed.div({
+      enter: {
+        x: 0,
+        y: 0,
+        opacity: 1,
+        delay: 200,
+        // delay: ({ delay }) => delay,
+        // delay: ({ i }) => i * staggerDuration,
+        // scale: 1,
+        transition: {
+          // scale: { type: "spring", stiffness: 200, damping: 5 },
+          x: { type: "spring", stiffness: 500, damping: 25 },
+          default: { duration: 200 }
+        }
+
+        // flip: true
+      },
+      exit: {
+        x: 40,
+        y: 0,
+        // delay: 0,
+        // delay: ({ i }) => i * staggerDuration,
+        opacity: 0,
+        // scale: 0,
+        transition: { duration: 200 }
+      }
+    });
 
     return (
       <Box
@@ -109,6 +160,22 @@ class KittyPageComponent extends Component {
                 <Text size="medium">Open on CK</Text>
               </Box>
             </Button>
+            {devMode && (
+              <Box>
+                {isLoadingData ? "loading Data" : "not data"} |{" "}
+                {isLoading ? "loading" : "not"} |{" "}
+                {!!routerStore.isTranstioning ? "isTranstioning" : "nottrans"} |
+                <Button
+                  onClick={() =>
+                    this.setState({ isLoadingData: !isLoadingData })
+                  }
+                >
+                  {isLoadingData
+                    ? "toggle loading data off"
+                    : "toggle loading data on"}
+                </Button>
+              </Box>
+            )}
           </Box>
           <Box
             className="mainHeader"
@@ -126,25 +193,16 @@ class KittyPageComponent extends Component {
                 className="fancyMeta"
                 align="center"
                 fill="horizontal"
-                justify="evenly"
+                justify="center"
                 direction="row"
                 gap="small"
                 // margin={{ horizontal: "xlarge" }}
               >
                 <Box
-                  basis="20%"
-                  direction="column"
-                  gap="small"
-                  className="metaSide"
-                  border="all"
-                  align="end"
-                ></Box>
-                <Box
-                  basis="60%"
                   justify="center"
                   align="center"
                   className="heroImageWrap"
-                  style={{ maxWidth: "inherit" }}
+                  style={{ maxWidth: "inherit", width: "40vw", height: "40vw" }}
                 >
                   <img
                     src={kittyData.image_url}
@@ -153,88 +211,189 @@ class KittyPageComponent extends Component {
                     style={{ background: this.getColor(kittyData.color) }}
                   />
                 </Box>
-                <Box
-                  basis="20%"
-                  direction="column"
-                  gap="small"
-                  className="metaSide"
-                  border="all"
-                ></Box>
-                {!kittyData.is_fancy &&
-                  (kittyData.cattributes || kittyData.enhanced_cattributes) && (
-                    <Box className="traitHighlights">
-                      <Box className="traitItem eyeColor">
-                        <Heading level={6} margin="none">
-                          Eye Color
-                        </Heading>
-                        <Text>
-                          {kittyData &&
-                            scoreUtils.getCattribute(kittyData, "coloreyes")}
-                        </Text>
-                        <div className="lineWrap">
-                          <Line
-                            viewBoxWidth={90}
-                            viewBoxHeight={140}
-                            startPoint={{ x: 0, y: 0 }}
-                            endPoint={{ x: 80, y: 130 }}
-                            stroke="violet"
-                            dotSize={10}
-                          />
-                        </div>
-                      </Box>
-                      <Box className="traitItem primaryColor">
-                        <Heading level={6} margin="none">
-                          Primary Color
-                        </Heading>
-                        <Text>
-                          {kittyData &&
-                            scoreUtils.getCattribute(kittyData, "colorprimary")}
-                        </Text>
-                        <div className="lineWrap">
-                          <Line
-                            viewBoxWidth={110}
-                            viewBoxHeight={110}
-                            startPoint={{ x: 0, y: 0 }}
-                            endPoint={{ x: 100, y: 100 }}
-                            stroke="violet"
-                            dotSize={10}
-                          />
-                        </div>
-                      </Box>
-                      <Box className="traitItem secondaryColor">
-                        <Heading level={6} margin="none">
-                          Secondary Color
-                        </Heading>
-                        <Text>
-                          {kittyData &&
+                {kittyData && !kittyData.is_fancy && (
+                  <Box className="colorsWrapper">
+                    <Box
+                      className="colorContent eyesColor"
+                      background={"red"}
+                      style={{
+                        background: this.getColor(
+                          scoreUtils.getCattribute(kittyData, "coloreyes"),
+                          "colorHex"
+                        )
+                      }}
+                    ></Box>
+                    {kittyData && !kittyData.is_fancy && (
+                      <Box
+                        className="colorContent primaryColor"
+                        // background={
+                        //   kittyData && kittyData
+                        //     ? this.getPrimaryColor(
+                        //         scoreUtils.getCattribute(kittyData, "colorprimary")
+                        //       )
+                        //     : "transparent"
+                        // }
+                        style={{
+                          background: this.getPrimaryColor(
+                            scoreUtils.getCattribute(kittyData, "colorprimary")
+                          )
+                        }}
+                      ></Box>
+                    )}
+                    {kittyData && !kittyData.is_fancy && (
+                      <Box
+                        className="colorContent secondaryColor"
+                        style={{
+                          background: this.getSecondaryColor(
                             scoreUtils.getCattribute(
                               kittyData,
                               "colorsecondary"
-                            )}
-                        </Text>
-                        <div className="lineWrap">
-                          <Line
-                            viewBoxWidth={110}
-                            viewBoxHeight={110}
-                            startPoint={{ x: 0, y: 0 }}
-                            endPoint={{ x: 100, y: 70 }}
-                            stroke="violet"
-                            dotSize={10}
-                          />
-                        </div>
-                      </Box>
-                      <Box className="traitItem tertiaryColor">
-                        <Heading level={6} margin="none">
-                          Tertiary Color
-                        </Heading>
-                        <Text>
-                          {kittyData &&
-                            scoreUtils.getCattribute(
-                              kittyData,
-                              "colortertiary"
-                            )}
-                        </Text>
-                        {/* <Box className="curve">
+                            )
+                          )
+                        }}
+                      ></Box>
+                    )}
+                    {kittyData && !kittyData.is_fancy && (
+                      <Box
+                        className="colorContent tertiaryColor"
+                        style={{
+                          background: this.getTertiaryColor(
+                            scoreUtils.getCattribute(kittyData, "colortertiary")
+                          )
+                        }}
+                      ></Box>
+                    )}
+                  </Box>
+                )}
+                {kittyData &&
+                  !kittyData.is_fancy &&
+                  (kittyData.cattributes || kittyData.enhanced_cattributes) && (
+                    <Box className="traitHighlights" style={{ height: "100%" }}>
+                      <PoseGroup animateOnMount flipMove>
+                        {!routerStore.isTranstioning && !isLoadingData && (
+                          <PosedBox
+                            className="traitItemWrap eyeColor "
+                            delay={100}
+                            key="sdflssdfdmj"
+                          >
+                            <PosedTrait
+                              key="eyeColor"
+                              className="traitItem primaryColor"
+                              delay={100}
+                            >
+                              <Heading level={6} margin="none">
+                                Eye Color
+                              </Heading>
+                              <Text>
+                                {kittyData &&
+                                  scoreUtils.getCattribute(
+                                    kittyData,
+                                    "coloreyes"
+                                  )}
+                              </Text>
+                              <div className="lineWrap">
+                                <Line
+                                  viewBoxWidth={90}
+                                  viewBoxHeight={140}
+                                  startPoint={{ x: 0, y: 0 }}
+                                  endPoint={{ x: 80, y: 95 }}
+                                  stroke="violet"
+                                  dotSize={10}
+                                />
+                              </div>
+                            </PosedTrait>
+                          </PosedBox>
+                        )}
+                        {!routerStore.isTranstioning && !isLoadingData && (
+                          <PosedBox
+                            className="traitItemWrap primaryColor "
+                            delay={150}
+                            key="sdflsdmj"
+                          >
+                            <PosedTrait
+                              key="primaryColor"
+                              className="traitItem primaryColor"
+                              delay={150}
+                            >
+                              <Heading level={6} margin="none">
+                                Primary Color
+                              </Heading>
+                              <Text>
+                                {kittyData &&
+                                  scoreUtils.getCattribute(
+                                    kittyData,
+                                    "colorprimary"
+                                  )}
+                              </Text>
+                              <div className="lineWrap">
+                                <Line
+                                  viewBoxWidth={110}
+                                  viewBoxHeight={110}
+                                  startPoint={{ x: 0, y: 0 }}
+                                  endPoint={{ x: 85, y: 65 }}
+                                  stroke="violet"
+                                  dotSize={10}
+                                />
+                              </div>
+                            </PosedTrait>
+                          </PosedBox>
+                        )}
+                        {!routerStore.isTranstioning && !isLoadingData && (
+                          <PosedBox
+                            className="traitItemWrap secondaryColor right"
+                            key="sdflsdsdffdmj"
+                            delay={200}
+                          >
+                            <PosedTrait
+                              className="traitItem secondaryColor"
+                              key="secondaryColor"
+                              delay={200}
+                            >
+                              <Heading level={6} margin="none">
+                                Secondary Color
+                              </Heading>
+                              <Text>
+                                {kittyData &&
+                                  scoreUtils.getCattribute(
+                                    kittyData,
+                                    "colorsecondary"
+                                  )}
+                              </Text>
+                              <div className="lineWrap">
+                                <Line
+                                  viewBoxWidth={110}
+                                  viewBoxHeight={110}
+                                  startPoint={{ x: 0, y: 0 }}
+                                  endPoint={{ x: 85, y: 50 }}
+                                  stroke="violet"
+                                  dotSize={10}
+                                />
+                              </div>
+                            </PosedTrait>
+                          </PosedBox>
+                        )}
+                        {!routerStore.isTranstioning && !isLoadingData && (
+                          <PosedBox
+                            className="traitItemWrap tertiaryColor "
+                            key="ssdfdflsdmj"
+                            delay={250}
+                          >
+                            <PosedTrait
+                              key="tertiaryColor"
+                              delay={250}
+                              className="traitItem tertiaryColor"
+                            >
+                              <Heading level={6} margin="none">
+                                Tertiary Color
+                              </Heading>
+                              <Text>
+                                {kittyData &&
+                                  scoreUtils.getCattribute(
+                                    kittyData,
+                                    "colortertiary"
+                                  )}
+                              </Text>
+                              {/* <Box className="curve">
                       <Bezier
                         // viewBoxWidth={viewBoxWidth}
                         // viewBoxHeight={viewBoxHeight}
@@ -250,144 +409,243 @@ class KittyPageComponent extends Component {
                         endPoint={[300, 150]}
                       />
                     </Box> */}
-                        <div className="lineWrap">
-                          <Line
-                            viewBoxWidth={110}
-                            viewBoxHeight={110}
-                            startPoint={{ x: 0, y: 0 }}
-                            endPoint={{ x: 80, y: 50 }}
-                            stroke="violet"
-                            dotSize={10}
-                          />
-                        </div>
-                      </Box>
-                      {kittyData &&
-                      scoreUtils.getCattribute(kittyData, "environment") &&
-                      scoreUtils.getCattribute(kittyData, "environment") !==
-                        "0" ? (
-                        <Box className="traitItem environment">
-                          <Heading level={6} margin="none">
-                            Environment
-                          </Heading>
-                          <Text>
-                            {kittyData &&
-                              scoreUtils.getCattribute(
-                                kittyData,
-                                "environment"
-                              )}
-                          </Text>
-                          <div className="lineWrap">
-                            <Line
-                              viewBoxWidth={80}
-                              viewBoxHeight={50}
-                              startPoint={{ x: 0, y: 0 }}
-                              endPoint={{ x: 60, y: 20 }}
-                              stroke="violet"
-                              dotSize={10}
-                            />
-                          </div>
-                        </Box>
-                      ) : null}
+                              <div className="lineWrap">
+                                <Line
+                                  viewBoxWidth={110}
+                                  viewBoxHeight={110}
+                                  startPoint={{ x: 0, y: 0 }}
+                                  endPoint={{ x: 60, y: 30 }}
+                                  stroke="violet"
+                                  dotSize={10}
+                                />
+                              </div>
+                            </PosedTrait>
+                          </PosedBox>
+                        )}
+                        {!routerStore.isTranstioning &&
+                          !isLoadingData &&
+                          kittyData &&
+                          scoreUtils.getCattribute(kittyData, "environment") &&
+                          scoreUtils.getCattribute(kittyData, "environment") !==
+                            "0" && (
+                            <PosedBox
+                              className="traitItemWrap environment "
+                              key="sdflmj"
+                              delay={300}
+                            >
+                              <PosedTrait
+                                key="environment"
+                                className="traitItem environment"
+                                delay={100}
+                              >
+                                <Heading level={6} margin="none">
+                                  Environment
+                                </Heading>
+                                <Text>
+                                  {kittyData &&
+                                    scoreUtils.getCattribute(
+                                      kittyData,
+                                      "environment"
+                                    )}
+                                </Text>
+                                <div className="lineWrap">
+                                  <Line
+                                    viewBoxWidth={100}
+                                    viewBoxHeight={50}
+                                    startPoint={{ x: 0, y: 20 }}
+                                    endPoint={{ x: 80, y: 15 }}
+                                    stroke="violet"
+                                    dotSize={10}
+                                  />
+                                </div>
+                              </PosedTrait>
+                            </PosedBox>
+                          )}
+                      </PoseGroup>
+
                       {/* RIGHT SIDE */}
-                      {kittyData &&
-                      scoreUtils.getCattribute(kittyData, "wild") &&
-                      scoreUtils.getCattribute(kittyData, "wild") !== "0" ? (
-                        <Box className="traitItem wild right">
-                          <Heading level={6} margin="none">
-                            Wild
-                          </Heading>
-                          <Text>
-                            {kittyData &&
-                              scoreUtils.getCattribute(kittyData, "wild")}
-                          </Text>
-                          <div className="lineWrap">
-                            <Line
-                              viewBoxWidth={200}
-                              viewBoxHeight={200}
-                              startPoint={{ x: 200, y: 0 }}
-                              endPoint={{ x: 50, y: 100 }}
-                              dotSize={10}
-                              stroke="violet"
-                            />
-                          </div>
-                        </Box>
-                      ) : null}
-                      <Box className="traitItem eyes right">
-                        <Heading level={6} margin="none">
-                          Eyes
-                        </Heading>
-                        <Text>
-                          {kittyData &&
-                            scoreUtils.getCattribute(kittyData, "eyes")}
-                        </Text>
-                        <div className="lineWrap">
-                          <Line
-                            viewBoxWidth={280}
-                            viewBoxHeight={120}
-                            startPoint={{ x: 280, y: 0 }}
-                            endPoint={{ x: 40, y: 100 }}
-                            dotSize={10}
-                            stroke="violet"
-                          />
-                        </div>
-                      </Box>
-                      <Box className="traitItem mouth right">
-                        <Heading level={6} margin="none">
-                          Mouth
-                        </Heading>
-                        <Text>
-                          {kittyData &&
-                            scoreUtils.getCattribute(kittyData, "mouth")}
-                        </Text>
-                        <div className="lineWrap">
-                          <Line
-                            viewBoxWidth={300}
-                            viewBoxHeight={130}
-                            startPoint={{ x: 300, y: 0 }}
-                            endPoint={{ x: 30, y: 60 }}
-                            dotSize={10}
-                            stroke="violet"
-                          />
-                        </div>
-                      </Box>
-                      <Box className="traitItem body right">
-                        <Heading level={6} margin="none">
-                          Body
-                        </Heading>
-                        <Text>
-                          {kittyData &&
-                            scoreUtils.getCattribute(kittyData, "body")}
-                        </Text>
-                        <div className="lineWrap">
-                          <Line
-                            viewBoxWidth={90}
-                            viewBoxHeight={90}
-                            startPoint={{ x: 90, y: 0 }}
-                            endPoint={{ x: 10, y: 40 }}
-                            stroke="violet"
-                            dotSize={10}
-                          />
-                        </div>
-                      </Box>
-                      <Box className="traitItem pattern right">
-                        <Heading level={6} margin="none">
-                          Pattern
-                        </Heading>
-                        <Text>
-                          {kittyData &&
-                            scoreUtils.getCattribute(kittyData, "pattern")}
-                        </Text>
-                        <div className="lineWrap">
-                          <Line
-                            viewBoxWidth={180}
-                            viewBoxHeight={180}
-                            startPoint={{ x: 180, y: 0 }}
-                            endPoint={{ x: 30, y: 30 }}
-                            stroke="violet"
-                            dotSize={10}
-                          />
-                        </div>
-                      </Box>
+                      <PoseGroup animateOnMount flipMove>
+                        {!isLoadingData &&
+                          kittyData &&
+                          scoreUtils.getCattribute(kittyData, "wild") &&
+                          scoreUtils.getCattribute(kittyData, "wild") !==
+                            "0" && (
+                            <PosedBox
+                              className="traitItemWrap wild right"
+                              delay={100}
+                              key="owpwiw"
+                            >
+                              <PosedTrait
+                                key="wild"
+                                delay={100}
+                                // pose={
+                                //   !isLoadingData &&
+                                //   kittyData &&
+                                //   scoreUtils.getCattribute(kittyData, "wild") &&
+                                //   scoreUtils.getCattribute(
+                                //     kittyData,
+                                //     "wild"
+                                //   ) !== "0"
+                                //     ? "enter"
+                                //     : "exit"
+                                // }
+                              >
+                                <Box className="traitItem wild right">
+                                  <Heading level={6} margin="none">
+                                    Wild
+                                  </Heading>
+                                  <Text>
+                                    {kittyData &&
+                                      scoreUtils.getCattribute(
+                                        kittyData,
+                                        "wild"
+                                      )}
+                                  </Text>
+                                  <div className="lineWrap">
+                                    <Line
+                                      viewBoxWidth={200}
+                                      viewBoxHeight={200}
+                                      startPoint={{ x: 200, y: 0 }}
+                                      endPoint={{ x: 50, y: 100 }}
+                                      dotSize={10}
+                                      stroke="violet"
+                                    />
+                                  </div>
+                                </Box>
+                              </PosedTrait>
+                            </PosedBox>
+                          )}
+
+                        {!isLoadingData && kittyData && (
+                          <PosedBox
+                            className="traitItemWrap eyes right"
+                            key="skjdnoe"
+                            delay={150}
+                          >
+                            <PosedTrait
+                              key="eyes"
+                              delay={100}
+                              //pose={ ? "enter" : "exit"}
+                              className="traitItem eyes right"
+                            >
+                              <Heading level={6} margin="none">
+                                Eyes
+                              </Heading>
+                              <Text>
+                                {kittyData &&
+                                  scoreUtils.getCattribute(kittyData, "eyes")}
+                              </Text>
+                              <div className="lineWrap">
+                                <Line
+                                  viewBoxWidth={280}
+                                  viewBoxHeight={120}
+                                  startPoint={{ x: 280, y: 0 }}
+                                  endPoint={{ x: 40, y: 100 }}
+                                  dotSize={10}
+                                  stroke="violet"
+                                />
+                              </div>
+                            </PosedTrait>
+                          </PosedBox>
+                        )}
+
+                        {!isLoadingData && kittyData && (
+                          <PosedBox
+                            className="traitItemWrap mouth right"
+                            key="mouth"
+                            delay={200}
+                          >
+                            <PosedTrait
+                              key="mouth"
+                              delay={100}
+                              //pose={!isLoadingData && kittyData ? "enter" : "exit"}
+                              className="traitItem mouth right"
+                            >
+                              <Heading level={6} margin="none">
+                                Mouth
+                              </Heading>
+                              <Text>
+                                {kittyData &&
+                                  scoreUtils.getCattribute(kittyData, "mouth")}
+                              </Text>
+                              <div className="lineWrap">
+                                <Line
+                                  viewBoxWidth={280}
+                                  viewBoxHeight={130}
+                                  startPoint={{ x: 280, y: 0 }}
+                                  endPoint={{ x: 10, y: 60 }}
+                                  dotSize={10}
+                                  stroke="violet"
+                                />
+                              </div>
+                            </PosedTrait>
+                          </PosedBox>
+                        )}
+                        {!isLoadingData && kittyData && (
+                          <PosedBox
+                            className="traitItemWrap pattern right"
+                            key="pattern"
+                            delay={250}
+                          >
+                            <PosedTrait
+                              className="traitItem pattern right"
+                              delay={100}
+                            >
+                              <Heading level={6} margin="none">
+                                Pattern
+                              </Heading>
+                              <Text>
+                                {kittyData &&
+                                  scoreUtils.getCattribute(
+                                    kittyData,
+                                    "pattern"
+                                  )}
+                              </Text>
+                              <div className="lineWrap">
+                                <Line
+                                  viewBoxWidth={240}
+                                  viewBoxHeight={180}
+                                  startPoint={{ x: 240, y: 0 }}
+                                  endPoint={{ x: 10, y: 30 }}
+                                  stroke="violet"
+                                  dotSize={10}
+                                />
+                              </div>
+                            </PosedTrait>
+                          </PosedBox>
+                        )}
+
+                        {!isLoadingData && kittyData && (
+                          <PosedBox
+                            className="traitItemWrap body right"
+                            key="body"
+                            delay={300}
+                          >
+                            <PosedTrait
+                              className="traitItem body right"
+                              delay={100}
+                            >
+                              <Heading level={6} margin="none">
+                                Body
+                              </Heading>
+                              <Text>
+                                {kittyData &&
+                                  scoreUtils.getCattribute(kittyData, "body")}
+                              </Text>
+                              <div className="lineWrap">
+                                <Line
+                                  viewBoxWidth={230}
+                                  viewBoxHeight={90}
+                                  startPoint={{ x: 230, y: 40 }}
+                                  endPoint={{ x: 25, y: 30 }}
+                                  stroke="violet"
+                                  dotSize={10}
+                                />
+                              </div>
+                            </PosedTrait>
+                          </PosedBox>
+                        )}
+                      </PoseGroup>
                     </Box>
                   )}
               </Box>
@@ -577,6 +835,7 @@ class KittyPageComponent extends Component {
     console.log("kittyData", kittyData);
     if (kittyData.breederNickname) {
       console.log("MINIMAL VERSION");
+      this.setState({ kittyData: kittyData, isLoadingData: false });
     }
     if (kittyData && kittyData.id) {
       console.log("not empty");
@@ -618,6 +877,7 @@ class KittyPageComponent extends Component {
         console.log("data result by type: ", data);
         this.setState({
           kittyData: data.kitties[0],
+          isLoadingData: false,
           isLoadingStore: false
         });
       })
@@ -697,15 +957,50 @@ class KittyPageComponent extends Component {
     const cattr = scoreUtils.getCattribute(kitty, cattribute);
     console.log(cattr);
   }
-  getColor = name => {
+  getColor = (name, version) => {
+    console.log("getting color", name, version);
     const {
       rootStore: { UiStore }
     } = this.props;
-    const { allColors } = UiStore;
+    const { allColors, primaryColors } = UiStore;
     const filtered = allColors.filter(color => color.name === name);
-    return filtered.length && filtered[0].backgroundColorHex;
+    console.log("filtered", filtered);
+    if (version) {
+      return filtered.length && filtered[0][version];
+    } else {
+      return filtered.length && filtered[0].backgroundColorHex;
+    }
   };
 
+  getPrimaryColor = name => {
+    const {
+      rootStore: { UiStore }
+    } = this.props;
+    const { primaryColors } = UiStore;
+    const filtered = primaryColors.filter(color => color.name === name);
+    console.log("filtered", filtered);
+    return filtered.length && filtered[0].colorHex;
+  };
+
+  getSecondaryColor = name => {
+    const {
+      rootStore: { UiStore }
+    } = this.props;
+    const { secondaryColors } = UiStore;
+    const filtered = secondaryColors.filter(color => color.name === name);
+    console.log("filtered", filtered);
+    return filtered.length && filtered[0].colorHex;
+  };
+
+  getTertiaryColor = name => {
+    const {
+      rootStore: { UiStore }
+    } = this.props;
+    const { tertiaryColors } = UiStore;
+    const filtered = tertiaryColors.filter(color => color.name === name);
+    console.log("filtered", filtered);
+    return filtered.length && filtered[0].colorHex;
+  };
   handleMenu = value => {
     const {
       rootStore: { UiStore }
@@ -723,8 +1018,9 @@ class KittyPageComponent extends Component {
   // };
   sideLink = newId => {
     const {
-      rootStore: { KittyStore }
+      rootStore: { routerStore, KittyStore }
     } = this.props;
+    this.setState({ isLoading: true });
     KittyStore.kittyData = undefined;
     this.getKittyData(newId);
     this.appLink("kitty", newId, "reset");
