@@ -11,8 +11,12 @@ import "./KittyItem.scss";
 class KittyItem extends Component {
   state = {
     hasSelected: true,
-    showAllColors: false
+    showAllColors: false,
+    isVisible: false
   };
+  componentDidMount() {
+    this.setState({ isVisible: true });
+  }
   render() {
     // const { displayMode = "default", colorData } = this.props;
     const {
@@ -22,10 +26,11 @@ class KittyItem extends Component {
       handleKittyLink = () => {}
     } = this.props;
 
-    // const { showAllColors = this.props.showAllColors } = this.state;
+    const { isVisible } = this.state;
     // const [hasSelected, setHasSelected] = useState(true);
     // const chartHeight = 160;
     // const dateNow = new Date();
+
     return (
       <Box
         className={`KittyItem ${displayMode}`}
@@ -36,15 +41,27 @@ class KittyItem extends Component {
         justify={displayMode === "ranking" ? "center" : "stretch"}
         fill="horizontal"
         background="#fff"
-        elevation="xsmall"
+        elevation={displayMode === "featured" ? "small" : "xsmall"}
         align="center"
         onClick={() => handleKittyLink(kitty)}
+        style={{
+          border:
+            displayMode === "featured"
+              ? `2px solid ${background}`
+              : " 1px solid red"
+        }}
       >
         <Box
           className="kittyItemImage"
-          basis={displayMode === "ranking" ? "24px" : "10%"}
-          background={background ? background : "transparent"}
+          basis={displayMode === "ranking" ? "24px" : "12%"}
+          // background={background ? background : "transparent"}
         >
+          {displayMode === "featured" && (
+            <div
+              className="bigDot"
+              style={{ background: background ? background : "transparent" }}
+            />
+          )}
           <img src={kitty.image_url} alt="" />
         </Box>
         {displayMode !== "ranking" && (
@@ -62,10 +79,6 @@ class KittyItem extends Component {
         {displayMode === "featured" && (
           <Box className="kittyDetail" justify="end" basis="30%">
             <Heading level={6} margin="none">
-              Generation
-            </Heading>
-            <Text size="small">{kitty.generation}</Text>
-            <Heading level={6} margin="none">
               Born
             </Heading>
             <Text size="small">
@@ -74,6 +87,10 @@ class KittyItem extends Component {
                 ago
               </Text>
             </Text>
+            <Heading level={6} margin="none">
+              Generation
+            </Heading>
+            <Text size="small">{kitty.generation}</Text>
           </Box>
         )}
 

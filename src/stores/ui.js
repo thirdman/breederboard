@@ -14,7 +14,7 @@ const UiStore = new observable({
   UiData: new Document({ mode: "auto" }),
   isLive: true,
   hasMenu: false,
-  devMode: true,
+  devMode: false,
   defaultScores: {
     fancyScores: {
       top10: {

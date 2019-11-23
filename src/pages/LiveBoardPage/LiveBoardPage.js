@@ -1,11 +1,14 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
+import posed, { PoseGroup } from "react-pose";
+
 import firebase from "firebase/app";
 import "firebase/functions";
 import classNames from "classnames";
 import { Box, Button, Heading, Text } from "grommet";
-import { Fireball, View } from "grommet-icons";
-import { Board } from "../../components/Board/Board";
+// import { Fireball, View } from "grommet-icons";
+// import { Board } from "../../components/Board/Board";
+import ButtonGroup from "../../components/ButtonGroup/ButtonGroup";
 import Loading from "../../components/Loading/Loading";
 import KittyFeed from "../../components/KittyFeed/KittyFeed";
 import KittyItem from "../../components/KittyItem/KittyItem";
@@ -34,36 +37,60 @@ class LiveBoardPageComponent extends Component {
     const { id } = params;
     const { devMode } = UiStore;
 
-    const {
-      isLoadingStore = true,
-      showRestAttributes,
-      updateStatus,
-      attributeData
-    } = this.state;
-    const { allFancies } = UiStore;
+    const { isLoadingStore = true, updateStatus, attributeData } = this.state;
     if (params.attributes) {
-      // console.log("params.attributes", params.attributes);
+      console.log("params.attributes", params.attributes);
     }
     if (params.id) {
       console.log("params.id", params.id);
       BoardStore.path = `boards/${params.id}`;
     }
     console.log("KittehStore", KittehStore);
+    const { pageCount } = KittehStore;
     const isReady = KittehStore.ready();
-    if (!KittehStore.isActive) {
-      KittehStore.fetch();
-    }
-    console.log("isReady", isReady);
+    // if (!KittehStore.isActive) {
+    //   KittehStore.fetch();
+    // }
+    // console.log("isReady", isReady);
+    const mode = params.id && params.id === "prestige" ? "prestige" : "fancy";
     const filtered =
       KittehStore &&
       KittehStore.docs &&
-      this.filterDocs(KittehStore.docs, "is_fancy", true);
+      this.filterDocs(
+        KittehStore.docs,
+        mode === "prestige" ? "is_prestige" : "is_fancy",
+        true
+      );
     console.log("filtered", filtered);
     const attributeDataFull =
       (KittehStore &&
         KittehStore.docs &&
         this.getAttributeData(KittehStore.docs)) ||
       [];
+
+    const PosedBox = posed.div({
+      enter: {
+        x: 0,
+        y: 0,
+        opacity: 1,
+        delay: 0,
+        scale: 1,
+        transition: {
+          y: { type: "spring", stiffness: 200, damping: 10 },
+          default: { duration: 200 }
+        }
+      },
+      exit: {
+        x: 0,
+        y: 30,
+        scale: 0.5,
+
+        delay: 0,
+        // delay: ({ i }) => i * staggerDuration,
+        opacity: 0,
+        transition: { duration: 200 }
+      }
+    });
     return (
       <Box
         className={classNames("LiveBoardPage", {
@@ -77,12 +104,6 @@ class LiveBoardPageComponent extends Component {
       >
         {devMode && (
           <Box justify="start">
-            {/* <Button primary onClick={() => this.testFirebase()}>
-                  test firebase
-                </Button>
-                <Button primary onClick={() => this.testByType()}>
-                  test fancy get
-                </Button> */}
             <Button primary onClick={() => this.testSaveRecent()}>
               testSaveRecent
             </Button>
@@ -105,12 +126,49 @@ class LiveBoardPageComponent extends Component {
           gap="small"
           style={{ maxWidth: "1024px" }}
         >
-          <Heading level={2} margin={{ vertical: "small" }}>
-            Live Fancy Feed
+          <Heading level={2} margin={{ vertical: "small" }} style={{textTransform: "capitalize"}}>
+            Live {mode} Feed
           </Heading>
           {KittehStore && KittehStore.docs && (
-            <Box>
+            <Box justify="between" fill="horizontal" direction="row">
               <Text size="small">{KittehStore.docs.length} Kitties</Text>
+              <Box direction="row" align="center">
+                <Text size="small">Kitty Count:</Text>
+                <ButtonGroup>
+                  <Button onClick={() => this.setPageCount(15)}>
+                    <Box
+                      pad="xsmall"
+                      background={pageCount === 15 ? "violet" : "transparent"}
+                    >
+                      <Text size="small">15</Text>
+                    </Box>
+                  </Button>
+                  <Button onClick={() => this.setPageCount(30)}>
+                    <Box
+                      pad="xsmall"
+                      background={pageCount === 30 ? "violet" : "transparent"}
+                    >
+                      <Text size="small">30</Text>
+                    </Box>
+                  </Button>
+                  <Button onClick={() => this.setPageCount(50)}>
+                    <Box
+                      pad="xsmall"
+                      background={pageCount === 50 ? "violet" : "transparent"}
+                    >
+                      <Text size="small">50</Text>
+                    </Box>
+                  </Button>
+                  <Button onClick={() => this.setPageCount(100)}>
+                    <Box
+                      pad="xsmall"
+                      background={pageCount === 100 ? "violet" : "transparent"}
+                    >
+                      <Text size="small">100</Text>
+                    </Box>
+                  </Button>
+                </ButtonGroup>
+              </Box>
             </Box>
           )}
         </Box>
@@ -124,21 +182,6 @@ class LiveBoardPageComponent extends Component {
           gap="large"
           style={{ maxWidth: "1024px" }}
         >
-          {/* {!isLoadingStore && (
-            <Board
-              allAttributes={allAttributes}
-              // allFancies={storeFancies}
-              allFancies={allFancies}
-              initialAttributes={UiStore.allAttributes}
-              boardId={id}
-              queryParams={
-                queryParams && queryParams.attributes
-                  ? queryParams.attributes.split(",")
-                  : []
-              }
-              appLink={this.appLink}
-            />
-          )} */}
           <Box basis="60%">
             {filtered && filtered[0] && (
               <Box
@@ -151,16 +194,30 @@ class LiveBoardPageComponent extends Component {
                     Latest
                   </Heading>
                 </Box>
-                <Box className="fancyFresh" direciton="column">
-                  <KittyItem
-                    kitty={filtered[0].data}
-                    displayMode={"featured"}
-                    handleKittyLink={this.handleKittyLink}
-                    background={
-                      filtered[0].data.color &&
-                      this.getColor(filtered[0].data.color)
-                    }
-                  />
+                <Box
+                  className="fancyFresh"
+                  direction="column"
+                  align="start"
+                  fill="horizontal"
+                >
+                  <PoseGroup animateOnMount flipMove>
+                    {filtered &&
+                      filtered.map((item, index) => (
+                        <PosedBox
+                          key={`kittyFeature${index}`}
+                          style={{ marginBottom: "12px", width: "100%" }}
+                        >
+                          <KittyItem
+                            kitty={item.data}
+                            displayMode={"featured"}
+                            handleKittyLink={this.handleKittyLink}
+                            background={
+                              item.data.color && this.getColor(item.data.color)
+                            }
+                          />
+                        </PosedBox>
+                      ))}
+                  </PoseGroup>
                 </Box>
               </Box>
             )}
@@ -170,10 +227,16 @@ class LiveBoardPageComponent extends Component {
               fill="horizontal"
               margin={{ vertical: "small" }}
             >
-              <Box className="sectionHeading" pad={{ vertical: "small" }}>
+              <Box
+                className="sectionHeading"
+                pad={{ vertical: "small" }}
+                direction="row"
+                justify="between"
+              >
                 <Heading level={3} margin="none">
                   Attributes
                 </Heading>
+                {KittehStore && KittehStore.isLoading && <Loading text="" />}
               </Box>
               <AttributeList
                 attributeData={attributeDataFull}
@@ -306,6 +369,18 @@ class LiveBoardPageComponent extends Component {
   ////////////////
   // MISC
   ////////////////
+  setPageCount = count => {
+    const {
+      rootStore: { KittehStore }
+    } = this.props;
+    KittehStore.pageCount = count;
+    console.log("setPageCount", count);
+    console.log("KittehStore", KittehStore);
+    console.log("KittehStore.query", KittehStore.query);
+    const tempRef = KittehStore.ref;
+    const newQuery = tempRef => tempRef.orderBy("id", "desc").limit(count);
+    KittehStore.query = newQuery;
+  };
   getColor = name => {
     const {
       rootStore: { UiStore }

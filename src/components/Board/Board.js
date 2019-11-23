@@ -688,6 +688,7 @@ class BoardComponent extends Component {
             ) : null}
           </Box>
         )}
+        {devMode && (
         <ShowHide>
           <Box direction="row" pad={{ bottom: "small" }} gap="small">
             <Box direction="column">
@@ -749,6 +750,7 @@ class BoardComponent extends Component {
             </Box>
           </Box>
         </ShowHide>
+        )}
         {BoardStore.isLoading ? (
           <Box
             pad="xsmall"
@@ -1542,7 +1544,7 @@ class BoardComponent extends Component {
             </Box>
           </Layer>
         )}
-        {!isPublic && (
+        {devMode && !isPublic && (
           <Box
             className="shhBox"
             pad="small"
@@ -1560,7 +1562,7 @@ class BoardComponent extends Component {
             Private!
           </Box>
         )}
-        {updatingData && (
+        {devMode && updatingData && (
           <Box
           className="updateMessage"
             pad="small"

@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import classNames from "classnames";
 import { parseISO, format } from "date-fns";
 import { Box, Heading, Text, Button } from "grommet";
-import { CaretPrevious, FormView, Share } from "grommet-icons";
+import { CaretPrevious, FormView, Share, Next, Previous } from "grommet-icons";
 import Loading from "../../components/Loading/Loading";
 import Banner from "../../components/Banner/Banner";
 import Bezier from "../../components/Bezier/Bezier";
@@ -17,21 +17,22 @@ import { empty } from "rxjs";
 
 class KittyPageComponent extends Component {
   state = {
-    allAttributes: []
+    allAttributes: [],
+    showArrows: true
   };
   async componentDidMount() {
     await this.handleLoad();
   }
   render() {
     const {
-      rootStore: { routerStore }
+      rootStore: { routerStore, UiStore }
     } = this.props;
 
     const {
       routerState: { params, queryParams }
     } = routerStore;
     const { id } = params;
-
+    const { devMode } = UiStore;
     const {
       isLoadingStore = true,
 
@@ -39,7 +40,8 @@ class KittyPageComponent extends Component {
       kittyData,
       isLoadingData,
       scoreData,
-      vintageInfo
+      vintageInfo,
+      showArrows
       // colorWinnersData,
       // highGenData,
       // dateData,
@@ -390,6 +392,34 @@ class KittyPageComponent extends Component {
                   )}
               </Box>
             )}
+            {showArrows && (
+              <Box
+                className="arrow prev"
+                background="#444"
+                color="#eee"
+                align="center"
+                justify="center"
+                onClick={() => {
+                  this.sideLink(parseInt(id) - 1);
+                }}
+              >
+                <Previous />
+              </Box>
+            )}
+            {showArrows && (
+              <Box
+                className="arrow next"
+                background="#444"
+                color="white"
+                align="center"
+                justify="center"
+                onClick={() => {
+                  this.sideLink(parseInt(id) + 1);
+                }}
+              >
+                <Next />
+              </Box>
+            )}
           </Box>
 
           {isLoadingData && !kittyData && (
@@ -514,10 +544,14 @@ class KittyPageComponent extends Component {
             </Box>
           )}
         </Box>
-        <Button onClick={() => this.handleGetScore()}>get score</Button>
-        <Button onClick={() => this.handleGetScoreTypes()}>
-          get handleGetScoreTypes
-        </Button>
+        {devMode && (
+          <Box>
+            <Button onClick={() => this.handleGetScore()}>get score</Button>
+            <Button onClick={() => this.handleGetScoreTypes()}>
+              get handleGetScoreTypes
+            </Button>
+          </Box>
+        )}
       </Box>
     );
   }
@@ -680,10 +714,31 @@ class KittyPageComponent extends Component {
     UiStore.hasMenu = !UiStore.hasMenu;
     // console.log("handle menu", UiStore);
   };
-  appLink = (routeName, id, stage) => {
+  // handleKittyLink = kitty => {
+  //   const {
+  //     rootStore: { routerStore, KittyStore }
+  //   } = this.props;
+  //   KittyStore.kittyData = kitty;
+  //   this.appLink("kitty", kitty.id, "overview");
+  // };
+  sideLink = newId => {
     const {
-      rootStore: { routerStore }
+      rootStore: { KittyStore }
     } = this.props;
+    KittyStore.kittyData = undefined;
+    this.getKittyData(newId);
+    this.appLink("kitty", newId, "reset");
+  };
+  appLink = (routeName, id, stage) => {
+    console.log("stage", stage);
+    const {
+      rootStore: { routerStore, KittyStore }
+    } = this.props;
+    if (stage === "reset") {
+      console.log("reset the kitty Data");
+
+      KittyStore.kittyData = undefined;
+    }
     routerStore.goTo(routeName, { id: id || "none", stage: stage || "none" });
   };
   openLink = (e, id) => {
