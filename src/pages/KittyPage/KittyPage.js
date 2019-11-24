@@ -14,6 +14,7 @@ import "./KittyPage.scss";
 // import apiConfig from "../../apiConfig";
 import ckUtils from "../../utils/ck";
 import scoreUtils from "../../utils/scoring";
+import NullCat from "../../assets/nullcat.js";
 import { empty } from "rxjs";
 
 class KittyPageComponent extends Component {
@@ -55,6 +56,7 @@ class KittyPageComponent extends Component {
       // console.log("params.attributes", params.attributes);
     }
     // const dateNow = new Date();
+    // console.log("nullcat: ", NullCat);
     const PosedBox = posed.div({
       enter: {
         x: 0,
@@ -210,6 +212,7 @@ class KittyPageComponent extends Component {
                     className="fancyImage"
                     style={{ background: this.getColor(kittyData.color) }}
                   />
+                  {kittyData && !kittyData.image_url && <NullCat />}
                 </Box>
                 {kittyData && !kittyData.is_fancy && (
                   <Box className="colorsWrapper">
@@ -818,7 +821,7 @@ class KittyPageComponent extends Component {
     const {
       rootStore: { routerStore, UiStore, KittyStore }
     } = this.props;
-    console.log("KittyStore", KittyStore);
+    // console.log("KittyStore", KittyStore);
     const {
       routerState: { params, queryParams }
     } = routerStore;
@@ -832,15 +835,13 @@ class KittyPageComponent extends Component {
           : []
     });
     const { kittyData } = KittyStore;
-    console.log("kittyData", kittyData);
+    // console.log("kittyData", kittyData);
     if (kittyData.breederNickname) {
-      console.log("MINIMAL VERSION");
+      // console.log("MINIMAL VERSION");
       this.setState({ kittyData: kittyData, isLoadingData: false });
     }
     if (kittyData && kittyData.id) {
-      console.log("not empty");
       if (kittyData.id !== id) {
-        console.log("not the same: ", kittyData.id, id);
         this.getKittyData(id);
       } else {
         this.setState({
@@ -874,7 +875,7 @@ class KittyPageComponent extends Component {
     const getKitty = ckUtils.getKitties(options);
     getKitty
       .then(data => {
-        console.log("data result by type: ", data);
+        // console.log("data result by type: ", data);
         this.setState({
           kittyData: data.kitties[0],
           isLoadingData: false,
@@ -932,39 +933,39 @@ class KittyPageComponent extends Component {
     const data = {
       kitties: [kittyData]
     };
-    console.log("data", data);
-    console.log("data.kitties", data.kitties);
+    // console.log("data", data);
+    // console.log("data.kitties", data.kitties);
     const scoreData = scoreUtils.getScore({
       data: data,
       includeTypes: ["every"]
     });
     // const vintageData = scoreUtils.getVintagePoints({ data: data });
     const vintageInfo = scoreUtils.isVintage(kittyData);
-    console.log("scoreData", scoreData);
-    console.log("vintageInfo", vintageInfo);
+    // console.log("scoreData", scoreData);
+    // console.log("vintageInfo", vintageInfo);
     this.setState({ scoreData: scoreData, vintageInfo: vintageInfo });
   };
 
   handleGetScoreTypes = () => {
     // const { kittyData } = this.state;
     const scoreTypes = scoreUtils.getScoreTypes();
-    console.log("scoreTypes", scoreTypes);
+    // console.log("scoreTypes", scoreTypes);
   };
   ////////////////
   // MISC
   ////////////////
   getCattribute(kitty, cattribute) {
     const cattr = scoreUtils.getCattribute(kitty, cattribute);
-    console.log(cattr);
+    // console.log(cattr);
   }
   getColor = (name, version) => {
-    console.log("getting color", name, version);
+    // console.log("getting color", name, version);
     const {
       rootStore: { UiStore }
     } = this.props;
     const { allColors, primaryColors } = UiStore;
     const filtered = allColors.filter(color => color.name === name);
-    console.log("filtered", filtered);
+    // console.log("filtered", filtered);
     if (version) {
       return filtered.length && filtered[0][version];
     } else {
@@ -988,7 +989,7 @@ class KittyPageComponent extends Component {
     } = this.props;
     const { secondaryColors } = UiStore;
     const filtered = secondaryColors.filter(color => color.name === name);
-    console.log("filtered", filtered);
+    // console.log("filtered", filtered);
     return filtered.length && filtered[0].colorHex;
   };
 
@@ -998,7 +999,7 @@ class KittyPageComponent extends Component {
     } = this.props;
     const { tertiaryColors } = UiStore;
     const filtered = tertiaryColors.filter(color => color.name === name);
-    console.log("filtered", filtered);
+    // console.log("filtered", filtered);
     return filtered.length && filtered[0].colorHex;
   };
   handleMenu = value => {

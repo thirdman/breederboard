@@ -141,7 +141,7 @@ function calcDates(props) {
   const { data, limit } = props;
   const firstDate = data.kitties[0].created_at;
   const lastDate = data.kitties[data.kitties.length - 1].created_at;
-  console.log(":: calcdates firstDate: ", firstDate);
+  // console.log(":: calcdates firstDate: ", firstDate);
   var hours = differenceInHours(parseISO(firstDate), parseISO(lastDate));
   var minutes = differenceInMinutes(parseISO(firstDate), parseISO(lastDate));
   const perMinute = (limit / minutes).toFixed(2);
@@ -156,8 +156,8 @@ function calcDates(props) {
     parseISO(lastDate),
     { addSuffix: false }
   );
-  console.log("formattedDistance", formattedDistance);
-  console.log("hours: ", hours, " and minutes: ", minutes);
+  // console.log("formattedDistance", formattedDistance);
+  // console.log("hours: ", hours, " and minutes: ", minutes);
   return {
     hours: hours,
     minutes: minutes,
@@ -173,7 +173,7 @@ function calcDates(props) {
 function massageData(data, lastKittyId) {
   const earliestKittyId = data.kitties[0].id;
   const latestKittyId = data.kitties[data.kitties.length - 1].id;
-  console.log("in massage function lastKittyId", lastKittyId);
+  // console.log("in massage function lastKittyId", lastKittyId);
   let massagedKitties = [];
   const kitteh = data.kitties.map(kitty => {
     if (!kitty.id > lastKittyId) {
@@ -189,7 +189,9 @@ function massageData(data, lastKittyId) {
       image_url,
       hatcher,
       generation,
-      enhanced_cattributes
+      enhanced_cattributes,
+      fancy_ranking,
+      prestige_ranking,
     } = kitty;
     const breederNickname = kitty.hatcher.nickname || "";
     const breederId = kitty.hatcher.address || "";
@@ -213,13 +215,15 @@ function massageData(data, lastKittyId) {
       breederId,
       image_url,
       generation,
-      cattributes
+      cattributes,
+      fancy_ranking,
+      prestige_ranking,
     };
     massagedKitties.push(tempObj);
     return tempObj;
   });
-  console.log("::: massaged kitteh.length: ", kitteh.length);
-  console.log("::: massagedKitties length: ", massagedKitties.length);
+  // console.log("::: massaged kitteh.length: ", kitteh.length);
+  // console.log("::: massagedKitties length: ", massagedKitties.length);
   // const sliced = kitteh.slice(0, 9);
   const toReturn = { kitteh: kitteh, earliestKittyId, latestKittyId };
   return toReturn;
@@ -319,7 +323,7 @@ function handleRecentKitties(props) {
  *
  */
 exports.getLiveData = functions.pubsub
-  .schedule("every 1 minutes")
+  .schedule("every 3 minutes")
   .onRun(async context => {
     console.log("=== begin schedulefunction: running every 5 minutes === ");
 

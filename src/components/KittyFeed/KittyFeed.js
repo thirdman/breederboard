@@ -2,12 +2,13 @@ import React, { Component } from "react";
 import classNames from "classnames";
 import posed, { PoseGroup } from "react-pose";
 
-import { parseISO, formatDistanceStrict } from "date-fns";
+import { parseISO, formatDistanceStrict, differenceInSeconds } from "date-fns";
 import { Box, Button, Text } from "grommet";
 import { CaretUp, CaretDown } from "grommet-icons";
 // import { parseISO, formatDistanceStrict, format, fromUnixTime } from "date-fns";
 import Loading from "../../components/Loading/Loading";
 import KittyItem from "../../components/KittyItem/KittyItem";
+import NullCat from "../../assets/nullcat.js";
 import "./KittyFeed.scss";
 
 // class KittyFeed extends Component {
@@ -23,7 +24,7 @@ function KittyFeed(props) {
     handleKittyLink = () => {}
   } = props;
   const staggerDuration = 50;
-  console.log("kittyData", kittyData);
+  // console.log("kittyData", kittyData);
   // const { showAllColors = this.props.showAllColors } = this.state;
   // const [hasSelected, setHasSelected] = useState(true);
   // const chartHeight = 160;
@@ -40,7 +41,8 @@ function KittyFeed(props) {
         x: { type: "spring", stiffness: 1000, damping: 25 },
         y: { type: "spring", stiffness: 1000, damping: 25 },
         default: { duration: 300 }
-      }
+      },
+      staggerChildren: 100
     },
     exit: {
       x: 10,
@@ -64,7 +66,8 @@ function KittyFeed(props) {
       transition: {
         y: { type: "spring", stiffness: 200, damping: 5 },
         default: { duration: 200 }
-      }
+      },
+      staggerChildren: 100
     },
     exit: {
       x: 0,
@@ -76,6 +79,59 @@ function KittyFeed(props) {
       transition: { duration: 200 }
     }
   });
+
+  // const PosedHighlight = posed.div({
+  //   enter: {
+  //     y: 0,
+  //     opacity: 1,
+  //     delay: 0,
+  //     transition: {
+  //       y: { type: "spring", stiffness: 200, damping: 5 },
+  //       default: { duration: 200 }
+  //     }
+  //   },
+  //   exit: {
+  //     x: 0,
+  //     y: 20,
+  //     opacity: 1,
+  //     // scale: 0.15,
+  //     transition: { duration: 200 }
+  //   }
+  // });
+
+  const NewHighlight = props => {
+    const wordArray = [
+      "New!",
+      "Wow!",
+      "Boom!",
+      "Pow!",
+      "Purr",
+      "Wot!",
+      "Who dis?",
+      "OH HAI",
+      "Meow!",
+      "Heyyy"
+    ];
+    const tempArray = shuffle(wordArray);
+    const word = tempArray.slice(0, 1)[0];
+    // const randomNumber = Math.floor(Math.random() * 300) + 70;
+    const randomNumber = Math.floor(Math.random() * (300 - 50 + 1) + 50);
+    // console.log("isnew", isNew(props.created_at));
+    const delay = randomNumber * 1;
+    // const difference = differenceInSeconds(dateNow, parseISO(props.created_at));
+    // console.log("difference", difference);
+
+    return (
+      <Box
+        align="center"
+        justify="center"
+        className="newHighlight"
+        style={{ animationDelay: `${delay}ms` }}
+      >
+        {word}
+      </Box>
+    );
+  };
 
   return (
     <Box className="KittyFeed" fill="horizontal">
@@ -121,15 +177,23 @@ function KittyFeed(props) {
                     gap="xxsmall"
                     round="xsmall"
                     margin={{ vertical: "xxsmall" }}
-                    
                   >
+                    {isNew(doc.data.created_at) ? (
+                      <Box className="newHighlightWrap">
+                        <NewHighlight created_at={doc.data.created_at} />
+                      </Box>
+                    ) : null}
                     <Box
                       className="kittyImageWrap"
                       basis="15%"
                       align="center"
                       justify="center"
                     >
-                      <img src={doc.data.image_url} alt="" />
+                      {doc.data.image_url ? (
+                        <img src={doc.data.image_url} alt="" />
+                      ) : (
+                        <NullCat />
+                      )}
                     </Box>
                     <Box className="kittyText" basis="70%" direction="column">
                       {/* <Text size="small">
@@ -143,7 +207,10 @@ function KittyFeed(props) {
                         ago
                       </Text>
                       <Text size="small">
-                        <strong>{doc.data.name}</strong> was born
+                        <strong>
+                          {doc.data.name || `Kitty ${doc.data.id}`}
+                        </strong>{" "}
+                        was born
                       </Text>
                     </Box>
                     <Box basis="20%">
@@ -195,6 +262,20 @@ function KittyFeed(props) {
       </PoseGroup>
     </Box>
   );
+}
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function isNew(created_at) {
+  const dateNow = new Date();
+  const difference = differenceInSeconds(dateNow, parseISO(created_at));
+  // console.log("difference", difference);
+  return difference < 180 ? true : false;
 }
 
 export default KittyFeed;

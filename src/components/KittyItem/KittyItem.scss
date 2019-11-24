@@ -43,6 +43,13 @@ $bezier: cubic-bezier(0.75, -0.5, 0, 1.75);
         transition: 0.5s transform $bezier;
       }
     }
+    .kittyFancyRank {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      z-index: 11;
+      border-bottom-left-radius: 12px;
+    }
   }
   &:hover {
     &.featured {

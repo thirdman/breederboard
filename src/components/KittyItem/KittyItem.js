@@ -51,6 +51,14 @@ class KittyItem extends Component {
               : " 1px solid red"
         }}
       >
+        {/* {displayMode === "featured" &&
+          (kitty.fancy_ranking || kitty.prestige_ranking) && (
+            <Box className="rankingNumber" align="center" justify="center">
+              <Text size="small">
+                {kitty.fancy_ranking || kitty.prestige_ranking}
+              </Text>
+            </Box>
+          )} */}
         <Box
           className="kittyItemImage"
           basis={displayMode === "ranking" ? "24px" : "12%"}
@@ -94,13 +102,22 @@ class KittyItem extends Component {
           </Box>
         )}
 
-        {kitty.fancy_ranking && (
+        {(kitty.fancy_ranking || kitty.prestige_ranking) && (
           <Box
             className="kittyFancyRank"
             justify="end"
             basis={displayMode === "ranking" ? "20px" : "10%"}
+            pad={{ vertical: "xsmall", horizontal: "small" }}
+            style={{
+              background:
+                displayMode === "featured" && background
+                  ? background
+                  : "transparent"
+            }}
           >
-            <Text size="medium">#{kitty.fancy_ranking}</Text>
+            <Text size="medium">
+              #{kitty.fancy_ranking || kitty.prestige_ranking}
+            </Text>
           </Box>
         )}
       </Box>

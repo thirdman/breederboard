@@ -357,10 +357,10 @@ class LiveBoardPageComponent extends Component {
     } = this.props;
     const kitties = KittehStore.docs && KittehStore.docs.map(doc => doc.data);
     const tempObj = { data: { kitties: kitties, limit: array.length } };
-    console.log("KittehStore.docs", KittehStore.docs);
-    console.log("tempObj", tempObj);
+    // console.log("KittehStore.docs", KittehStore.docs);
+    // console.log("tempObj", tempObj);
     const attributeData = ckUtils.calcAttributes(tempObj);
-    console.log("attributeData", attributeData);
+    // console.log("attributeData", attributeData);
     // this.setState({ attributeData: attributeData });
     return attributeData;
   };
@@ -404,9 +404,9 @@ class LiveBoardPageComponent extends Component {
       rootStore: { KittehStore }
     } = this.props;
     KittehStore.pageCount = count;
-    console.log("setPageCount", count);
-    console.log("KittehStore", KittehStore);
-    console.log("KittehStore.query", KittehStore.query);
+    // console.log("setPageCount", count);
+    // console.log("KittehStore", KittehStore);
+    // console.log("KittehStore.query", KittehStore.query);
     const tempRef = KittehStore.ref;
     const newQuery = tempRef => tempRef.orderBy("id", "desc").limit(count);
     KittehStore.query = newQuery;

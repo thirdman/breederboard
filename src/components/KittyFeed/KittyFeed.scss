@@ -6,7 +6,7 @@ $bezier2: cubic-bezier(0, 1.4, 1, 1);
     color: #888;
   }
   .feedItem {
-    // background: #eee;
+    position: relative;
     height: 3rem;
     transition: transform 0.3s $bezier; //, box-shadow 0.2s $bezier
     // box-shadow: 0 0 0 0 white;
@@ -96,5 +96,49 @@ $bezier2: cubic-bezier(0, 1.4, 1, 1);
         }
       }
     }
+  }
+}
+.newHighlightWrap {
+  position: absolute;
+  left: -20px;
+  top: -20px;
+  width: 50px;
+  height: 50px;
+  // background: red;
+  z-index: 10;
+}
+.newHighlight {
+  position: relative;
+  // background: pink;
+  width: 50px;
+  height: 50px;
+  border-radius: 100px;
+  color: hsla(278, 100%, 55%, 1);
+  font-weight: 700;
+  animation: newPop 3s $bezier;
+  animation-fill-mode: both;
+  animation-iteration-count: 1;
+  transform-origin: center center;
+  white-space: nowrap;
+  text-transform: uppercase;
+  text-shadow: 0 1px 10px gold;
+}
+
+@keyframes newPop {
+  0% {
+    transform: translateY(10px) rotate(-80deg) scale3d(0, 0, 0);
+    opacity: 0;
+  }
+  30% {
+    transform: translateY(0px) rotate(-20deg) scale3d(0.7, 0.7, 1);
+    opacity: 1;
+  }
+  60% {
+    transform: translateY(0px) rotate(-15deg) scale3d(0.8, 0.8, 1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-40px) rotate(30deg) scale3d(1, 1, 1);
+    opacity: 0;
   }
 }
