@@ -90,9 +90,14 @@ class AdminPageComponent extends Component {
             margin="large"
           >
             <Heading level={5}>Colors</Heading>
-            <Button onClick={() => this.getAttributes()}>
+            <Button onClick={() => this.getAttributes({ inclFancy: true })}>
               <Box pad="small">Get attr</Box>
             </Button>
+
+            <Button onClick={() => this.getTrait({ type: "Secret", gene: 12 })}>
+              <Box pad="small">Get gene eyes 12</Box>
+            </Button>
+
             {/* <Button onClick={() => this.getFancies()}>
               <Box pad="small">load fancies</Box>
             </Button> */}
@@ -257,12 +262,13 @@ class AdminPageComponent extends Component {
     // this.getAttributes();
   };
 
-  getAttributes = address => {
+  getAttributes = settings => {
     const {
       rootStore: { UiStore }
     } = this.props;
 
-    console.log("address", address);
+    const { inclFancy } = settings;
+    // console.log("address", address);
     // const {
     //   rootStore: { AssetsStore }
     // } = this.props;
@@ -274,7 +280,8 @@ class AdminPageComponent extends Component {
     // Add a few headers
     theHeaders.append("Content-Type", "application/json");
     theHeaders.append("x-api-token", apiConfig.apiToken);
-    const API = "https://public.api.cryptokitties.co/v1/cattributes?fancy=true";
+    // const API = "https://public.api.cryptokitties.co/v1/cattributes?fancy=true";
+    const API = `https://public.api.cryptokitties.co/v1/cattributes`;
     fetch(API, { headers: theHeaders })
       .then(response => response.json())
       .then(data => {
@@ -285,7 +292,49 @@ class AdminPageComponent extends Component {
         UiStore.allAttributes = data;
         const simplifiedAttributes = data.map(attr => attr.description);
         console.log("=======");
+        console.log("ALL ATTRIBUTES data: ", data);
         console.log("ALL ATTRIBUTES: ", simplifiedAttributes);
+        console.log("=======");
+        return true;
+      });
+  };
+
+  getTrait = settings => {
+    const {
+      rootStore: { UiStore }
+    } = this.props;
+
+    const { gene, type } = settings;
+    if (!gene || !type) {
+      console.error("no gene or type: ", gene, type);
+      return false;
+    }
+    // console.log("address", address);
+    // const {
+    //   rootStore: { AssetsStore }
+    // } = this.props;
+    console.log("AssetsStore");
+    let theHeaders = new Headers();
+    this.setState({
+      isLoadingAssets: true
+    });
+    // Add a few headers
+    theHeaders.append("Content-Type", "application/json");
+    theHeaders.append("x-api-token", apiConfig.apiToken);
+    // const API = "https://public.api.cryptokitties.co/v1/cattributes?fancy=true";
+    const API = `https://public.api.cryptokitties.co/v1/cattributes/${type}/${gene}`;
+    fetch(API, { headers: theHeaders })
+      .then(response => response.json())
+      .then(data => {
+        // this.setState({ allAttributes: data });
+        // this.setState({
+        //   isLoadingAttributes: false
+        // });
+        // UiStore.allAttributes = data;
+        // const simplifiedAttributes = data.map(attr => attr.description);
+        console.log("=======");
+        console.log("TraitData data: ", data);
+
         console.log("=======");
         return true;
       });
