@@ -12,6 +12,7 @@ import { FormAdd } from "grommet-icons";
 import "./AdminPage.scss";
 import apiConfig from "./../../apiConfig";
 import ckUtils from "../../utils/ck";
+import ethUtils from "../../utils/eth";
 // import Loading from "./../../components/Loading/Loading";
 class AdminPageComponent extends Component {
   state = {
@@ -115,6 +116,19 @@ class AdminPageComponent extends Component {
             </Button>
             <Button onClick={() => this.getColorsTertiary()}>
               <Box pad="small">get colors Tertiary</Box>
+            </Button>
+          </Box>
+
+          <Box
+            pad="small"
+            round="small"
+            background="#eee"
+            fill="horizontal"
+            margin="large"
+          >
+            <Heading level={3}>Tests</Heading>
+            <Button onClick={() => ethUtils.queryContract()}>
+              <Box pad="small">QueryContract</Box>
             </Button>
           </Box>
 
@@ -244,8 +258,8 @@ class AdminPageComponent extends Component {
     const {
       rootStore: { SiteStore }
     } = this.props;
-    const { allFancies } = SiteStore.data;
-    console.log("allFancies", allFancies);
+    // const { allFancies } = SiteStore.data;
+    // console.log("allFancies", allFancies);
     this.setState({ isLoadingAttributes: true });
     await SiteStore.ready().then(() => {
       console.log("sitestore.ready");
@@ -767,6 +781,32 @@ class AdminPageComponent extends Component {
     }
     return metaObj;
   };
+  ////////////////
+  // FIREBASE
+  ////////////////
+
+  testQueryContract = () => {
+    console.log("testQueryContract");
+    // this.setState({ updateStatus: "Updating" });
+    const functions = firebase.app().functions("us-central1");
+    // const getRecent = ckUtils.manualGetRecent(options);
+    const testQuery = functions.httpsCallable("manualQueryContract");
+    const props = {
+      kittyId: 123456,
+      saveOnData: false
+    };
+    testQuery(props)
+      .then(data => {
+        console.log("returned data: ", data);
+
+        this.setState({ updateStatus: "Updated" });
+      })
+      .then(data => {
+        this.getAttributeData();
+      })
+      .catch(error => console.error(error));
+  };
+
   ////////////////
   // MISC
   ////////////////

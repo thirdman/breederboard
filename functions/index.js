@@ -2,6 +2,8 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 // const cors = require("cors")({ origin: true });
+const BN = require("bn.js");
+const Web3 = require("web3");
 
 const parseISO = require("date-fns/parseISO");
 const formatDistance = require("date-fns/formatDistance");
@@ -17,6 +19,381 @@ const apiConfig = {
 const rp = require("request-promise");
 admin.initializeApp();
 
+const allAttributes = [
+  "fangtastic",
+  "pixiebob",
+  "emeraldgreen",
+  "tongue",
+  "greymatter",
+  "totesbasic",
+  "palejade",
+  "cyborg",
+  "floorislava",
+  "majestic",
+  "buzzed",
+  "manul",
+  "dahlia",
+  "norwegianforest",
+  "sully",
+  "rollercoaster",
+  "harbourfog",
+  "persian",
+  "safetyvest",
+  "seafoam",
+  "inflatablepool",
+  "prism",
+  "wiley",
+  "walrus",
+  "sizzurp",
+  "wyrm",
+  "redvelvet",
+  "hyacinth",
+  "juju",
+  "dali",
+  "asif",
+  "hotrod",
+  "cashewmilk",
+  "leopard",
+  "limegreen",
+  "unicorn",
+  "lynx",
+  "myparade",
+  "buttercup",
+  "icicle",
+  "scorpius",
+  "universe",
+  "meowgarine",
+  "wonky",
+  "olive",
+  "wowza",
+  "swampgreen",
+  "icy",
+  "gyre",
+  "kittencream",
+  "otaku",
+  "twilightsparkle",
+  "bornwithit",
+  "alien",
+  "ruhroh",
+  "mekong",
+  "pumpkin",
+  "ducky",
+  "struck",
+  "shadowgrey",
+  "fox",
+  "slyboots",
+  "ganado",
+  "drift",
+  "strawberry",
+  "splat",
+  "swarley",
+  "chronic",
+  "featherbrain",
+  "bridesmaid",
+  "soserious",
+  "calicool",
+  "frozen",
+  "shamrock",
+  "downbythebay",
+  "parakeet",
+  "balinese",
+  "cheeky",
+  "royalpurple",
+  "sphynx",
+  "onyx",
+  "kaleidoscope",
+  "coffee",
+  "foghornpawhorn",
+  "littlefoot",
+  "highlander",
+  "orangesoda",
+  "tinybox",
+  "cymric",
+  "daemonwings",
+  "shale",
+  "laperm",
+  "pinefresh",
+  "violet",
+  "secretgarden",
+  "azaleablush",
+  "sandalwood",
+  "finalfrontier",
+  "happygokitty",
+  "oasis",
+  "fallspice",
+  "babypuke",
+  "junglebook",
+  "rosequartz",
+  "lykoi",
+  "saycheese",
+  "glacier",
+  "pearl",
+  "himalayan",
+  "barkbrown",
+  "dioscuri",
+  "tiger",
+  "dragonwings",
+  "dreamboat",
+  "martian",
+  "allyouneed",
+  "daffodil",
+  "amur",
+  "fabulous",
+  "forgetmenot",
+  "burmilla",
+  "grim",
+  "serpent",
+  "sass",
+  "belleblue",
+  "firstblush",
+  "topoftheworld",
+  "satiated",
+  "ooze",
+  "chameleon",
+  "henna",
+  "koala",
+  "chantilly",
+  "impish",
+  "oldlace",
+  "bobtail",
+  "salty",
+  "firedup",
+  "tundra",
+  "coralsunrise",
+  "cloudwhite",
+  "dragontail",
+  "lemonade",
+  "avatar",
+  "chartreux",
+  "wingtips",
+  "royalblue",
+  "flamingo",
+  "autumnmoon",
+  "neckbeard",
+  "rascal",
+  "aflutter",
+  "sweetmeloncakes",
+  "dragonfruit",
+  "oceanid",
+  "rorschach",
+  "dune",
+  "gold",
+  "cinderella",
+  "spangled",
+  "chestnut",
+  "googly",
+  "isotope",
+  "mauveover",
+  "starstruck",
+  "granitegrey",
+  "koladiviya",
+  "mertail",
+  "springcrocus",
+  "luckystripe",
+  "mallowflower",
+  "ragdoll",
+  "dippedcone",
+  "bubblegum",
+  "delite",
+  "aquamarine",
+  "munchkin",
+  "gemini",
+  "highsociety",
+  "kurilian",
+  "kalahari",
+  "poisonberry",
+  "elk",
+  "gerbil",
+  "roadtogold",
+  "savannah",
+  "selkirk",
+  "jacked",
+  "drama",
+  "yokel",
+  "ragamuffin",
+  "cerulian",
+  "cobalt",
+  "siberian",
+  "chocolate",
+  "egyptiankohl",
+  "whixtensions",
+  "skyblue",
+  "missmuffett",
+  "padparadscha",
+  "butterscotch",
+  "thicccbrowz",
+  "hanauma",
+  "cornflower",
+  "camo",
+  "sapphire",
+  "scarlet",
+  "mintmacaron",
+  "salmon",
+  "daemonhorns",
+  "turtleback",
+  "grimace",
+  "frosting",
+  "lilac",
+  "razzledazzle",
+  "belch",
+  "apricot",
+  "patrickstarfish",
+  "alicorn",
+  "topaz",
+  "eclipse",
+  "mittens",
+  "hacker",
+  "stunned",
+  "hotcocoa",
+  "wasntme",
+  "caffeine",
+  "birman",
+  "cyan",
+  "metime",
+  "wolfgrey",
+  "toyger",
+  "tendertears",
+  "manx",
+  "samwise",
+  "bananacream",
+  "arcreactor",
+  "lavender",
+  "doridnudibranch",
+  "simple",
+  "vigilante",
+  "moonrise",
+  "peppermint",
+  "purplehaze",
+  "raisedbrow",
+  "thunderstruck",
+  "hintomint",
+  "periwinkle",
+  "spock",
+  "garnet",
+  "liger",
+  "thundergrey",
+  "crazy",
+  "tigerpunk",
+  "brownies",
+  "baddate",
+  "verdigris",
+  "prairierose",
+  "wuvme",
+  "mainecoon",
+  "jaguar",
+  "cottoncandy",
+  "beard",
+  "confuzzled",
+  "flapflap",
+  "morningglory",
+  "pouty",
+  "peach",
+  "trioculus",
+  "nachocheez",
+  "moue",
+  "mintgreen",
+  "atlantis",
+  "summerbonnet",
+  "bloodred",
+  "candyshoppe",
+  "robin",
+
+  "en01",
+  "en02",
+  "en03",
+  "en04",
+  "en05",
+  "en06",
+  "en07",
+  "en08",
+  "en09",
+  "en10",
+  "en11",
+  "en12",
+  "en13",
+  "en14",
+  "en15",
+
+  "we01",
+  "we02",
+  "we03",
+  "we04",
+  "we05",
+  "we06",
+  "we07",
+  "we08",
+  "we09",
+  "we10",
+  "we11",
+  "we12",
+  "we13",
+  "we14",
+  "we15",
+
+  "se01",
+  "se02",
+  "se03",
+  "se04",
+  "se05",
+  "se06",
+  "se07",
+  "se08",
+  "se09",
+  "se10",
+  "se11",
+  "se12",
+  "se13",
+  "se14",
+  "se15",
+  "se16",
+  "se17",
+  "se18",
+  "se19",
+  "se20",
+  "se21",
+  "se22",
+  "se23",
+  "se24",
+  "se25",
+  "se26",
+  "se27",
+  "se28",
+  "se29",
+  "se30",
+
+  "pu01",
+  "pu02",
+  "pu03",
+  "pu04",
+  "pu05",
+  "pu06",
+  "pu07",
+  "pu08",
+  "pu09",
+  "pu10",
+  "pu11",
+  "pu12",
+  "pu13",
+  "pu14",
+  "pu15",
+  "pu16",
+  "pu17",
+  "pu18",
+  "pu19",
+  "pu20",
+  "pu21",
+  "pu22",
+  "pu23",
+  "pu24",
+  "pu25",
+  "pu26",
+  "pu27",
+  "pu28",
+  "pu29",
+  "pu30"
+];
+
+/////////////////////////////
 // MANUAL GET RECENT
 // This is called from the app
 exports.manualGetRecent = functions.https.onCall(async (data, context) => {
@@ -59,6 +436,29 @@ exports.manualSaveRecent = functions.https.onCall(async (data, context) => {
         // const doSave = saveKitteh(data)
         console.log("this would save data");
       }
+      return result;
+    })
+    .catch(error => {
+      console.error(error);
+      return error;
+    });
+});
+
+/**
+ * MANUAL QUERY CONTRACT
+ * This is the manual version of the auto save in scheduled
+ */
+exports.manualQueryContract = functions.https.onCall(async (data, context) => {
+  console.log(" - - manualQueryContract - - data: ", data);
+  const handleTheQuery = queryContract({ kittyId: 1001 });
+  return await handleTheJandal
+    .then(result => {
+      // const saveToFirebase = (data && data.saveToDatabase) || true;
+      console.log("handle the handleTheQuery result: ", result);
+      // if (saveToFirebase) {
+      //   // const doSave = saveKitteh(data)
+      //   console.log("this would save data");
+      // }
       return result;
     })
     .catch(error => {
@@ -191,7 +591,7 @@ function massageData(data, lastKittyId) {
       generation,
       enhanced_cattributes,
       fancy_ranking,
-      prestige_ranking,
+      prestige_ranking
     } = kitty;
     const breederNickname = kitty.hatcher.nickname || "";
     const breederId = kitty.hatcher.address || "";
@@ -217,7 +617,7 @@ function massageData(data, lastKittyId) {
       generation,
       cattributes,
       fancy_ranking,
-      prestige_ranking,
+      prestige_ranking
     };
     massagedKitties.push(tempObj);
     return tempObj;
@@ -311,6 +711,218 @@ function handleRecentKitties(props) {
       return data;
     })
     .catch(error => console.error(error));
+}
+
+///////////////////////////////////
+/////// GENE RELATED FUNCTIONS
+///////////////////////////////////
+
+/************************************************
+ * QUERY CONTRACT
+ * returns genes
+ * */
+function queryContract(props = { kittyId: 111111 }) {
+  console.log("queryContract props", props);
+  // const web3 = new Web3(
+  //   new Web3.providers.HttpProvider("http://localhost:4444")
+  // );
+  // console.log("UiStore.cattributes", UiStore.cattributes);
+  // const cat = getCattribute("secret", 12);
+  // console.log("cat: ", cat);
+  var web3 = new Web3(Web3.givenProvider);
+  if (window.ethereum) {
+    console.log("window.ethereum: ", window.ethereum);
+  }
+  console.log("web3", web3);
+  const version = web3.version.api;
+  const action = "getabi";
+  const module = "contract";
+  const address = "0x06012c8cf97bead5deae237070f9587f8e7a266d"; // CK READONLY CONTRACT
+
+  const theHeaders = {
+    "Content-Type": "application/json"
+    // "x-api-token": apiConfig.apiToken
+  };
+  const requestOptions = {
+    method: "GET",
+    headers: theHeaders,
+    url: `http://api.etherscan.io/api?module=${module}&action=${action}&address=${address}`,
+    qs: {
+      // orderDirection: "desc", limit: { limit }, orderBy: "created_at"
+    }
+  };
+
+  return rp(requestOptions)
+    .then(body => {
+      const data = JSON.parse(body);
+      console.log(" - - queryContract", data);
+
+      let contractABI = "";
+      contractABI = JSON.parse(data.result);
+      if (contractABI === "") {
+        console.error("NO ABI");
+        return;
+      }
+
+      console.log("web3.eth", web3.eth);
+      // var MyContract = new web3.eth.Contract(contractABI);
+      const MyContract = new web3.eth.Contract(contractABI, address);
+      // console.log("MyContract", MyContract);
+      console.log("MyContract.methods", MyContract.methods);
+      const getResult = MyContract.methods.getKitty(props.kittyId).call();
+      const theGeneData = getResult
+        .then(result => {
+          console.log("result", result);
+          const geneObj = readGenes(result.genes);
+          return geneObj;
+        })
+        .then(geneObj => {
+          const geneArray = Object.keys(geneObj).map((item, index) => {
+            // console.log("item: ", item, index, geneObj[item]);
+            const primaryGene = geneObj[item][0];
+            const description = getCattribute(item, primaryGene, "string");
+            return {
+              id: item,
+              description: description
+            };
+          });
+          console.log("geneArray", geneArray);
+          return geneArray;
+        })
+        .catch(error => console.error(error));
+      return theGeneData;
+    })
+    .catch(error => {
+      throw new Error(error);
+    });
+}
+/************************************************
+ * GET CATTRIBUTE
+ *
+ * */
+function getCattribute(type, geneId, mode = "string") {
+  if (!type) {
+    console.error("no type supplied");
+    return;
+  }
+  const cattribtues = allAttributes;
+  if (type === "environment") {
+    console.log("type: environment");
+    const tempfiltered = cattribtues.filter(i => i.type === type);
+    console.log("tempFiltered", tempfiltered);
+  }
+
+  const filtered = cattribtues.filter(
+    i => i.gene === geneId && i.type === type
+  );
+  console.log("filtered", filtered);
+  if (filtered.length < 1) {
+    // console.error("no cattribtue found", filtered);
+    const unknownlabel = compileUnknown(type, geneId);
+    console.log("unknownlabel", unknownlabel);
+    return mode === "string"
+      ? unknownlabel
+      : {
+          description: unknownlabel,
+          gene: geneId,
+          type: type
+        };
+  }
+  return mode === "string" ? filtered[0].description : filtered[0];
+}
+
+function readGenes(sourcegenes) {
+  console.log("sourcegenes", sourcegenes);
+  const res = newGenes();
+  const split = [];
+  const genes = new BN(sourcegenes.toString(16), 16);
+  for (let i = 0; i < 48; i++) {
+    const gene = genes
+      .shrn(i * 5)
+      .mod(new BN(32))
+      .toNumber();
+    split.push(gene);
+  }
+  console.log("genes", genes);
+  console.log("split", split);
+
+  const types = getTraitTypes().map(t => t.Name);
+  for (let i = 0; i < 12; i += 1) {
+    res[types[i]][0] = split[i * 4];
+    res[types[i]][1] = split[i * 4 + 1];
+    res[types[i]][2] = split[i * 4 + 2];
+    res[types[i]][3] = split[i * 4 + 3];
+  }
+  console.log("res", res);
+  return res;
+}
+
+function getTraitTypes() {
+  return [
+    { Name: "body", Label: "Body" },
+    { Name: "pattern", Label: "Pattern" },
+    { Name: "eyes", Label: "Eye type" },
+    { Name: "coloreyes", Label: "Eye color" },
+    { Name: "colorprimary", Label: "Body color" },
+    { Name: "colorsecondary", Label: "Pattern color" },
+    { Name: "colortertiary", Label: "Accent color" },
+    { Name: "wild", Label: "Wild" },
+    { Name: "mouth", Label: "Mouth" },
+    { Name: "environment", Label: "Environment" },
+    { Name: "secret", Label: "Secret" },
+    { Name: "unknown", Label: "Unknown" }
+  ];
+}
+
+function newGenes() {
+  const res = {
+    body: [],
+    pattern: [],
+    eyes: [],
+    coloreyes: [],
+    colorprimary: [],
+    colorsecondary: [],
+    colortertiary: [],
+    wild: [],
+    mouth: [],
+    environment: [],
+    secret: [],
+    unknown: []
+  };
+  return res;
+}
+
+/************************************************
+ * COMPILE UNKNOWN
+ *
+ * */
+function compileUnknown(type, geneId) {
+  let prefix = "";
+  if (type === "environment") {
+    prefix = "en";
+  }
+  if (type === "secret") {
+    prefix = "se";
+  }
+  if (type === "unknown") {
+    prefix = "pu";
+  }
+  if (type === "wild") {
+    prefix = "we  ";
+  }
+
+  const number = pad(geneId);
+
+  const label = `${prefix}${number}`;
+  return label;
+}
+
+/************************************************
+ * PAD
+ * pads out the  numbers under 10 with a 0
+ * */
+function pad(n) {
+  return n < 10 ? "0" + n : n;
 }
 
 ///////////////////////////////////

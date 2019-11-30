@@ -1705,7 +1705,7 @@ class BoardComponent extends Component {
     const { allAttributes } = UiStore;
     // const plainAttributes =
     //   allAttributes.map(cattribute => cattribute.description) || [];
-
+    // console.log('allAttributes', allAttributes);
     let newAttributeValues = [...attributeValues];
     if (attributeValues.includes(value)) {
       newAttributeValues = newAttributeValues.filter(

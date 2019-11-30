@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "@dapperlabs/dappauth": "^2.0.1",
+    "bn.js": "^5.0.0",
     "classnames": "^2.2.6",
     "date-fns": "^2.0.0-beta.5",
     "dom-to-image": "^2.6.0",
@@ -28,6 +29,7 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.5",
     "styled-components": "^4.3.2",
+    "web3": "^1.2.4",
     "web3connect": "^1.0.0-beta.18"
   },
   "scripts": {
