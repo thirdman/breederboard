@@ -128,7 +128,10 @@ class AdminPageComponent extends Component {
           >
             <Heading level={3}>Tests</Heading>
             <Button onClick={() => ethUtils.queryContract()}>
-              <Box pad="small">QueryContract</Box>
+              <Box pad="small">QueryContract local</Box>
+            </Button>
+            <Button onClick={() => this.testQueryContract()}>
+              <Box pad="small">QueryContract manyal firebase</Box>
             </Button>
           </Box>
 
